@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "Condition",
+  "definitions": {
+    "Sha256Condition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["sha256"]
+        }
+      }
+    },
+    "TimeBeforeCondition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["before"]
+        },
+        "time": {
+          "format": "date"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/definitions/Sha256Condition" },
+    { "$ref": "#/definitions/TimeBeforeCondition"}
+  ]
+}
