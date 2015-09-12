@@ -1,14 +1,13 @@
 'use strict'
 
 const crypto = require('crypto')
-const skeemas = require('skeemas')()
+const tv4 = require('tv4')
 
 const schemaJson = require('../../schemas/Condition.json')
-skeemas.addRef('Condition.json', schemaJson)
 
 class Condition {
   static validate (condition) {
-    return skeemas.validate(condition, 'Condition.json')
+    return tv4.validateMultiple(condition, schemaJson)
   }
 
   static testFulfillment (condition, fulfillment) {
