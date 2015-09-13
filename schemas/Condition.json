@@ -2,13 +2,19 @@
   "$schema": "http://json-schema.org/draft-04/schema",
   "title": "Condition",
   "definitions": {
-    "Sha256Condition": {
+    "HashSha256Condition": {
       "type": "object",
       "properties": {
         "type": {
           "enum": ["sha256"]
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
         }
-      }
+      },
+      "required": ["type", "digest"],
+      "additionalProperties": false
     },
     "TimeBeforeCondition": {
       "type": "object",
@@ -16,14 +22,35 @@
         "type": {
           "enum": ["before"]
         },
-        "time": {
-          "format": "date"
+        "date": {
+          "type": "string",
+          "format": "date-time"
         }
-      }
+      },
+      "required": ["type", "date"],
+      "additionalProperties": false
+    },
+    "BooleanAndCondition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["and"]
+        },
+        "subconditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["type", "subconditions"],
+      "additionalProperties": false
     }
   },
   "oneOf": [
-    { "$ref": "#/definitions/Sha256Condition" },
-    { "$ref": "#/definitions/TimeBeforeCondition"}
+    { "$ref": "#/definitions/HashSha256Condition" },
+    { "$ref": "#/definitions/TimeBeforeCondition" },
+    { "$ref": "#/definitions/BooleanAndCondition" }
   ]
 }
