@@ -14,6 +14,8 @@ class Condition {
     switch (condition.type) {
       case 'sha256':
         return this.testSha256Fulfillment(condition, fulfillment)
+      case 'before':
+        return this.testBefore(condition)
       default:
         return false
     }
@@ -24,6 +26,10 @@ class Condition {
     hash.update(fulfillment.message)
     const digest = hash.digest('hex')
     return condition.digest === digest
+  }
+
+  static testBefore (condition) {
+    return Number(new Date()) < Number(new Date(condition.date))
   }
 }
 
