@@ -21,6 +21,7 @@
     "sinon": "^1.16.1"
   },
   "scripts": {
+    "lint": "eslint .",
     "test": "NODE_ENV=unit node node_modules/.bin/istanbul test -- _mocha"
   },
   "repository": {
