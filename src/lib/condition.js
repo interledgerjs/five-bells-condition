@@ -4,6 +4,7 @@ const _ = require('lodash')
 const crypto = require('crypto')
 const tv4 = require('tv4')
 const formats = require('tv4-formats')
+const tweetnacl = require('tweetnacl')
 
 const schemaJson = require('../../schemas/Condition.json')
 
@@ -21,6 +22,8 @@ class Condition {
         return this.testTimeBefore(condition)
       case 'and':
         return this.testBooleanAnd(condition, fulfillment)
+      case 'ed25519-sha512':
+        return this.testEd25519Sha512(condition, fulfillment)
       default:
         return false
     }
@@ -42,6 +45,17 @@ class Condition {
       .zip(fulfillment.subfulfillments)
       .map(_.spread(this.testFulfillment.bind(this)))
       .every()
+  }
+
+  static testEd25519Sha512 (condition, fulfillment) {
+    let messageHash = tweetnacl.util.decodeBase64(condition.message_hash)
+    let signature = tweetnacl.util.decodeBase64(fulfillment.signature)
+    let publicKey = tweetnacl.util.decodeBase64(condition.public_key)
+    try {
+      return tweetnacl.sign.detached.verify(messageHash, signature, publicKey)
+    } catch (e) {
+      return false
+    }
   }
 }
 

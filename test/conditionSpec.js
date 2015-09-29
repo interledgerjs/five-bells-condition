@@ -103,6 +103,31 @@ describe('Condition', function () {
     expect(validationResult.errors).to.have.length.above(0)
   })
 
+  it('should return valid: true for a valid `ed25519-sha512` condition', function () {
+    const condition = {
+      type: 'ed25519-sha512',
+      message_hash: 'claZQU7qkFz7smkAVtQp9ekUCc5LgoeN9W3RItIzykNEDbGSvzeHvOk9v/vrPpm+XWx5VFjd/sVbM2SLnCpxLw==',
+      signer: 'http://ledger.example',
+      public_key: 'Lvf3YtnHLMER+VHT0aaeEJF+7WQcvp4iKZAdvMVto7c='
+    }
+
+    const validationResult = Condition.validate(condition)
+    expect(validationResult).to.be.an('object')
+    expect(validationResult.valid).to.equal(true)
+  })
+
+  it('should return valid: false for an invalid `ed25519-sha512` message_hash', function () {
+    const condition = {
+      type: 'ed25519-sha512',
+      signer: 'http://ledger.example',
+      public_key: 'Lvf3YtnHLMER+VHT0aaeEJF+7WQcvp4iKZAdvMVto7c='
+    }
+
+    const validationResult = Condition.validate(condition)
+    expect(validationResult).to.be.an('object')
+    expect(validationResult.valid).to.equal(false)
+  })
+
   describe('testFulfillment', function () {
     it('should return true for a valid fulfillment of a `sha256` condition', function () {
       const condition = {
@@ -264,6 +289,40 @@ describe('Condition', function () {
       expect(result).to.equal(false)
 
       clock.restore()
+    })
+
+    it('should return true for a valid fulfillment of a `ed25519-sha512` condition', function () {
+      const condition = {
+        type: 'ed25519-sha512',
+        message_hash: 'claZQU7qkFz7smkAVtQp9ekUCc5LgoeN9W3RItIzykNEDbGSvzeHvOk9v/vrPpm+XWx5VFjd/sVbM2SLnCpxLw==',
+        signer: 'http://ledger.example',
+        public_key: 'Lvf3YtnHLMER+VHT0aaeEJF+7WQcvp4iKZAdvMVto7c='
+      }
+      const fulfillment = {
+        type: 'ed25519-sha512',
+        signature: 'sd0RahwuJJgeNfg8HvWHtYf4uqNgCOqIbseERacqs8G0kXNQQnhfV6gWAnMb+0RIlY3e0mqbrQiUwbRYJvRBAw=='
+      }
+
+      const result = Condition.testFulfillment(condition, fulfillment)
+
+      expect(result).to.equal(true)
+    })
+
+    it('should return false for an invalid fulfillment of a `ed25519-sha512` condition', function () {
+      const condition = {
+        type: 'ed25519-sha512',
+        message_hash: 'claZQU7qkFz7smkAVtQp9ekUCc5LgoeN9W3RItIzykNEDbGSvzeHvOk9v/vrPpm+XWx5VFjd/sVbM2SLnCpxLw==',
+        signer: 'http://ledger.example',
+        public_key: 'Lvf3YtnHLMER+VHT0aaeEJF+7WQcvp4iKZAdvMVto7c='
+      }
+      const fulfillment = {
+        type: 'ed25519-sha512',
+        signature: 'claZQU7qkFz7smkAVtQp9ekUCc5LgoeN9W3RItIzykNEDbGSvzeHvOk9v/vrPpm+XWx5VFjd/sVbM2SLnCpxLw=='
+      }
+
+      const result = Condition.testFulfillment(condition, fulfillment)
+
+      expect(result).to.equal(false)
     })
   })
 })
