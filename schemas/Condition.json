@@ -46,11 +46,34 @@
       },
       "required": ["type", "subconditions"],
       "additionalProperties": false
+    },
+    "Ed25519_Sha512_Condition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["ed25519-sha512"]
+        },
+        "message_hash": {
+          "description": "Base64-encoded hash of the message (hash algorithm dependent on signing algorithm) ",
+          "$ref": "Base64.json"
+        },
+        "signer": {
+          "description": "IRI of signer",
+          "$ref": "Iri.json"
+        },
+        "public_key": {
+          "description": "Base64-encoded public key of signer",
+          "$ref": "Base64.json"
+        }
+      },
+      "required": ["type", "message_hash", "signer", "public_key"],
+      "additionalProperties": false
     }
   },
   "oneOf": [
     { "$ref": "#/definitions/HashSha256Condition" },
     { "$ref": "#/definitions/TimeBeforeCondition" },
-    { "$ref": "#/definitions/BooleanAndCondition" }
+    { "$ref": "#/definitions/BooleanAndCondition" },
+    { "$ref": "#/definitions/Ed25519_Sha512_Condition" }
   ]
 }
