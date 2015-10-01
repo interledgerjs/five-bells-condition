@@ -7,7 +7,7 @@ describe('Condition', function () {
     it('should return valid: true for a valid `sha256` condition', function () {
       const condition = {
         type: 'sha256',
-        digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+        digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
       }
 
       const validationResult = Condition.validate(condition)
@@ -19,7 +19,7 @@ describe('Condition', function () {
     it('should return valid: false and validation errors for an invalid type', function () {
       const condition = {
         type: 'invalid',
-        digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+        digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
       }
 
       const validationResult = Condition.validate(condition)
@@ -75,7 +75,7 @@ describe('Condition', function () {
         type: 'and',
         subconditions: [{
           type: 'sha256',
-          digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+          digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
         }]
       }
 
@@ -91,7 +91,7 @@ describe('Condition', function () {
       type: 'and',
       subconditions: [{
         type: 'sha256',
-        digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f65451c'
+        digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F65451C'
       }]
     }
 
@@ -107,7 +107,7 @@ describe('Condition', function () {
     it('should return true for a valid fulfillment of a `sha256` condition', function () {
       const condition = {
         type: 'sha256',
-        digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+        digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
       }
       const fulfillment = {
         type: 'sha256',
@@ -122,7 +122,7 @@ describe('Condition', function () {
     it('should return false for an invalid fulfillment of a `sha256` condition', function () {
       const condition = {
         type: 'sha256',
-        digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545d'
+        digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545d'
       }
       const fulfillment = {
         type: 'sha256',
@@ -187,7 +187,7 @@ describe('Condition', function () {
           date: '2015-09-13T05:43:23.508Z'
         }, {
           type: 'sha256',
-          digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+          digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
         }]
       }
 
@@ -216,7 +216,7 @@ describe('Condition', function () {
           date: '2015-09-13T05:43:23.508Z'
         }, {
           type: 'sha256',
-          digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+          digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
         }]
       }
 
@@ -245,7 +245,7 @@ describe('Condition', function () {
           date: '2015-09-13T05:43:13.508Z'
         }, {
           type: 'sha256',
-          digest: '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c'
+          digest: '50D858E0985ECC7F60418AAF0CC5AB587F42C2570A884095A9E8CCACD0F6545C'
         }]
       }
 

@@ -30,7 +30,7 @@ class Condition {
     const hash = crypto.createHash('sha256')
     hash.update(fulfillment.message)
     const digest = hash.digest('hex')
-    return condition.digest === digest
+    return condition.digest.toUpperCase() === digest.toUpperCase()
   }
 
   static testTimeBefore (condition) {
