@@ -5,7 +5,7 @@
 ## Usage
 
 ``` js
-const conditions = require('@ripple/five-bells-conditions')
+const conditions = require('five-bells-conditions')
 
 // Check a condition for validity
 const validationResult = conditions.validate({ ... })
