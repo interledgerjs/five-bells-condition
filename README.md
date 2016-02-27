@@ -86,13 +86,13 @@ thresholdCondition.addSubcondition(myCondition)
 thresholdCondition.addSubcondition(rsaCondition)
 thresholdCondition.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdCondition.serializeCondition())
-// prints 'cc:1:AR9QCVepDTNSct6SGWTx6cWfLgBrp8tNqWIjylAiEy4vtAI'
+// prints 'cc:1:BETwrHWUsdWZknhVSmoPhorke3nDGa6izP3lyF4Q-h6OtAI'
 
 const thresholdFulfillment = thresholdCondition.serializeFulfillment()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
 // thresholdFulfillment.length === 57
 console.log(thresholdFulfillment)
-// prints 'cf:1:AQICaX_QGANFWTfZ9dNUxDpXVJIoWvEAXtcd6B4jXq9Np7GyAgEC'
+// prints 'cf:1:BAICaX_QGANFWTfZ9dNUxDpXVJIoWvEAXtcd6B4jXq9Np7GyAgEC'
 
 ```

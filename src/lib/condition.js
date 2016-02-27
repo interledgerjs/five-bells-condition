@@ -90,6 +90,13 @@ class Condition {
       Class
     })
   }
+
+  static registerMetaType (Class) {
+    Condition.registeredMetaTypes.push({
+      bitmask: Class.BITMASK,
+      Class
+    })
+  }
 }
 
 Condition.registeredMetaTypes = []

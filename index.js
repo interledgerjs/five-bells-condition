@@ -42,7 +42,7 @@ const validateFulfillment = (serializedFulfillment) => {
 
 Condition.registerType(Sha256)
 Condition.registerType(RsaSha256)
-Condition.registerType(ThresholdSha256)
+Condition.registerMetaType(ThresholdSha256)
 
 module.exports = {
   Condition,

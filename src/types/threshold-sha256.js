@@ -35,7 +35,7 @@ class ThresholdSha256 extends BaseSha256 {
     }
 
     if (payload.length < 2) {
-      throw new ParseError('Payload too short for a SHA256 fulfillment')
+      throw new ParseError('Payload too short for a THRESHOLD-SHA256 fulfillment')
     }
 
     const fulfillmentLength = util.varuint.decode(payload, 1)
@@ -81,7 +81,6 @@ class ThresholdSha256 extends BaseSha256 {
       util.varuint.predictLength(this.subconditions.length) +
       worstCaseFulfillmentsLength
     )
-    console.log(maxFulfillmentLength)
 
     return maxFulfillmentLength
   }
@@ -129,15 +128,9 @@ class ThresholdSha256 extends BaseSha256 {
       throw new MissingDataError('Not enough subconditions have been fulfilled')
     }
 
-    console.log('f before', fulfillments.map((f) => f.fulfillment.length))
-    console.log('c before', conditions.length)
-
     while (fulfillments.length > this.threshold) {
       conditions.push(fulfillments.pop().cond.serializeConditionPayload())
     }
-
-    console.log('f after', fulfillments.map((f) => f.fulfillment.length))
-    console.log('c after', conditions.length)
 
     const payloadComponents = [
       new Buffer([ThresholdSha256.BITMASK]),
@@ -146,12 +139,11 @@ class ThresholdSha256 extends BaseSha256 {
       conditions,
       fulfillments.map((f) => f.fulfillment)
     )
-    console.log(payloadComponents)
 
     return Buffer.concat(payloadComponents)
   }
 }
 
-ThresholdSha256.BITMASK = 0x01
+ThresholdSha256.BITMASK = 0x04
 
 module.exports = ThresholdSha256
