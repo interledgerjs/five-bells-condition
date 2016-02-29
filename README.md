@@ -2,6 +2,10 @@
 
 > Implementation of crypto-conditions
 
+## Spec
+
+You can find the draft specification under [**docs/spec.md**](docs/spec.md).
+
 ## Usage
 
 ``` js
