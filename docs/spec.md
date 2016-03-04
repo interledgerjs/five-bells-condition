@@ -24,7 +24,7 @@ This provides a useful primitive for distributed, event-based systems since we c
 * Secure
 * Stable - will rarely have to change
 * Crypto-agile - easy to add new crypto-algorithms and deprecate old ones
-* Flexible delegation - can express complex trust graphs (e.g. I trust Bob, but only if Jenna or Nicki agree with him)
+* Flexible delegation - can express arbitrary trust graphs (e.g. I trust Bob, but only if Jenna or Nicki agree with him)
 
 ## Related Work
 
@@ -57,19 +57,81 @@ The following bits are assigned:
 
 ### Features
 
-* An implementation can verify whether it understands a given condition by verifying that the condition's bitmask `condition` and its own bitmask of supported algorithms `supported` satisfies `condition & ~supported == 0` where `&` is the bitwise AND operator and `~` is the bitwise NOT operator.
-* New algorithms can be added by defining new bits.
-* Any new high bit can redefine the meaning of any existing lower bits as long as it is set. This can be used to remove obsolete algorithms.
-* The bitmask is encoded as a varint to minimize space usage.
+Crypto-conditions are a simple multi-algorithm, multi-message, multi-level, multi-signature standard.
 
-## String encoding
+* **Multi-algorithm**
+
+  Crypto-conditions can support several different signature and hash algorithms and support for new ones can be added in the future.
+
+  Implementations can state their supported algorithms simply by providing a bitmask. It is easy to verify that a given implementation will be able to verify the fulfillment to a given condition, by verifying that the condition's bitmask `condition` and its own bitmask of supported algorithms `supported` satisfies `condition & ~supported == 0` where `&` is the bitwise AND operator and `~` is the bitwise NOT operator.
+
+  Any new high bit can redefine the meaning of any existing lower bits as long as it is set. This can be used to remove obsolete algorithms.
+
+  The bitmask is encoded as a varint to minimize space usage.
+
+* **Multi-signature**
+
+  Crypto-conditions can abstract away many of the details of multi-sign. When a party provides a condition, other parties can treat it opaquely and do not need to know about its internal structure. That allows parties to define arbitrary multi-signature setups without breaking compatibility.
+
+  Protocol designers can use crypto-conditions as a drop-in replacement for public key signature algorithms and add multi-signature support to their protocols without adding any additional complexity.
+
+* **Multi-level**
+
+  Basic multi-sign is single-level and does not support more complex trust relationships such as "I trust Alice and Bob, but only when Candice also agrees". In single level 2-of-3 Alice and Bob could sign on their own, without Candice's approval.
+
+  Crypto-conditions add that flexibility elegantly, by making
+
+* **Multi-message**
+
+  Crypto-conditions can sign not just one, but multiple messages at the same time and by different people. These messages can then be used as inputs for other algorithms.
+
+  This allows resource-controlling systems to perform their functions without knowing the details of the higher-level protocols that these functions are a part of.
+
+## Encoding
+
+### Binary types
+
+* **VARUINT**
+
+  Unsigned variable-length integer. Implementation matches [Base128 Varints](https://developers.google.com/protocol-buffers/docs/encoding#varints) in Protocol Buffers. Implementations MAY define different maximum lengths for their varints, as long as that length is long enough to cover their bitmask and their maximum supported fulfillment length. (This is safe, because no larger varuint can appear in a valid crypto-condition.)
+
+* **VARBYTES**
+
+  Consists of a `VARUINT` length field followed by that many bytes.
+
+* **VARARRAY**
+
+  Consists of a `VARUINT` length fields followed by that many bytes filled with elements of the array.
+
+### String types
+
+* **BASE10**
+
+  Variable-length integer encoded as a base-10 (decimal) number. Implementations MUST reject encodings that are too large for them to parse. Implementations MUST be tested for overflows.
+
+* **BASE16**
+
+  Variable-length integer encoded as a base-16 (hexadecimal) number. Implementations MUST reject encodings that are too large for them to parse. Implementations MUST be tested for overflows.
+
+* **BASE64URL**
+
+  Base64-URL encoding. See [RFC4648 Section 5](https://tools.ietf.org/html/rfc4648#section-5).
 
 ### Condition
 
 Conditions are string encoded as:
 
 ```
-"cc:1:" BASE64(CONDITION)
+"cc:" BASE10(VERSION) ":" BASE16(BITMASK) ":" BASE64URL(HASH) ":" BASE10(MAX_FULFILLMENT_LENGTH)
+```
+
+Conditions are binary encoded as:
+
+```
+CONDITION =
+  VARUINT BITMASK
+  UINT256 HASH
+  VARUINT MAX_FULFILLMENT_LENGTH
 ```
 
 ### Fulfillment
@@ -77,7 +139,15 @@ Conditions are string encoded as:
 Fulfillments are string encoded as:
 
 ```
-"cf:1:" BASE64(FULFILLMENT)
+"cf:1:" BITMASK ":" BASE64URL(FULFILLMENT_PAYLOAD)
+```
+
+Fulfillments are binary encoded as:
+
+```
+FULFILLMENT =
+  VARUINT BITMASK
+  FULFILLMENT_PAYLOAD
 ```
 
 # Condition Types
@@ -88,27 +158,21 @@ Bitmask: 1
 
 ### Notes
 
-SHA-224 is not supported for Bitcoin compatibility.
+This type of condition is also called a hashlock. We can use revealing the preimage as a type of one bit signature.
+
+Bitcoin supports this type of condition via the `OP_HASH256` operator
 
 ### Condition
 
 ```
-CONDITION =
-  VARUINT BITMASK = 1
-  UINT256 HASH
-  VARUINT MAX_FULLFILLMENT_LENGTH
-
-HASH = SHA256(
-  UINT8[] PREIMAGE
-)
+HASH = SHA256(PREIMAGE)
 ```
 
 ### Fulfillment
 
 ```
-FULFILLMENT =
-  VARUINT BITMASK = 1
-  VARSTR PREIMAGE
+FULFILLMENT_PAYLOAD =
+  VARBYTES PREIMAGE
 ```
 
 ## RSA-SHA-256
@@ -118,36 +182,35 @@ Bitmask: 2
 ### Condition
 
 ```
-CONDITION =
-  VARUINT BITMASK = 2
-  UINT256 HASH
-  VARUINT MAX_FULLFILLMENT_LENGTH
-
 HASH = SHA256(
   SHA256("https://w3.org/2016/02/xxx-xxx.html#rsa-sha-256")
   VARUINT BITMASK = 2
-  VARSTR MODULUS
-  VARSTR MESSAGE_PREFIX
+  VARBYTES MODULUS
+  VARBYTES MESSAGE_ID
+  VARBYTES FIXED_MESSAGE_PREFIX
+  VARUINT MAX_SUFFIX_LENGTH
 )
 ```
 
 ### Fulfillment
 
 ```
-FULFILLMENT =
-  VARUINT BITMASK = 2
-  VARSTR MODULUS
-  VARSTR MESSAGE_PREFIX
-  VARSTR MESSAGE
-  UINT8[LENGTH(MODULUS)] SIGNATURE
-  VARUINT BYTES_UNUSED
+FULFILLMENT_PAYLOAD =
+  VARBYTES MODULUS
+  VARBYTES MESSAGE_ID
+  VARBYTES FIXED_MESSAGE_PREFIX
+  VARUINT MAX_SUFFIX_LENGTH
+  VARBYTES DYNAMIC_MESSAGE_SUFFIX
+  VARBYTES SIGNATURE
 ```
 
-The `SIGNATURE` must have the exact same number of octets as the `MODULUS`.
+The `SIGNATURE` must have the exact same number of octets as the `MODULUS`. So theoretically we could omit the length prefix for the `SIGNATURE` field. But for consistency, we include the length prefix. Implementations MUST verify that the `SIGNATURE` and `MODULUS` are of the same length.
 
-The `BYTES_UNUSED` field is used to determine the `MAX_FULFILLMENT_LENGTH`. It
-denotes the number of bytes that the fulfillment is below the
-`MAX_FULFILLMENT_LENGTH`, not counting the BYTES_UNUSED field's own length.
+The `MAX_SUFFIX_LENGTH` is included to provide a maximum length `DYNAMIC_MESSAGE_SUFFIX` even if the actual message suffix length is different. This value is also used to calculate the `MAX_FULFILLMENT_LENGTH` in the condition.
+
+The `MESSAGE_ID` represents an identifier for the message. All messages in a cryptocondition that have a common identifier must match, otherwise the condition is invalid. Implementations may return messages as a map of `MESSAGE_ID` => `MESSAGE` pairs.
+
+The message to be signed is the concatenation of the `FIXED_MESSAGE_PREFIX` and `DYNAMIC_MESSAGE_SUFFIX`.
 
 ### Implementation
 
@@ -161,36 +224,32 @@ The recommended modulus size as of 2016 [is 2048 bits](https://www.keylength.com
 
 ### Bitmask
 
-Bitmask: 4 | any supported subconditions
+Bitmask: 4 | *bitmasks of all subconditions*
 
 ### Condition
 
 ```
-CONDITION =
-  VARUINT BITMASK
-  UINT256 HASH
-  VARUINT MAX_FULFILLMENT_LENGTH
-
 HASH = SHA256(
-  SHA-256("https://w3.org/2016/02/xxx-xxx.html#threshold-sha-256")
+  SHA256("https://w3.org/2016/02/xxx-xxx.html#threshold-sha-256")
   VARUINT BITMASK
   VARUINT THRESHOLD
-  VARUINT NUM_ELEMENTS
-  FOR EACH ELEMENT
-    ELEMENT_CONDITION
+  VARARRAY
+    VARUINT WEIGHT
+    CONDITION
 )
 ```
+
+The `VARARRAY` of conditions is sorted first based on length, shortest first. Elements of the same length are sorted in lexicographic (big-endian) order, smallest first.
 
 ### Fulfillment
 
 ```
-FULFILLMENT =
-  VARUINT BITMASK
+FULFILLMENT_PAYLOAD =
   VARUINT THRESHOLD
-  VARUINT NUM_ELEMENTS
-  FOR EACH ELEMENT
-    VARUINT PARAMS
-    ELEMENT_CONDITION/FULFILLMENT
-
-PARAMS = (WEIGHT << 1) | (IS_FULFILLED % 1)
+  VARARRAY
+    VARUINT WEIGHT
+    FULFILLMENT
+  VARARRAY
+    VARUINT WEIGHT
+    CONDITION
 ```
