@@ -187,8 +187,8 @@ HASH = SHA256(
   VARUINT BITMASK = 2
   VARBYTES MODULUS
   VARBYTES MESSAGE_ID
-  VARBYTES FIXED_MESSAGE_PREFIX
-  VARUINT MAX_SUFFIX_LENGTH
+  VARBYTES FIXED_PREFIX
+  VARUINT DYNAMIC_MESSAGE_LENGTH
 )
 ```
 
@@ -198,19 +198,19 @@ HASH = SHA256(
 FULFILLMENT_PAYLOAD =
   VARBYTES MODULUS
   VARBYTES MESSAGE_ID
-  VARBYTES FIXED_MESSAGE_PREFIX
-  VARUINT MAX_SUFFIX_LENGTH
-  VARBYTES DYNAMIC_MESSAGE_SUFFIX
+  VARBYTES FIXED_PREFIX
+  VARUINT DYNAMIC_MESSAGE_LENGTH
+  VARBYTES DYNAMIC_MESSAGE
   VARBYTES SIGNATURE
 ```
 
 The `SIGNATURE` must have the exact same number of octets as the `MODULUS`. So theoretically we could omit the length prefix for the `SIGNATURE` field. But for consistency, we include the length prefix. Implementations MUST verify that the `SIGNATURE` and `MODULUS` are of the same length.
 
-The `MAX_SUFFIX_LENGTH` is included to provide a maximum length `DYNAMIC_MESSAGE_SUFFIX` even if the actual message suffix length is different. This value is also used to calculate the `MAX_FULFILLMENT_LENGTH` in the condition.
+The `DYNAMIC_MESSAGE_LENGTH` is included to provide a maximum length `DYNAMIC_MESSAGE` even if the actual message suffix length is different. This value is also used to calculate the `MAX_FULFILLMENT_LENGTH` in the condition.
 
 The `MESSAGE_ID` represents an identifier for the message. All messages in a cryptocondition that have a common identifier must match, otherwise the condition is invalid. Implementations may return messages as a map of `MESSAGE_ID` => `MESSAGE` pairs.
 
-The message to be signed is the concatenation of the `FIXED_MESSAGE_PREFIX` and `DYNAMIC_MESSAGE_SUFFIX`.
+The message to be signed is the concatenation of the `FIXED_PREFIX` and `DYNAMIC_MESSAGE`.
 
 ### Implementation
 
