@@ -1,7 +1,13 @@
 'use strict'
 
 const util = require('../util')
+const MissingDataError = require('../errors/missing-data-error')
+
 class BaseSha256 {
+  getBitmask () {
+    return this.constructor.BITMASK
+  }
+
   getHash () {
     if (!this.hash) {
       this.hash = this.generateHash()
@@ -14,20 +20,47 @@ class BaseSha256 {
     this.hash = hash
   }
 
-  serializeCondition () {
-    return 'cc:1:' + util.encodeBase64url(this.serializeConditionPayload())
+  getMaxFulfillmentLength () {
+    if (typeof this.maxFulfillmentLength !== 'number') {
+      throw new MissingDataError('Could not generate condition, no maximum fulfillment length provided')
+    }
+
+    return this.maxFulfillmentLength
   }
 
-  serializeConditionPayload () {
+  setMaxFulfillmentLength (maxFulfillmentLength) {
+    this.maxFulfillmentLength = maxFulfillmentLength
+  }
+
+  parseConditionBinary (payload) {
+    this.setHash(payload.slice(1, 33))
+    this.setMaxFulfillmentLength(util.varuint.decode(payload, 33))
+  }
+
+  serializeConditionUri () {
+    return 'cc:1:' + this.getBitmask().toString(16) +
+      ':' + util.encodeBase64url(this.getHash()) +
+      ':' + this.getMaxFulfillmentLength()
+  }
+
+  serializeConditionBinary () {
     return Buffer.concat([
-      new Buffer([this.constructor.BITMASK]),
+      new Buffer([this.getBitmask()]),
       this.getHash(),
       util.varuint.encode(this.getMaxFulfillmentLength())
     ])
   }
 
-  serializeFulfillment () {
-    return 'cf:1:' + util.encodeBase64url(this.serializeFulfillmentPayload())
+  serializeFulfillmentUri () {
+    return 'cf:1:' + this.getBitmask().toString(16) + ':' +
+      util.encodeBase64url(this.serializeFulfillmentPayload())
+  }
+
+  serializeFulfillmentBinary () {
+    return Buffer.concat([
+      new Buffer([this.getBitmask()]),
+      this.serializeFulfillmentPayload()
+    ])
   }
 }
 

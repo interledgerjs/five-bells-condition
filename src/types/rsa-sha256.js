@@ -81,9 +81,6 @@ class RsaSha256 extends BaseSha256 {
       throw new MissingDataError('Requires a public modulus')
     }
 
-    // Bitmask
-    maxFulfillmentLength += 1
-
     // Modulus
     maxFulfillmentLength += util.varstr.predictLength(this.modulus)
 
@@ -133,7 +130,6 @@ class RsaSha256 extends BaseSha256 {
 
   serializeFulfillmentPayload () {
     const payloadComponents = [
-      new Buffer([RsaSha256.BITMASK]),
       varuint.encode(this.modulus.length),
       this.modulus,
       varuint.encode(this.messagePrefix.length),

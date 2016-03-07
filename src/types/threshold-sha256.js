@@ -2,10 +2,10 @@
 
 const crypto = require('crypto')
 const util = require('../util')
+const Condition = require('../lib/condition')
 const BaseSha256 = require('./base-sha256')
 const ParseError = require('../errors/parse-error')
 const MissingDataError = require('../errors/missing-data-error')
-const UnsupportedBitmaskError = require('../errors/unsupported-bitmask-error')
 
 class ThresholdSha256 extends BaseSha256 {
   constructor () {
@@ -14,38 +14,34 @@ class ThresholdSha256 extends BaseSha256 {
     this.subconditions = []
   }
 
-  parseConditionPayload (payload) {
-    if (payload[0] !== ThresholdSha256.BITMASK) {
-      throw new UnsupportedBitmaskError('Unexpected bitmask in payload')
-    }
-
-    if (payload.length < 34) {
-      throw new ParseError('Payload too short for a SHA256 condition')
-    }
-
-    this.setHash(payload.slice(1, 33))
-    const fulfillmentLength = util.varuint.decode(payload, 33)
-    // TODO check for invalid preimage length
-    this.setMaxFulfillmentLength(fulfillmentLength)
-  }
-
   parseFulfillmentPayload (payload) {
-    if (payload[0] !== ThresholdSha256.BITMASK) {
-      throw new UnsupportedBitmaskError('Unexpected bitmask in payload')
-    }
-
     if (payload.length < 2) {
       throw new ParseError('Payload too short for a THRESHOLD-SHA256 fulfillment')
     }
 
-    const fulfillmentLength = util.varuint.decode(payload, 1)
-    this.setMaxFulfillmentLength(fulfillmentLength)
+    const threshold = util.varuint.decode(payload, 0)
+    this.setThreshold(threshold)
 
-    const expectedLength = 1 + util.varstr.predictLength(fulfillmentLength)
-    if (payload.length !== expectedLength) {
-      throw new ParseError('Payload length ' + payload.length + ' is inconsistent with expected length ' + expectedLength)
+    const fulfillmentCount = util.varuint.decode(payload, 1)
+    let i = fulfillmentCount
+    let cursor = 2
+    while (i-- > 0) {
+      // const weight = 1
+      cursor++
+      const fulfillment = Condition.fromFulfillmentBinary(payload.slice(cursor))
+      this.addSubcondition(fulfillment)
+      cursor += fulfillment.serializeFulfillmentBinary().length
     }
-    this.setPreimage(payload.slice(1 + util.varuint.predictLength(fulfillmentLength)))
+
+    const conditionCount = util.varuint.decode(payload, cursor++)
+    i = conditionCount
+    while (i-- > 0) {
+      // const weight = 1
+      cursor++
+      const condition = Condition.fromConditionBinary(payload.slice(cursor))
+      this.addSubcondition(condition)
+      cursor += condition.serializeConditionBinary().length
+    }
   }
 
   generateHash () {
@@ -59,7 +55,7 @@ class ThresholdSha256 extends BaseSha256 {
       .update(util.varuint.encode(this.subconditions.length))
 
     this.subconditions
-      .map((cond) => cond.serializeConditionPayload())
+      .map((cond) => cond.serializeConditionBinary())
       .sort(Buffer.compare)
       .forEach(hash.update.bind(hash))
 
@@ -75,8 +71,6 @@ class ThresholdSha256 extends BaseSha256 {
       .reduce((a, b) => a + b, 0)
 
     const maxFulfillmentLength = (
-      // Bitmask
-      1 +
       // Conditions
       util.varuint.predictLength(this.subconditions.length) +
       worstCaseFulfillmentsLength
@@ -114,31 +108,37 @@ class ThresholdSha256 extends BaseSha256 {
       try {
         fulfillments.push({
           cond,
-          fulfillment: cond.serializeFulfillmentPayload()
+          fulfillment: cond.serializeFulfillmentBinary()
         })
       } catch (err) {
-        conditions.push(cond.serializeConditionPayload())
+        conditions.push(cond.serializeConditionBinary())
       }
     })
 
     // Prefer shorter fulfillments
-    fulfillments.sort((a, b) => a.length - b.length)
+    fulfillments.sort((a, b) => a.fulfillment.length - b.fulfillment.length)
 
     if (fulfillments.length < this.threshold) {
       throw new MissingDataError('Not enough subconditions have been fulfilled')
     }
 
     while (fulfillments.length > this.threshold) {
-      conditions.push(fulfillments.pop().cond.serializeConditionPayload())
+      conditions.push(fulfillments.pop().cond.serializeConditionBinary())
     }
 
-    const payloadComponents = [
-      new Buffer([ThresholdSha256.BITMASK]),
-      util.varuint.encode(this.subconditions.length)
-    ].concat(
-      conditions,
-      fulfillments.map((f) => f.fulfillment)
-    )
+    const payloadComponents = []
+    payloadComponents.push(util.varuint.encode(this.threshold))
+    payloadComponents.push(util.varuint.encode(fulfillments.length))
+    fulfillments.forEach((f) => {
+      // TODO: Support custom weights
+      payloadComponents.push(new Buffer([1]))
+      payloadComponents.push(f.fulfillment)
+    })
+    payloadComponents.push(util.varuint.encode(conditions.length))
+    conditions.forEach((condition) => {
+      payloadComponents.push(new Buffer([1]))
+      payloadComponents.push(condition)
+    })
 
     return Buffer.concat(payloadComponents)
   }

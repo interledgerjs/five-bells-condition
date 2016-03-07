@@ -8,7 +8,7 @@ const ThresholdSha256 = require('./src/types/threshold-sha256')
 const validate = (serializedCondition) => {
   try {
     // Parse condition, throw on error
-    const condition = Condition.fromCondition(serializedCondition)
+    const condition = Condition.fromConditionUri(serializedCondition)
 
     // Validate condition, throw on error
     return {
@@ -23,12 +23,12 @@ const validate = (serializedCondition) => {
 const validateFulfillment = (serializedFulfillment) => {
   try {
     // Parse fulfillment, throw on error
-    const fulfillment = Condition.fromFulfillment(serializedFulfillment)
+    const fulfillment = Condition.fromFulfillmentUri(serializedFulfillment)
 
     // Validate fulfillment, throw on error
     return {
       valid: fulfillment.validateFulfillment(),
-      condition: fulfillment.serializeCondition(),
+      condition: fulfillment.serializeConditionUri(),
       error: null
     }
   } catch (error) {
@@ -51,6 +51,8 @@ module.exports = {
   ThresholdSha256,
   validate,
   validateFulfillment,
-  fromCondition: Condition.fromCondition.bind(Condition),
-  fromFulfillment: Condition.fromFulfillment.bind(Condition)
+  fromConditionUri: Condition.fromConditionUri.bind(Condition),
+  fromConditionBinary: Condition.fromConditionBinary.bind(Condition),
+  fromFulfillmentUri: Condition.fromFulfillmentUri.bind(Condition),
+  fromFulfillmentBinary: Condition.fromFulfillmentBinary.bind(Condition)
 }

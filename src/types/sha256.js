@@ -23,16 +23,12 @@ class Sha256 extends BaseSha256 {
   }
 
   parseFulfillmentPayload (payload) {
-    if (payload[0] !== Sha256.BITMASK) {
-      throw new UnsupportedBitmaskError('Unexpected bitmask in payload')
-    }
-
-    if (payload.length < 2) {
+    if (payload.length < 1) {
       throw new ParseError('Payload too short for a SHA256 fulfillment')
     }
 
-    const preimageLength = util.varuint.decode(payload, 1)
-    const preimageOffset = 1 + util.varuint.predictLength(preimageLength)
+    const preimageLength = util.varuint.decode(payload, 0)
+    const preimageOffset = util.varuint.predictLength(preimageLength)
     this.setPreimage(payload.slice(preimageOffset, preimageOffset + preimageLength))
   }
 
@@ -44,14 +40,6 @@ class Sha256 extends BaseSha256 {
     return crypto.createHash('sha256').update(this.preimage).digest()
   }
 
-  getMaxFulfillmentLength () {
-    if (typeof this.maxFulfillmentLength !== 'number') {
-      throw new MissingDataError('Could not generate condition, no maximum fulfillment length provided')
-    }
-
-    return this.maxFulfillmentLength
-  }
-
   setPreimage (preimage) {
     this.preimage = preimage
     this.setPreimageLength(preimage.length)
@@ -59,8 +47,6 @@ class Sha256 extends BaseSha256 {
 
   setPreimageLength (preimageLength) {
     this.maxFulfillmentLength =
-      // Bitmask
-      1 +
       // Preimage
       util.varuint.predictLength(preimageLength) +
       preimageLength
@@ -76,8 +62,7 @@ class Sha256 extends BaseSha256 {
 
   serializeFulfillmentPayload () {
     return Buffer.concat([
-      new Buffer([Sha256.BITMASK]),
-      util.varuint.encode(this.maxFulfillmentLength),
+      util.varuint.encode(this.preimage.length),
       this.preimage
     ])
   }

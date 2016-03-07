@@ -111,7 +111,7 @@ Crypto-conditions are a simple multi-algorithm, multi-message, multi-level, mult
 
 * **BASE16**
 
-  Variable-length integer encoded as a base-16 (hexadecimal) number. Implementations MUST reject encodings that are too large for them to parse. Implementations MUST be tested for overflows.
+  Variable-length integer encoded as a base-16 (hexadecimal) number. Implementations MUST reject encodings that are too large for them to parse. Implementations MUST be tested for overflows. No leading zeros.
 
 * **BASE64URL**
 
