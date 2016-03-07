@@ -1,14 +1,19 @@
 'use strict'
 
 const Condition = require('./src/lib/condition')
-const Sha256 = require('./src/types/sha256')
-const RsaSha256 = require('./src/types/rsa-sha256')
-const ThresholdSha256 = require('./src/types/threshold-sha256')
+const Fulfillment = require('./src/lib/fulfillment')
+const BitmaskRegistry = require('./src/lib/bitmask-registry')
+const Sha256Condition = require('./src/conditions/sha256')
+const RsaSha256Condition = require('./src/conditions/rsa-sha256')
+const ThresholdSha256Condition = require('./src/conditions/threshold-sha256')
+const Sha256Fulfillment = require('./src/fulfillments/sha256')
+const RsaSha256Fulfillment = require('./src/fulfillments/rsa-sha256')
+const ThresholdSha256Fulfillment = require('./src/fulfillments/threshold-sha256')
 
 const validate = (serializedCondition) => {
   try {
     // Parse condition, throw on error
-    const condition = Condition.fromConditionUri(serializedCondition)
+    const condition = Condition.fromUri(serializedCondition)
 
     // Validate condition, throw on error
     return {
@@ -23,12 +28,12 @@ const validate = (serializedCondition) => {
 const validateFulfillment = (serializedFulfillment) => {
   try {
     // Parse fulfillment, throw on error
-    const fulfillment = Condition.fromFulfillmentUri(serializedFulfillment)
+    const fulfillment = Fulfillment.fromUri(serializedFulfillment)
 
     // Validate fulfillment, throw on error
     return {
-      valid: fulfillment.validateFulfillment(),
-      condition: fulfillment.serializeConditionUri(),
+      valid: fulfillment.validate(),
+      condition: fulfillment.getCondition().serializeUri(),
       error: null
     }
   } catch (error) {
@@ -40,19 +45,24 @@ const validateFulfillment = (serializedFulfillment) => {
   }
 }
 
-Condition.registerType(Sha256)
-Condition.registerType(RsaSha256)
-Condition.registerMetaType(ThresholdSha256)
+BitmaskRegistry.registerType(Sha256Fulfillment)
+BitmaskRegistry.registerType(RsaSha256Fulfillment)
+BitmaskRegistry.registerMetaType(ThresholdSha256Fulfillment)
 
 module.exports = {
   Condition,
-  Sha256,
-  RsaSha256,
-  ThresholdSha256,
+  Fulfillment,
+  BitmaskRegistry,
+  Sha256Condition,
+  RsaSha256Condition,
+  ThresholdSha256Condition,
+  Sha256Fulfillment,
+  RsaSha256Fulfillment,
+  ThresholdSha256Fulfillment,
   validate,
   validateFulfillment,
-  fromConditionUri: Condition.fromConditionUri.bind(Condition),
-  fromConditionBinary: Condition.fromConditionBinary.bind(Condition),
-  fromFulfillmentUri: Condition.fromFulfillmentUri.bind(Condition),
-  fromFulfillmentBinary: Condition.fromFulfillmentBinary.bind(Condition)
+  fromConditionUri: Condition.fromUri.bind(Condition),
+  fromConditionBinary: Condition.fromBinary.bind(Condition),
+  fromFulfillmentUri: Fulfillment.fromUri.bind(Fulfillment),
+  fromFulfillmentBinary: Fulfillment.fromBinary.bind(Fulfillment)
 }

@@ -7,7 +7,6 @@
     "test": "test"
   },
   "dependencies": {
-    "varint": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^3.2.0",

@@ -2,20 +2,21 @@
 
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
-const UnsupportedBitmaskError = require('../errors/unsupported-bitmask-error')
+const MissingDataError = require('../errors/missing-data-error')
 
-const util = require('../util')
+const base64url = require('../util/base64url')
+const Reader = require('./reader')
+const Writer = require('../lib/writer')
+const BitmaskRegistry = require('./bitmask-registry')
 
 // Regex for validating conditions
 //
 // Note that this regex is very strict and specific to the set of conditions
 // supported by this implementation.
 const CONDITION_REGEX = /^cc:1:[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
-const FULFILLMENT_REGEX = /^cf:1:[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]+$/
 
 class Condition {
-
-  static fromConditionUri (serializedCondition) {
+  static fromUri (serializedCondition) {
     if (typeof serializedCondition !== 'string') {
       throw new Error('Serialized condition must be a string')
     }
@@ -34,10 +35,10 @@ class Condition {
     }
 
     const bitmask = parseInt(pieces[2], 16)
-    const hash = util.decodeBase64url(pieces[3])
+    const hash = base64url.decode(pieces[3])
     const maxFulfillmentLength = parseInt(pieces[4], 10)
 
-    const ConditionClass = Condition.getClassFromBitmask(bitmask)
+    const ConditionClass = BitmaskRegistry.getClassFromBitmask(bitmask).ConditionClass
     const condition = new ConditionClass()
     condition.setHash(hash)
     condition.setMaxFulfillmentLength(maxFulfillmentLength)
@@ -45,88 +46,59 @@ class Condition {
     return condition
   }
 
-  static fromConditionBinary (payload) {
-    const ConditionClass = Condition.getClassFromBitmask(util.varuint.decode(payload, 0))
+  static fromBinary (reader) {
+    reader = Reader.from(reader)
+
+    const ConditionClass = BitmaskRegistry.getClassFromBitmask(reader.peekVarUInt()).ConditionClass
 
     // Instantiate condition
     const condition = new ConditionClass()
-    condition.parseConditionBinary(payload)
+    condition.parseBinary(reader)
 
     return condition
   }
 
-  static fromFulfillmentUri (serializedFulfillment) {
-    if (typeof serializedFulfillment !== 'string') {
-      throw new Error('Serialized fulfillment must be a string')
-    }
-
-    const pieces = serializedFulfillment.split(':')
-    if (pieces[0] !== 'cf') {
-      throw new PrefixError('Serialized fulfillment must start with "cf:"')
-    }
-
-    if (pieces[1] !== '1') {
-      throw new PrefixError('Fulfillment must be version 1')
-    }
-
-    if (!FULFILLMENT_REGEX.exec(serializedFulfillment)) {
-      throw new ParseError('Invalid fulfillment format')
-    }
-
-    const bitmask = parseInt(pieces[2], 16)
-    const payload = util.decodeBase64url(pieces[3])
-
-    const ConditionClass = Condition.getClassFromBitmask(bitmask)
-    const fulfillment = new ConditionClass()
-    fulfillment.parseFulfillmentPayload(payload)
-
-    return fulfillment
+  getBitmask () {
+    return this.constructor.BITMASK
   }
 
-  static fromFulfillmentBinary (payload) {
-    const ConditionClass = Condition.getClassFromBitmask(util.varuint.decode(payload, 0))
-
-    const condition = new ConditionClass()
-    condition.parseFulfillmentPayload(payload.slice(1))
-
-    return condition
-  }
-
-  static getClassFromBitmask (bitmask) {
-    // Determine type of condition
-    if (bitmask > Number.MAX_SAFE_INTEGER) {
-      throw new UnsupportedBitmaskError('Bitmask ' + bitmask + ' is not supported')
+  getHash () {
+    if (!this.hash) {
+      throw new MissingDataError('Maximum fulfillment length not set')
     }
 
-    for (let type of Condition.registeredMetaTypes) {
-      if (bitmask & type.bitmask) return type.Class
-    }
-
-    for (let type of Condition.registeredTypes) {
-      if (bitmask === type.bitmask) return type.Class
-    }
-
-    throw new UnsupportedBitmaskError('Bitmask ' + bitmask + ' is not supported')
+    return this.hash
   }
 
-  static registerType (Class) {
-    // TODO Do some sanity checks on Class
+  getMaxFulfillmentLength () {
+    if (!this.maxFulfillmentLength) {
+      throw new MissingDataError('Maximum fulfillment length not set')
+    }
 
-    Condition.registeredTypes.push({
-      bitmask: Class.BITMASK,
-      Class
-    })
+    return this.maxFulfillmentLength
   }
 
-  static registerMetaType (Class) {
-    Condition.registeredMetaTypes.push({
-      bitmask: Class.BITMASK,
-      Class
-    })
+  setMaxFulfillmentLength (maxFulfillmentLength) {
+    this.maxFulfillmentLength = maxFulfillmentLength
+  }
+
+  serializeUri () {
+    return 'cc:1:' + this.getBitmask().toString(16) +
+      ':' + base64url.encode(this.getHash()) +
+      ':' + this.getMaxFulfillmentLength()
+  }
+
+  serializeBinary () {
+    const writer = new Writer()
+    writer.writeVarUInt(this.getBitmask())
+    writer.write(this.getHash())
+    writer.writeVarUInt(this.getMaxFulfillmentLength())
+    return writer.getBuffer()
+  }
+
+  validate () {
+    return true
   }
 }
-
-Condition.registeredMetaTypes = []
-Condition.registeredTypes = []
 
 module.exports = Condition

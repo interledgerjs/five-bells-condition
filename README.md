@@ -25,47 +25,46 @@ console.log(compiled.valid && compiled.condition === exampleCondition)
 // prints true
 
 // Create a SHA256 condition
-const myCondition = new condition.Sha256()
-myCondition.setPreimage(new Buffer(''))
-// -- or --
+const myCondition = new condition.Sha256Condition()
 myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
-console.log(myCondition.serializeConditionUri())
+myCondition.setMaxFulfillmentLength(1)
+console.log(myCondition.serializeUri())
 // prints exampleCondition
 
 // Create a SHA256 fulfillment
-const myFulfillment = new condition.Sha256()
+const myFulfillment = new condition.Sha256Fulfillment()
 myFulfillment.setPreimage(new Buffer(''))
-console.log(myCondition.serializeFulfillmentUri())
-// prints 'cf:1:1:AA'
+console.log(myFulfillment.serializeUri())
+// prints exampleFulfillment
 
 // Parse a fulfillment
 const parsedFulfillment = condition.fromFulfillmentUri(exampleFulfillment)
-// parsedFulfillment instanceof condition.Sha256 === true
+// parsedFulfillment instanceof condition.Sha256Fulfillment === true
 // Note: Merely parsing a fulfillment DOES NOT validate it.
 
 // Validate a fulfillment
 parsedFulfillment.validate()
 
 // Compile a fulfillment
-console.log(parsedFulfillment.serializeFulfillmentUri())
+console.log(parsedFulfillment.serializeUri())
 // prints exampleFulfillment
 
 // Parse a condition
 const parsedCondition = condition.fromConditionUri(exampleCondition)
 console.log(parsedCondition.constructor.name)
-// prints 'Sha256'
+// prints 'Sha256Condition'
 
 // Compile to a condition
-console.log(parsedCondition.serializeConditionUri())
+console.log(parsedCondition.serializeUri())
 // prints exampleCondition
 
 // Create an RSA-SHA256 condition
-const rsaCondition = new condition.RsaSha256()
-rsaCondition.setPublicModulus(new Buffer('a125cbdaf5b7494349b164e12dce4b40d12813da65d38a1293fd1a9c0196c2ef4fada6269ccc1a77c16ab766da0e4761c48275ce833f8a937d9c29d3d5e6d2e9'))
-rsaCondition.setMessagePrefix(new Buffer('Hello world!'))
-rsaCondition.setMaxMessageLength(32) // defaults to 0
-console.log(rsaCondition.serializeConditionUri())
-// prints 'cc:1:2:aX_QGANFWTfZ9dNUxDpXVJIoWvEAXtcd6B4jXq9Np7E:305'
+const rsaFulfillment = new condition.RsaSha256Fulfillment()
+rsaFulfillment.setPublicModulus(new Buffer('a125cbdaf5b7494349b164e12dce4b40d12813da65d38a1293fd1a9c0196c2ef4fada6269ccc1a77c16ab766da0e4761c48275ce833f8a937d9c29d3d5e6d2e9'))
+rsaFulfillment.setMessagePrefix(new Buffer('Hello world!'))
+rsaFulfillment.setMaxSuffixLength(32) // defaults to 0
+console.log(rsaFulfillment.getCondition().serializeUri())
+// prints 'cc:1:2:KNc4bchlwmAt9wON-VsRCmXwJomU0Iv6tuG6_DARBHM:307'
 
 // Fulfill an RSA-SHA256 condition
 const privateKey =
@@ -79,31 +78,31 @@ const privateKey =
   'CIg/WgYXGcFHCLcGA6vqiGRrTldNndjnNHhlY3cDEg==\n' +
   '-----END RSA PRIVATE KEY-----\n'
 
-rsaCondition.setMessage(new Buffer(' Conditions are here!'))
-// rsaCondition.setSignature(new Buffer('...'))
+rsaFulfillment.setMessage(new Buffer(' Conditions are here!'))
+// rsaFulfillment.setSignature(new Buffer('...'))
 // -- or --
-rsaCondition.sign(privateKey)
-console.log(rsaCondition.serializeFulfillmentUri())
-// prints 'cf:1:2:gAFhMTI1Y2JkYWY1Yjc0OTQzNDliMTY0ZTEyZGNlNGI0MGQxMjgxM2RhNjVkMzhhMTI5M2ZkMWE5YzAxOTZjMmVmNGZhZGE2MjY5Y2NjMWE3N2MxNmFiNzY2ZGEwZTQ3NjFjNDgyNzVjZTgzM2Y4YTkzN2Q5YzI5ZDNkNWU2ZDJlOQxIZWxsbyB3b3JsZCEVIENvbmRpdGlvbnMgYXJlIGhlcmUhQUsTEVALk9eguWL8IGkgQTRY7KmRkvvAJ_94hYTEkkSZ2u3TS5uyj3gM7uAg4tROHmxEK6KPb1iizVv_ITv2DAA'
+rsaFulfillment.sign(privateKey)
+console.log(rsaFulfillment.serializeUri())
+// prints 'cf:1:2:gAFhMTI1Y2JkYWY1Yjc0OTQzNDliMTY0ZTEyZGNlNGI0MGQxMjgxM2RhNjVkMzhhMTI5M2ZkMWE5YzAxOTZjMmVmNGZhZGE2MjY5Y2NjMWE3N2MxNmFiNzY2ZGEwZTQ3NjFjNDgyNzVjZTgzM2Y4YTkzN2Q5YzI5ZDNkNWU2ZDJlOQxIZWxsbyB3b3JsZCEgFSBDb25kaXRpb25zIGFyZSBoZXJlIUBBSxMRUAuT16C5YvwgaSBBNFjsqZGS-8An_3iFhMSSRJna7dNLm7KPeAzu4CDi1E4ebEQroo9vWKLNW_8hO_YM'
 
 // Create a threshold condition
-const thresholdCondition = new condition.ThresholdSha256()
-thresholdCondition.addSubcondition(rsaCondition)
-thresholdCondition.addSubcondition(myCondition)
-thresholdCondition.setThreshold(1) // defaults to subconditions.length
-console.log(thresholdCondition.serializeConditionUri())
-// prints 'cc:1:4:LBSkmeQXCfWofjESgd02JrCCdzd_DVNd4GYUaFuwOpY:306'
+const thresholdFulfillment = new condition.ThresholdSha256Fulfillment()
+thresholdFulfillment.addSubfulfillment(rsaFulfillment)
+thresholdFulfillment.addSubfulfillment(myFulfillment)
+thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
+console.log(thresholdFulfillment.getCondition().serializeUri())
+// prints 'cc:1:4:cfrHAUosM16ayS9x9dV3_hQXqB1hix-jubNtbVJ08gQ:308'
 
-const thresholdFulfillment = thresholdCondition.serializeFulfillmentUri()
+const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
-// thresholdFulfillment.length === 63
-console.log(thresholdFulfillment)
-// prints 'cf:1:4:AQEBAQABAQJpf9AYA0VZN9n101TEOldUkiha8QBe1x3oHiNer02nsbEC'
+// thresholdFulfillmentUri.length === 63
+console.log(thresholdFulfillmentUri)
+// prints 'cf:1:4:AQEBAQABAQIo1zhtyGXCYC33A435WxEKZfAmiZTQi_q24br8MBEEc7MC'
 
-const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillment)
+const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 
-const reserializedFulfillment = reparsedFulfillment.serializeFulfillmentUri()
+const reserializedFulfillment = reparsedFulfillment.serializeUri()
 console.log(reserializedFulfillment)
-// prints thresholdFulfillment
+// prints thresholdFulfillmentUri
 ```
