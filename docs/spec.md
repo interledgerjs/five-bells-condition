@@ -79,7 +79,7 @@ Crypto-conditions are a simple multi-algorithm, multi-message, multi-level, mult
 
   Basic multi-sign is single-level and does not support more complex trust relationships such as "I trust Alice and Bob, but only when Candice also agrees". In single level 2-of-3 Alice and Bob could sign on their own, without Candice's approval.
 
-  Crypto-conditions add that flexibility elegantly, by making
+  Crypto-conditions add that flexibility elegantly, by applying thresholds not just to signatures, but to conditions which can be signatures or further conditions. That allows the creation of an arbitrary threshold boolean circuit of signatures.
 
 * **Multi-message**
 
