@@ -62,7 +62,7 @@ console.log(parsedCondition.serializeUri())
 const rsaFulfillment = new condition.RsaSha256Fulfillment()
 rsaFulfillment.setPublicModulus(new Buffer('a125cbdaf5b7494349b164e12dce4b40d12813da65d38a1293fd1a9c0196c2ef4fada6269ccc1a77c16ab766da0e4761c48275ce833f8a937d9c29d3d5e6d2e9'))
 rsaFulfillment.setMessagePrefix(new Buffer('Hello world!'))
-rsaFulfillment.setMaxSuffixLength(32) // defaults to 0
+rsaFulfillment.setMaxDynamicMessageLength(32) // defaults to 0
 console.log(rsaFulfillment.getCondition().serializeUri())
 // prints 'cc:1:2:KNc4bchlwmAt9wON-VsRCmXwJomU0Iv6tuG6_DARBHM:307'
 

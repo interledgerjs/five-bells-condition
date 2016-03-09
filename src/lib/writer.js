@@ -10,6 +10,11 @@ class Writer {
     this.components = []
   }
 
+  /**
+   * Write a byte to the stream.
+   *
+   * @param {Number} Data to write. Must be in range 0x00 - 0xff (0 to 255)
+   */
   writeUInt8 (byte) {
     if (typeof byte !== 'number') {
       throw new Error('UInt8 must be a number')
@@ -24,6 +29,15 @@ class Writer {
     this.write(new Buffer([byte]))
   }
 
+  /**
+   * Write a VARUINT to the stream.
+   *
+   * A VARUINT is a variable length integer encoded as base128 where the highest
+   * bit indicates that another byte is following. The first byte contains the
+   * seven least significant bits of the number represented.
+   *
+   * @param {Number} value Integer to represent.
+   */
   writeVarUInt (value) {
     const out = []
     let offset = 0
@@ -43,15 +57,37 @@ class Writer {
     this.write(new Buffer(out))
   }
 
+  /**
+   * Write a VARBYTES.
+   *
+   * A VARBYTES field consists of a VARUINT followed by that many bytes.
+   *
+   * @param {Buffer} buffer Contents of the VARBYTES.
+   */
   writeVarBytes (buffer) {
     this.writeVarUInt(buffer.length)
     this.write(buffer)
   }
 
+  /**
+   * Write a series of raw bytes.
+   *
+   * Adds the given bytes to the output buffer.
+   *
+   * @param {Buffer} buffer Bytes to write.
+   */
   write (buffer) {
     this.components.push(buffer)
   }
 
+  /**
+   * Return the resulting buffer.
+   *
+   * Returns the buffer containing the serialized data that was written using
+   * this writer.
+   *
+   * @return {Buffer} Result data.
+   */
   getBuffer () {
     return Buffer.concat(this.components)
   }
