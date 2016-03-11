@@ -45,15 +45,17 @@ Any system accepting crypto-conditions must be able to state its supported
 algorithms. It must be possible to verify that all algorithms used in a certain
 condition are indeed supported even if the fulfillment is not available yet.
 
-In order to meet these design goals, we use a bitmask to define the supported primitives.
+In order to meet these design goals, we define a bitmask to express the supported primitives.
 
 The following bits are assigned:
 
-|Bitmask  |Exp.         |Int.|Condition Type   |
+|Type Bit |Exp.         |Int.|Condition Type   |
 |--------:|------------:|---:|-----------------|
 |        1|2<sup>0</sup>|   1|SHA-256          |
 |       10|2<sup>1</sup>|   2|RSA-SHA-256      |
-|      1__|2<sup>2</sup>|   4|THRESHOLD-SHA-256|
+|      100|2<sup>2</sup>|   4|THRESHOLD-SHA-256|
+
+Conditions contain a bitmask of types they require the implementation to support. Implementations provide a bitmask of types they support.
 
 ### Features
 
@@ -119,42 +121,46 @@ Crypto-conditions are a simple multi-algorithm, multi-message, multi-level, mult
 
 ### Condition
 
-Conditions are string encoded as:
+Conditions are ASCII encoded as:
 
 ```
-"cc:" BASE10(VERSION) ":" BASE16(BITMASK) ":" BASE64URL(HASH) ":" BASE10(MAX_FULFILLMENT_LENGTH)
+"cc:" BASE10(VERSION) ":" BASE16(TYPE_BITMASK) ":" BASE64URL(HASH) ":" BASE10(MAX_FULFILLMENT_LENGTH)
 ```
 
 Conditions are binary encoded as:
 
 ```
 CONDITION =
-  VARUINT BITMASK
+  VARUINT TYPE_BITMASK
   UINT256 HASH
   VARUINT MAX_FULFILLMENT_LENGTH
 ```
 
+The `TYPE_BITMASK` is the boolean OR of the `TYPE_BIT`s of the condition type and all subcondition types, recursively.
+
 ### Fulfillment
 
-Fulfillments are string encoded as:
+Fulfillments are ASCII encoded as:
 
 ```
-"cf:1:" BITMASK ":" BASE64URL(FULFILLMENT_PAYLOAD)
+"cf:" BASE10(VERSION) ":" BASE16(TYPE_BIT) ":" BASE64URL(FULFILLMENT_PAYLOAD)
 ```
 
 Fulfillments are binary encoded as:
 
 ```
 FULFILLMENT =
-  VARUINT BITMASK
+  VARUINT TYPE_BIT
   FULFILLMENT_PAYLOAD
 ```
+
+The `TYPE_BIT` is the single bit representing the top level condition type.
 
 # Condition Types
 
 ## SHA-256
 
-Bitmask: 1
+SHA-256 is assigned the type bit 2<sup>0</sup> = 0x01.
 
 ### Notes
 
@@ -177,14 +183,12 @@ FULFILLMENT_PAYLOAD =
 
 ## RSA-SHA-256
 
-Bitmask: 2
+RSA-SHA-256 is assigned the type bit 2<sup>1</sup> = 0x02.
 
 ### Condition
 
 ```
 HASH = SHA256(
-  SHA256("https://w3.org/2016/02/xxx-xxx.html#rsa-sha-256")
-  VARUINT BITMASK = 2
   VARBYTES MODULUS
   VARBYTES MESSAGE_ID
   VARBYTES FIXED_PREFIX
@@ -222,22 +226,21 @@ The recommended modulus size as of 2016 [is 2048 bits](https://www.keylength.com
 
 ## THRESHOLD-SHA-256
 
-### Bitmask
-
-Bitmask: 4 | *bitmasks of all subconditions*
+THRESHOLD-SHA-256 is assigned the type bit 2<sup>2</sup> = 0x04.
 
 ### Condition
 
 ```
 HASH = SHA256(
-  SHA256("https://w3.org/2016/02/xxx-xxx.html#threshold-sha-256")
-  VARUINT BITMASK
+  VARUINT TYPE_BIT
   VARUINT THRESHOLD
   VARARRAY
     VARUINT WEIGHT
     CONDITION
 )
 ```
+
+The `TYPE_BIT` is `0x04`. The reason we need this is because threshold conditions are a structural condition. Structural conditions can have subconditions, meaning their TYPE_BITMASK can have multiple bits set, including other structural conditions. This `TYPE_BIT` prevents the possibility that two different structural fulfillments could ever generate the exact same condition.
 
 The `VARARRAY` of conditions is sorted first based on length, shortest first. Elements of the same length are sorted in lexicographic (big-endian) order, smallest first.
 
