@@ -25,7 +25,8 @@ console.log(compiled.valid && compiled.condition === exampleCondition)
 // prints true
 
 // Create a SHA256 condition
-const myCondition = new condition.Sha256Condition()
+const myCondition = new condition.Condition()
+myCondition.setBitmask(condition.Sha256Fulfillment.TYPE_BIT)
 myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
 myCondition.setMaxFulfillmentLength(1)
 console.log(myCondition.serializeUri())
@@ -52,7 +53,7 @@ console.log(parsedFulfillment.serializeUri())
 // Parse a condition
 const parsedCondition = condition.fromConditionUri(exampleCondition)
 console.log(parsedCondition.constructor.name)
-// prints 'Sha256Condition'
+// prints 'Condition'
 
 // Compile to a condition
 console.log(parsedCondition.serializeUri())
@@ -91,14 +92,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:4:cfrHAUosM16ayS9x9dV3_hQXqB1hix-jubNtbVJ08gQ:308'
+// prints 'cc:1:7:W4f22oX9bXocepiaAIyExP-3aE2NzE8XR5bTFiSVij8:308'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
-// thresholdFulfillmentUri.length === 63
+// thresholdFulfillmentUri.length === 65
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:4:AQEBAQABAQIo1zhtyGXCYC33A435WxEKZfAmiZTQi_q24br8MBEEc7MC'
+// prints 'cf:1:4:AQEBAQABAQIgKNc4bchlwmAt9wON-VsRCmXwJomU0Iv6tuG6_DARBHOzAg'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 

@@ -1,6 +1,5 @@
 'use strict'
 
-const Sha256Condition = require('../conditions/sha256')
 const BaseSha256Fulfillment = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
 
@@ -78,7 +77,6 @@ class Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-Sha256Fulfillment.BITMASK = 0x01
-Sha256Fulfillment.ConditionClass = Sha256Condition
+Sha256Fulfillment.TYPE_BIT = 0x01
 
 module.exports = Sha256Fulfillment

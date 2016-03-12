@@ -1,7 +1,6 @@
 'use strict'
 
 const crypto = require('crypto')
-const RsaSha256Condition = require('../conditions/rsa-sha256')
 const BaseSha256Fulfillment = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
@@ -117,7 +116,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Hasher} hasher Destination where the hash payload will be written.
    */
   writeHashPayload (hasher) {
-    hasher.writeVarUInt(RsaSha256Fulfillment.BITMASK)
+    hasher.writeVarUInt(RsaSha256Fulfillment.TYPE_BIT)
     this.writeCommonHeader(hasher)
   }
 
@@ -192,7 +191,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-RsaSha256Fulfillment.BITMASK = 0x02
-RsaSha256Fulfillment.ConditionClass = RsaSha256Condition
+RsaSha256Fulfillment.TYPE_BIT = 0x02
 
 module.exports = RsaSha256Fulfillment

@@ -7,7 +7,6 @@ const MissingDataError = require('../errors/missing-data-error')
 const base64url = require('../util/base64url')
 const Reader = require('./reader')
 const Writer = require('../lib/writer')
-const BitmaskRegistry = require('./bitmask-registry')
 
 // Regex for validating conditions
 //
@@ -43,14 +42,10 @@ class Condition {
       throw new ParseError('Invalid condition format')
     }
 
-    const bitmask = parseInt(pieces[2], 16)
-    const hash = base64url.decode(pieces[3])
-    const maxFulfillmentLength = parseInt(pieces[4], 10)
-
-    const ConditionClass = BitmaskRegistry.getClassFromBitmask(bitmask).ConditionClass
-    const condition = new ConditionClass()
-    condition.setHash(hash)
-    condition.setMaxFulfillmentLength(maxFulfillmentLength)
+    const condition = new Condition()
+    condition.setBitmask(parseInt(pieces[2], 16))
+    condition.setHash(base64url.decode(pieces[3]))
+    condition.setMaxFulfillmentLength(parseInt(pieces[4], 10))
 
     return condition
   }
@@ -67,10 +62,8 @@ class Condition {
   static fromBinary (reader) {
     reader = Reader.from(reader)
 
-    const ConditionClass = BitmaskRegistry.getClassFromBitmask(reader.peekVarUInt()).ConditionClass
-
     // Instantiate condition
-    const condition = new ConditionClass()
+    const condition = new Condition()
     condition.parseBinary(reader)
 
     return condition
@@ -87,8 +80,18 @@ class Condition {
    * @return {Number} Bitmask corresponding to this condition.
    */
   getBitmask () {
-    // TODO: Return the right thing for meta-types
-    return this.constructor.BITMASK
+    return this.bitmask
+  }
+
+  /**
+   * Set the bitmask.
+   *
+   * Sets the required bitmask to validate a fulfillment for this condition.
+   *
+   * @param {Number} bitmask Integer representation of bitmask.
+   */
+  setBitmask (bitmask) {
+    this.bitmask = bitmask
   }
 
   /**
@@ -108,6 +111,23 @@ class Condition {
     }
 
     return this.hash
+  }
+
+  /**
+   * Validate and set the hash of this condition.
+   *
+   * Typically conditions are generated from fulfillments and the hash is
+   * calculated automatically. However, sometimes it may be necessary to
+   * construct a condition URI from a known hash. This method enables that case.
+   *
+   * @param {Buffer} hash Hash as binary.
+   */
+  setHash (hash) {
+    if (!Buffer.isBuffer(hash)) {
+      throw new Error('Hash must be a Buffer')
+    }
+
+    this.hash = hash
   }
 
   /**
@@ -176,9 +196,24 @@ class Condition {
   serializeBinary () {
     const writer = new Writer()
     writer.writeVarUInt(this.getBitmask())
-    writer.write(this.getHash())
+    writer.writeVarBytes(this.getHash())
     writer.writeVarUInt(this.getMaxFulfillmentLength())
     return writer.getBuffer()
+  }
+
+  /**
+   * Parse any condition in binary format.
+   *
+   * Will populate the condition object with data from the provided binary
+   * stream.
+   *
+   * @param {Reader} reader Binary stream containing the condition.
+   */
+  parseBinary (reader) {
+    this.setBitmask(reader.readVarUInt())
+    // TODO Ensure bitmask is supported?
+    this.setHash(reader.readVarBytes())
+    this.setMaxFulfillmentLength(reader.readVarUInt())
   }
 
   /**

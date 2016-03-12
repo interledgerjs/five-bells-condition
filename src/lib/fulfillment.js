@@ -1,6 +1,7 @@
 'use strict'
 
 const BitmaskRegistry = require('./bitmask-registry')
+const Condition = require('./condition')
 const Predictor = require('./predictor')
 const Writer = require('./writer')
 const Reader = require('./reader')
@@ -41,7 +42,7 @@ class Fulfillment {
     const bitmask = parseInt(pieces[2], 16)
     const payload = Reader.from(base64url.decode(pieces[3]))
 
-    const ConditionClass = BitmaskRegistry.getClassFromBitmask(bitmask)
+    const ConditionClass = BitmaskRegistry.getClassFromTypeBit(bitmask)
     const fulfillment = new ConditionClass()
     fulfillment.parsePayload(payload)
 
@@ -60,12 +61,24 @@ class Fulfillment {
   static fromBinary (reader) {
     reader = Reader.from(reader)
 
-    const ConditionClass = BitmaskRegistry.getClassFromBitmask(reader.readVarUInt())
+    const ConditionClass = BitmaskRegistry.getClassFromTypeBit(reader.readVarUInt())
 
     const condition = new ConditionClass()
     condition.parsePayload(reader)
 
     return condition
+  }
+
+  /**
+   * Return the type bit of this fulfillment.
+   *
+   * This is always just a single type bit, meaning the Hamming weight of the
+   * number returned by this function will always be one.
+   *
+   * @return {Number} Integer with type bit set.
+   */
+  getTypeBit () {
+    return this.constructor.TYPE_BIT
   }
 
   /**
@@ -79,7 +92,7 @@ class Fulfillment {
    * @return {Number} Bitmask corresponding to this fulfillment.
    */
   getBitmask () {
-    return this.constructor.BITMASK
+    return this.constructor.TYPE_BIT
   }
 
   /**
@@ -94,7 +107,8 @@ class Fulfillment {
    * @return {Condition} Condition corresponding to this fulfillment.
    */
   getCondition () {
-    const condition = new this.constructor.ConditionClass()
+    const condition = new Condition()
+    condition.setBitmask(this.getBitmask())
     condition.setHash(this.generateHash())
     condition.setMaxFulfillmentLength(this.calculateMaxFulfillmentLength())
     return condition
@@ -134,7 +148,7 @@ class Fulfillment {
    * @return {String} Fulfillment as a URI
    */
   serializeUri () {
-    return 'cf:1:' + this.getBitmask().toString(16) + ':' +
+    return 'cf:1:' + this.getTypeBit().toString(16) + ':' +
       base64url.encode(this.serializePayload())
   }
 
@@ -148,10 +162,10 @@ class Fulfillment {
    * @return {Buffer} Serialized fulfillment
    */
   serializeBinary () {
-    return Buffer.concat([
-      new Buffer([this.getBitmask()]),
-      this.serializePayload()
-    ])
+    const writer = new Writer()
+    writer.writeVarUInt(this.getTypeBit())
+    this.writePayload(writer)
+    return writer.getBuffer()
   }
 
   /**

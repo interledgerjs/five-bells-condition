@@ -1,6 +1,5 @@
 'use strict'
 
-const ThresholdSha256Condition = require('../conditions/threshold-sha256')
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256Fulfillment = require('./base-sha256')
@@ -79,6 +78,31 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
+   * Get full bitmask.
+   *
+   * This is a type of condition that can contain subconditions. A complete
+   * bitmask must contain the set of types that must be supported in order to
+   * validate this fulfillment. Therefore, we need to calculate the bitwise OR
+   * of this condition's TYPE_BIT and all subcondition's and subfulfillment's
+   * bitmasks.
+   *
+   * @return {Number} Complete bitmask for this fulfillment.
+   */
+  getBitmask () {
+    let bitmask = this.getTypeBit()
+
+    for (let cond of this.subconditions) {
+      bitmask |= cond.getBitmask()
+    }
+
+    for (let f of this.subfulfillments) {
+      bitmask |= f.getBitmask()
+    }
+
+    return bitmask
+  }
+
+  /**
    * Produce the contents of the condition hash.
    *
    * This function is called internally by the `getCondition` method.
@@ -94,7 +118,7 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
       .map((cond) => cond.serializeBinary())
       .sort(Buffer.compare)
 
-    hasher.writeVarUInt(ThresholdSha256Fulfillment.BITMASK)
+    hasher.writeVarUInt(ThresholdSha256Fulfillment.TYPE_BIT)
     hasher.writeVarUInt(this.threshold)
     hasher.writeVarUInt(subconditions.length)
     subconditions.forEach(hasher.write.bind(hasher))
@@ -219,7 +243,6 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-ThresholdSha256Fulfillment.BITMASK = 0x04
-ThresholdSha256Fulfillment.ConditionClass = ThresholdSha256Condition
+ThresholdSha256Fulfillment.TYPE_BIT = 0x04
 
 module.exports = ThresholdSha256Fulfillment
