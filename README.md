@@ -106,4 +106,23 @@ const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri
 const reserializedFulfillment = reparsedFulfillment.serializeUri()
 console.log(reserializedFulfillment)
 // prints thresholdFulfillmentUri
+
+// Create an ED25519-SHA-256 condition
+const ed25519Fulfillment = new condition.Ed25519Sha256Fulfillment()
+ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
+ed25519Fulfillment.setMessagePrefix(new Buffer('Hello world!'))
+ed25519Fulfillment.setMaxDynamicMessageLength(32) // defaults to 0
+console.log(ed25519Fulfillment.getCondition().serializeUri())
+// prints 'cc:1:8:qQINW2um59C4DB9JSVXH1igqAmaYGGqryllHUgCpfPU:113'
+
+// Fulfill an ED25519-SHA-256 condition
+const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
+
+ed25519Fulfillment.setMessage(new Buffer(' Conditions are here!'))
+// ed25519Fulfillment.setSignature(new Buffer('...'))
+// -- or --
+ed25519Fulfillment.sign(edPrivateKey)
+console.log(ed25519Fulfillment.serializeUri())
+// prints 'cf:1:8:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_DEhlbGxvIHdvcmxkISAVIENvbmRpdGlvbnMgYXJlIGhlcmUhQENbql531PbCJlRUvKjP56k0XKJMOrIGo2F66ueuTtRnYrJB2t2ZttdfXM4gzD_87eH1nZTpu4rTkAx81hSdpwI'
+
 ```

@@ -54,6 +54,7 @@ The following bits are assigned:
 |        1|2<sup>0</sup>|   1|SHA-256          |
 |       10|2<sup>1</sup>|   2|RSA-SHA-256      |
 |      100|2<sup>2</sup>|   4|THRESHOLD-SHA-256|
+|     1000|2<sup>3</sup>|   8|ED25519-SHA-256  |
 
 Conditions contain a bitmask of types they require the implementation to support. Implementations provide a bitmask of types they support.
 
@@ -210,7 +211,7 @@ FULFILLMENT_PAYLOAD =
 
 The `SIGNATURE` must have the exact same number of octets as the `MODULUS`. So theoretically we could omit the length prefix for the `SIGNATURE` field. But for consistency, we include the length prefix. Implementations MUST verify that the `SIGNATURE` and `MODULUS` are of the same length.
 
-The `DYNAMIC_MESSAGE_LENGTH` is included to provide a maximum length `DYNAMIC_MESSAGE` even if the actual message suffix length is different. This value is also used to calculate the `MAX_FULFILLMENT_LENGTH` in the condition.
+The `DYNAMIC_MESSAGE_LENGTH` is included to provide a maximum length for `DYNAMIC_MESSAGE` even if the actual message suffix length is different. This value is used to calculate the `MAX_FULFILLMENT_LENGTH` in the condition.
 
 The `MESSAGE_ID` represents an identifier for the message. All messages in a cryptocondition that have a common identifier must match, otherwise the condition is invalid. Implementations may return messages as a map of `MESSAGE_ID` => `MESSAGE` pairs.
 
@@ -256,3 +257,36 @@ FULFILLMENT_PAYLOAD =
     VARUINT WEIGHT
     CONDITION
 ```
+
+## ED25519-SHA-256
+
+ED25519-SHA-256 is assigned the type bit 2<sup>3</sup> = 0x08.
+
+### Condition
+
+```
+HASH = SHA256(
+  VARBYTES PUBLIC_KEY
+  VARBYTES MESSAGE_ID
+  VARBYTES FIXED_PREFIX
+  VARUINT DYNAMIC_MESSAGE_LENGTH
+)
+```
+
+### Fulfillment
+
+```
+FULFILLMENT_PAYLOAD =
+  VARBYTES PUBLIC_KEY
+  VARBYTES MESSAGE_ID
+  VARBYTES FIXED_PREFIX
+  VARUINT DYNAMIC_MESSAGE_LENGTH
+  VARBYTES DYNAMIC_MESSAGE
+  VARBYTES SIGNATURE
+```
+
+The `MESSAGE_ID`, `FIXED_PREFIX`, `DYNAMIC_MESSAGE_LENGTH` and `DYNAMIC_MESSAGE` fields have the same meaning as in the RSA-SHA-256 condition type.
+
+### Implementation
+
+The exact algorithm and encodings used for `PUBLIC_KEY` and `SIGNATURE` are Ed25519 as defined in [draft-irtf-cfrg-eddsa-04](https://datatracker.ietf.org/doc/draft-irtf-cfrg-eddsa/).
