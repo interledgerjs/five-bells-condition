@@ -30,7 +30,7 @@ class Predictor {
       throw new Error('Variable length integer too large')
     } else {
       // Calculate number of bits divided by seven
-      this.size += Math.ceil((Math.floor(Math.log2(val)) + 1) / 7)
+      this.size += Math.ceil(val.toString(2).length / 7)
     }
   }
 

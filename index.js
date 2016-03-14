@@ -1,5 +1,6 @@
 'use strict'
 
+require('babel-polyfill')
 const Condition = require('./src/lib/condition')
 const Fulfillment = require('./src/lib/fulfillment')
 const BitmaskRegistry = require('./src/lib/bitmask-registry')
