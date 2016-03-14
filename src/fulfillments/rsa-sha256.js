@@ -1,6 +1,8 @@
 'use strict'
 
 const crypto = require('crypto')
+const constants = require('constants')
+const Pss = require('../crypto/pss.js')
 const BaseSha256Fulfillment = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
@@ -98,13 +100,20 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    *
    * The key should be provided as a PEM encoded private key string.
    *
+   * The message is padded using RSA-PSS with SHA256.
+   *
    * @param {String} privateKey RSA private key
    */
   sign (privateKey) {
-    this.signature = crypto.createSign('RSA-SHA256')
-      .update(this.messagePrefix)
-      .update(this.message)
-      .sign(privateKey)
+    const message = Buffer.concat([this.messagePrefix, this.message])
+    const pss = new Pss()
+    const modulusHighByteBitLength = this.modulus[0].toString(2).length
+    const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
+    const paddedMessage = pss.encode(message, modulusBitLength - 1)
+    this.signature = crypto.privateEncrypt({
+      key: privateKey,
+      padding: constants.RSA_NO_PADDING
+    }, paddedMessage)
   }
 
   /**

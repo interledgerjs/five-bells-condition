@@ -100,6 +100,22 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
+   * Set the signature.
+   *
+   * Instead of using the private key to sign using the sign() method, we can
+   * also generate the signature elsewhere and pass it in.
+   *
+   * @param {Buffer} signature 64-byte signature.
+   */
+  setSignature (signature) {
+    if (!Buffer.isBuffer(signature)) {
+      throw new Error('Signature must be a Buffer')
+    }
+
+    this.signature = signature
+  }
+
+  /**
    * Sign the message.
    *
    * This method will take the currently configured values for the message
@@ -119,13 +135,15 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
       throw new Error('Private key must be a Buffer')
     }
 
-    const naclPrivateKey = nacl.sign.keyPair.fromSeed(privateKey).secretKey
+    const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
+    this.setPublicKey(new Buffer(keyPair.publicKey))
+
     const message = Buffer.concat([this.messagePrefix, this.message])
     // This would be the Ed25519ph version:
     // const message = crypto.createHash('sha512')
     //   .update(Buffer.concat([this.messagePrefix, this.message]))
     //   .digest()
-    this.signature = new Buffer(nacl.sign.detached(message, naclPrivateKey))
+    this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
   }
 
   /**

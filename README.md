@@ -61,30 +61,36 @@ console.log(parsedCondition.serializeUri())
 
 // Create an RSA-SHA256 condition
 const rsaFulfillment = new condition.RsaSha256Fulfillment()
-rsaFulfillment.setPublicModulus(new Buffer('a125cbdaf5b7494349b164e12dce4b40d12813da65d38a1293fd1a9c0196c2ef4fada6269ccc1a77c16ab766da0e4761c48275ce833f8a937d9c29d3d5e6d2e9'))
+rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
 rsaFulfillment.setMessagePrefix(new Buffer('Hello world!'))
 rsaFulfillment.setMaxDynamicMessageLength(32) // defaults to 0
 console.log(rsaFulfillment.getCondition().serializeUri())
-// prints 'cc:1:2:KNc4bchlwmAt9wON-VsRCmXwJomU0Iv6tuG6_DARBHM:307'
+// prints 'cc:1:2:fIE-iexHu64M34Sc43_vkUhsR6zQd44HtUOLEQeCgFo:307'
 
 // Fulfill an RSA-SHA256 condition
 const privateKey =
   '-----BEGIN RSA PRIVATE KEY-----\n' +
-  'MIIBOwIBAAJBAKEly9r1t0lDSbFk4S3OS0DRKBPaZdOKEpP9GpwBlsLvT62mJpzM\n' +
-  'GnfBardm2g5HYcSCdc6DP4qTfZwp09Xm0ukCAwEAAQJAf0CBgh6W5dukzdiDmNBW\n' +
-  'zJBdvY+w6SMXGJW99YOrsbJXXVGhwqnmdjDS2X8gSqEWnEw5QxoMBeVjiJmxE0N8\n' +
-  'AQIhANXJQtKIF6C2BTp5vqIf7yQUsBS3lSCCD6ymFPKKNCbZAiEAwPex4tccWZ9t\n' +
-  'tZdwc2auMCpn8GNUdlUVFTw4IbJUIpECIQCUvZOFYPR3d0zJ83xj1i4O/2nG8DeM\n' +
-  'R5FaQK8gVHGWeQIhAIOovLNEB7DSiT0r/WqPdWuhk1c9voQaWw8pDjdXf/YxAiA1\n' +
-  'CIg/WgYXGcFHCLcGA6vqiGRrTldNndjnNHhlY3cDEg==\n' +
+  'MIICXAIBAAKBgQCzDnqTh4O6v4NoUP9J4U+H4/ktXEbjP+yj5PCyI1hYCxF2WZX0\n' +
+  'uO6n+0cSwuHjFvf3dalT0jIhahadmmTdwAcSCkALN/KvwHe2L+ME3nTeahGexAdr\n' +
+  'UpxPYJawuq1PUz3wFzubgi/YXWX6S++pLY9ST2nLygE2vYDQlcFprsDglQIDAQAB\n' +
+  'AoGAB7Rjyd1W6b475U027vLm/S3uFumVk0m44QSE5uVmc8NmKPWJ4lHi0w+Y61G/\n' +
+  'booaeWdytcyho5ZxCq8OEAynQSkJiBNtzBg+xCGcO6GPOf+dFBYZFQsXiG/EbwrA\n' +
+  'pT0cv+AqiGzLIAh2WtNI6cr5/ZEMScNhMcQ4AZ1kRyUdpIECQQDbRtFz0dSMMvS/\n' +
+  '1KtDZxej9HqC5xOEuCDEZuLvk4bW4mC02OP/H/VV5qqclz0LIvMWK6TDtoFRpkvD\n' +
+  'UYiYoc85AkEA0QtH1zQlGGlliLcWoPeqjkbtf3ocmYy2exBSCwnOf87xV//k9pNC\n' +
+  '7jmoIzRgKVef8kQR/mXWszo3WbWMt0aAPQJBAMtoRD/GM/7h/fw9Uamy5lEnJsZr\n' +
+  'iMWi8HKAZp+LIJgRY1gfolA12yWWVknwWaYNA6ZbUfpjQE73jmxfI/FCmLECQBmF\n' +
+  'WAr06cZ2L5gmShPyyJbAIASdItq4LBsQHgQM+XHvENXeftR/m/87eMR7g3XopbVN\n' +
+  'DClTw4d0Bwfjuz8w0z0CQFG7RmgPqsTEGfojpRgLZnec87R6XhuUY5ZoGgpnx7r9\n' +
+  '/zGekAwjBZDKpc+H0jC14JjMzRRKeWVEpDU3k2cfBH0=\n' +
   '-----END RSA PRIVATE KEY-----\n'
 
 rsaFulfillment.setMessage(new Buffer(' Conditions are here!'))
 // rsaFulfillment.setSignature(new Buffer('...'))
 // -- or --
 rsaFulfillment.sign(privateKey)
-console.log(rsaFulfillment.serializeUri())
-// prints 'cf:1:2:gAFhMTI1Y2JkYWY1Yjc0OTQzNDliMTY0ZTEyZGNlNGI0MGQxMjgxM2RhNjVkMzhhMTI5M2ZkMWE5YzAxOTZjMmVmNGZhZGE2MjY5Y2NjMWE3N2MxNmFiNzY2ZGEwZTQ3NjFjNDgyNzVjZTgzM2Y4YTkzN2Q5YzI5ZDNkNWU2ZDJlOQxIZWxsbyB3b3JsZCEgFSBDb25kaXRpb25zIGFyZSBoZXJlIUBBSxMRUAuT16C5YvwgaSBBNFjsqZGS-8An_3iFhMSSRJna7dNLm7KPeAzu4CDi1E4ebEQroo9vWKLNW_8hO_YM'
+console.log(rsaFulfillment.serializeUri().length)
+// prints '402'
 
 // Create a threshold condition
 const thresholdFulfillment = new condition.ThresholdSha256Fulfillment()
@@ -92,14 +98,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:7:W4f22oX9bXocepiaAIyExP-3aE2NzE8XR5bTFiSVij8:308'
+// prints 'cc:1:7:aLvod0VG5-lmMDBkZltV-e6SN43Cw2aSwJHVZdYYpa0:308'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
 // thresholdFulfillmentUri.length === 65
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:4:AQEBAQABAQIgKNc4bchlwmAt9wON-VsRCmXwJomU0Iv6tuG6_DARBHOzAg'
+// prints 'cf:1:4:AQEBAQABAQIgfIE-iexHu64M34Sc43_vkUhsR6zQd44HtUOLEQeCgFqzAg'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 

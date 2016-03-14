@@ -34,6 +34,16 @@ class Hasher extends Writer {
   getDigest () {
     return this.hash.digest()
   }
+
+  /**
+   * Get digest length for hashing algorithm.
+   *
+   * @param {String} algorithm Hashing algorithm identifier.
+   * @return {Number} Digest length in bytes.
+   */
+  static getLength (algorithm) {
+    return crypto.createHash(algorithm).digest().length
+  }
 }
 
 module.exports = Hasher
