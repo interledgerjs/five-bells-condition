@@ -223,7 +223,9 @@ The signature algorithm used is RSASSA-PSS as defined in [PKCS#1 v2.2](https://w
 
 The public exponent e is set to 65537. Very large exponents can be a [DoS vector](https://www.imperialviolet.org/2012/03/17/rsados.html) and 65537 is the largest Fermat prime, which has [some nice properties](http://crypto.stackexchange.com/questions/3110/impacts-of-not-using-rsa-exponent-of-65537).
 
-The recommended modulus size as of 2016 [is 2048 bits](https://www.keylength.com/en/compare/). In the future we anticipate an upgrade to 3072 bits which provides [approximately 128 bits of security](http://csrc.nist.gov/publications/nistpubs/800-57/sp800-57_part1_rev3_general.pdf) (p. 64), about the same level as SHA-256. Implementations MUST reject moduli smaller than 512 or greater than 4096 bits. Large moduli slow down signature verification which can be a DoS vector. DNSSEC [also limits the modulus to 4096 bits](https://tools.ietf.org/html/rfc3110#section-2). OpenSSL [supports up to 16384 bits](http://fm4dd.com/openssl/certexamples.htm).
+The recommended modulus size as of 2016 [is 2048 bits](https://www.keylength.com/en/compare/). In the future we anticipate an upgrade to 3072 bits which provides [approximately 128 bits of security](http://csrc.nist.gov/publications/nistpubs/800-57/sp800-57_part1_rev3_general.pdf) (p. 64), about the same level as SHA-256. Implementations MUST reject moduli smaller than 1024 or greater than 4096 bits. Large moduli slow down signature verification which can be a DoS vector. DNSSEC [also limits the modulus to 4096 bits](https://tools.ietf.org/html/rfc3110#section-2). OpenSSL [supports up to 16384 bits](http://fm4dd.com/openssl/certexamples.htm).
+
+The salt length for PSS is 32 bytes.
 
 ## THRESHOLD-SHA-256
 
