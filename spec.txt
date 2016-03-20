@@ -1,0 +1,672 @@
+
+
+
+
+Network Working Group                                          S. Thomas
+Internet-Draft                                                    Ripple
+Intended status: Standards Track                          March 20, 2016
+Expires: September 21, 2016
+
+
+                           Crypto-Conditions
+                   draft-thomas-crypto-conditions-01
+
+Abstract
+
+   Crypto-conditions provide a mechanism to describe a signed message
+   such that multiple actors in a distributed system can all verify the
+   same signed message and agree on whether it matches the description.
+   This provides a useful primitive for event-based systems that are
+   distributed on the Internet since we can describe events in a
+   standard deterministic manner (represented by signed messages) and
+   therefore define generic authenticated event handlers.
+
+Feedback
+
+   This specification is a part of the Interledger Protocol [1] work.
+   Feedback related to this specification should be sent to public-
+   interledger@w3.org [2].
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on September 21, 2016.
+
+Copyright Notice
+
+   Copyright (c) 2016 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+Thomas                 Expires September 21, 2016               [Page 1]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.1.  Terminology . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.2.  Features  . . . . . . . . . . . . . . . . . . . . . . . .   3
+       1.2.1.  Multi-Algorithm . . . . . . . . . . . . . . . . . . .   3
+       1.2.2.  Multi-Signature . . . . . . . . . . . . . . . . . . .   4
+       1.2.3.  Multi-Level . . . . . . . . . . . . . . . . . . . . .   4
+       1.2.4.  Multi-Message . . . . . . . . . . . . . . . . . . . .   5
+   2.  Format  . . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     2.1.  Bitmask . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     2.2.  Binary Types  . . . . . . . . . . . . . . . . . . . . . .   5
+     2.3.  String Types  . . . . . . . . . . . . . . . . . . . . . .   6
+     2.4.  Condition . . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.4.1.  String  . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.4.2.  Binary Format . . . . . . . . . . . . . . . . . . . .   6
+     2.5.  Fulfillment . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.5.1.  String Format . . . . . . . . . . . . . . . . . . . .   6
+       2.5.2.  Binary Format . . . . . . . . . . . . . . . . . . . .   7
+   3.  Condition Types . . . . . . . . . . . . . . . . . . . . . . .   7
+     3.1.  SHA-256 . . . . . . . . . . . . . . . . . . . . . . . . .   7
+       3.1.1.  Condition . . . . . . . . . . . . . . . . . . . . . .   7
+       3.1.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .   7
+     3.2.  RSA-SHA-256 . . . . . . . . . . . . . . . . . . . . . . .   7
+       3.2.1.  Condition . . . . . . . . . . . . . . . . . . . . . .   7
+       3.2.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .   8
+       3.2.3.  Implementation  . . . . . . . . . . . . . . . . . . .   8
+     3.3.  THRESHOLD-SHA-256 . . . . . . . . . . . . . . . . . . . .   9
+       3.3.1.  Condition . . . . . . . . . . . . . . . . . . . . . .   9
+       3.3.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .   9
+     3.4.  ED25519-SHA-256 . . . . . . . . . . . . . . . . . . . . .   9
+       3.4.1.  Condition . . . . . . . . . . . . . . . . . . . . . .   9
+       3.4.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  10
+       3.4.3.  Implementation  . . . . . . . . . . . . . . . . . . .  10
+   4.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     4.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
+     4.2.  Informative References  . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Security Considerations  . . . . . . . . . . . . . .  11
+   Appendix B.  Test Values  . . . . . . . . . . . . . . . . . . . .  11
+   Appendix C.  Acknowledgements . . . . . . . . . . . . . . . . . .  12
+   Appendix D.  IANA Considerations  . . . . . . . . . . . . . . . .  12
+
+
+
+Thomas                 Expires September 21, 2016               [Page 2]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+     D.1.  Crypto-Condition Type Registry  . . . . . . . . . . . . .  12
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
+
+1.  Introduction
+
+   This specification describes a message format for defining
+   distributable event descriptions (crypto-conditions) and the
+   cryptographically verifiable event messages (fulfillments) that can
+   be used to prove that the event occured.
+
+   The specification defines both binary and string-based encoding for
+   the messages.
+
+1.1.  Terminology
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+   Within this specification, the term "condition" refers to the hash of
+   a description of a signed message.
+
+   The term "fulfillment" refers to a description of a signed message
+   and a signed message that matches the description.
+
+   The description can be hashed and compared to a condition.  If the
+   message matches the description and the hash of the description
+   matches the condition, we say that the fulfillment fulfills the
+   condition.
+
+   A "hashlock" is a tuple consisting of a bytestring and its hash where
+   the hash is published first and the publication of the corresponding
+   bytestring acts as a one-bit, one-time signature.
+
+1.2.  Features
+
+   Crypto-conditions are a simple multi-algorithm, multi-message, multi-
+   level, multi-signature standard format for expressing conditions and
+   fulfillments.
+
+1.2.1.  Multi-Algorithm
+
+   Crypto-conditions can support several different signature and hash
+   algorithms and support for new ones can be added in the future.
+
+
+
+
+
+
+
+Thomas                 Expires September 21, 2016               [Page 3]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+   Implementations can state their supported algorithms simply by
+   providing a bitmask.  It is easy to verify that a given
+   implementation will be able to verify the fulfillment to a given
+   condition, by verifying that the condition's bitmask and its own
+   bitmask of supported algorithms satisfies:
+
+   condition &amp; ~supported == 0
+
+   where & is the bitwise AND operator and ~ is the bitwise NOT
+   operator.
+
+   Any new high bit can redefine the meaning of any existing lower bits
+   as long as it is set.  This can be used to remove obsolete
+   algorithms.
+
+   The bitmask is encoded as a varint to minimize space usage.
+
+   By evaluating the bitmask of a condition actors in the system can
+   establish, even before a fulfillment is published, if they will be
+   able to verify the fulfilment.
+
+1.2.2.  Multi-Signature
+
+   Crypto-conditions can abstract away many of the details of multi-
+   sign.  When a party provides a condition, other parties can treat it
+   opaquely and do not need to know about its internal structure.  That
+   allows parties to define arbitrary multi-signature setups without
+   breaking compatibility.
+
+   Protocol designers can use crypto-conditions as a drop-in replacement
+   for public key signature algorithms and add multi-signature support
+   to their protocols without adding any additional complexity.
+
+1.2.3.  Multi-Level
+
+   Basic multi-sign is single-level and does not support more complex
+   trust relationships such as "I trust Alice and Bob, but only when
+   Candice also agrees".  In single level 2-of-3 Alice and Bob could
+   sign on their own, without Candice's approval.
+
+   Crypto-conditions add that flexibility elegantly, by applying
+   thresholds not just to signatures, but to conditions which can be
+   signatures or further conditions.  That allows the creation of an
+   arbitrary threshold boolean circuit of signatures.
+
+
+
+
+
+
+
+Thomas                 Expires September 21, 2016               [Page 4]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+1.2.4.  Multi-Message
+
+   Crypto-conditions can sign not just one, but multiple messages at the
+   same time and by different people.  These messages can then be used
+   as inputs for other algorithms.
+
+   This allows resource-controlling systems to perform their functions
+   without knowing the details of the higher-level protocols that these
+   functions are a part of.
+
+2.  Format
+
+   Conditions and fulfillments are expressed in a standard format with
+   both string and binary encoding supported.
+
+2.1.  Bitmask
+
+   Any system accepting crypto-conditions must be able to state its
+   supported algorithms.  It must be possible to verify that all
+   algorithms used in a certain condition are indeed supported even if
+   the fulfillment is not available yet.
+
+   In order to meet these design goals, we define a bitmask to express
+   the supported primitives.
+
+   Each bit represents a different crypto-condition type.  The list of
+   known types is maintained in the IANA maintained Crypto-Condition
+   Type Registry (Appendix D.1).
+
+   Conditions contain a bitmask of types which they require the
+   implementation to support.  Implementations provide a bitmask of
+   types they support.
+
+2.2.  Binary Types
+
+   VARUINT Unsigned variable-length integer.  Implementation matches
+           Base128 Varints in Protocol Buffers [PROTOCOL-BUFFERS].
+           Implementations MAY define different maximum lengths for
+           their varints, as long as that length is long enough to cover
+           their bitmask and their maximum supported fulfillment length.
+           (This is safe, because no larger varuint can appear in a
+           valid crypto-condition.)
+
+   VARBYTES  Consists of a VARUINT length field followed by that many
+           bytes.
+
+   VARARRAY  Consists of a VARUINT length fields followed by that many
+           bytes filled with elements of the array.
+
+
+
+Thomas                 Expires September 21, 2016               [Page 5]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+2.3.  String Types
+
+   BASE10  Variable-length integer encoded as a base-10 (decimal)
+           number.  Implementations MUST reject encodings that are too
+           large for them to parse.  Implementations MUST be tested for
+           overflows.
+
+   BASE16  Variable-length integer encoded as a base-16 (hexadecimal)
+           number.  Implementations MUST reject encodings that are too
+           large for them to parse.  Implementations MUST be tested for
+           overflows.  No leading zeros.
+
+   BASE64URL  Base64-URL encoding.  See [RFC4648], Section 5.
+
+2.4.  Condition
+
+   Below are the string and binary encoding formats for a condition.  In
+   both, the TYPE_BITMASK is the boolean OR of the TYPE_BITs of the
+   condition type and all subcondition types, recursively.
+
+2.4.1.  String
+
+   Conditions are ASCII encoded as:
+
+   "cc:" BASE10(VERSION) ":" BASE16(TYPE_BITMASK) ":"
+       BASE64URL(HASH) ":" BASE10(MAX_FULFILLMENT_LENGTH)
+
+2.4.2.  Binary Format
+
+   Conditions are binary encoded as:
+
+   CONDITION =
+     VARUINT TYPE_BITMASK
+     VARBYTES HASH
+     VARUINT MAX_FULFILLMENT_LENGTH
+
+2.5.  Fulfillment
+
+   Below are the string and binary encoding formats for a fulfillment.
+   In both the TYPE_BIT is the single bit representing the top level
+   condition type.
+
+2.5.1.  String Format
+
+   Fulfillments are ASCII encoded as:
+
+   "cf:" BASE10(VERSION) ":" BASE16(TYPE_BIT) ":"
+       BASE64URL(FULFILLMENT_PAYLOAD)
+
+
+
+Thomas                 Expires September 21, 2016               [Page 6]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+2.5.2.  Binary Format
+
+   Fulfillments are binary encoded as:
+
+   FULFILLMENT =
+     VARUINT TYPE_BIT
+     FULFILLMENT_PAYLOAD
+
+3.  Condition Types
+
+   The following condition types are defined in this version of the
+   specification.  New types may be defined in future and will be
+   registered in the IANA maintained Crypto-Condition Type Registry
+   (Appendix D.1)
+
+3.1.  SHA-256
+
+   SHA-256 is assigned the type bit 2^0 = 0x01.
+
+   This type of condition is also called a hashlock.  We can use
+   revealing the preimage as a type of one bit signature.
+
+   Bitcoin supports this type of condition via the OP_HASH256 operator.
+
+3.1.1.  Condition
+
+   HASH = SHA256(PREIMAGE)
+
+3.1.2.  Fulfillment
+
+   FULFILLMENT_PAYLOAD =
+     VARBYTES PREIMAGE
+
+3.2.  RSA-SHA-256
+
+   RSA-SHA-256 is assigned the type bit 2^1 = 0x02.
+
+3.2.1.  Condition
+
+   HASH = SHA256(
+     VARBYTES MODULUS
+     VARBYTES MESSAGE_ID
+     VARBYTES FIXED_PREFIX
+     VARUINT DYNAMIC_MESSAGE_LENGTH
+   )
+
+
+
+
+
+
+Thomas                 Expires September 21, 2016               [Page 7]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+3.2.2.  Fulfillment
+
+   FULFILLMENT_PAYLOAD =
+     VARBYTES MODULUS
+     VARBYTES MESSAGE_ID
+     VARBYTES FIXED_PREFIX
+     VARUINT DYNAMIC_MESSAGE_LENGTH
+     VARBYTES DYNAMIC_MESSAGE
+     VARBYTES SIGNATURE
+
+   The SIGNATURE must have the exact same number of octets as the
+   MODULUS.  So theoretically we could omit the length prefix for the
+   SIGNATURE field.  But for consistency, we include the length prefix.
+   Implementations MUST verify that the SIGNATURE and MODULUS are of the
+   same length.
+
+   The DYNAMIC_MESSAGE_LENGTH is included to provide a maximum length
+   for DYNAMIC_MESSAGE even if the actual message suffix length is
+   different.  This value is used to calculate the
+   MAX_FULFILLMENT_LENGTH in the condition.
+
+   The MESSAGE_ID represents an identifier for the message.  All
+   messages in a cryptocondition that have a common identifier must
+   match, otherwise the condition is invalid.  Implementations may
+   return messages as a map of MESSAGE_ID => MESSAGE pairs.
+
+   The message to be signed is the concatenation of the FIXED_PREFIX and
+   DYNAMIC_MESSAGE.
+
+3.2.3.  Implementation
+
+   The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.
+   [RFC3447]
+
+   The public exponent e is set to 65537 as recommended in [RFC4871].
+   Very large exponents can be a DoS vector [LARGE-RSA-EXPONENTS] and
+   65537 is the largest Fermat prime, which has some nice properties
+   [USING-RSA-EXPONENT-OF-65537].
+
+   The recommended modulus size as of 2016 is 2048 bits
+   [KEYLENGTH-RECOMMENDATION].  In the future we anticipate an upgrade
+   to 3072 bits which provides approximately 128 bits of security
+   [NIST-KEYMANAGEMENT](p. 64), about the same level as SHA-256.
+   Implementations MUST reject moduli smaller than 1024 or greater than
+   4096 bits.  Large moduli slow down signature verification which can
+   be a DoS vector.  DNSSEC also limits the modulus to 4096 bits
+   [RFC3110].  OpenSSL supports up to 16384 bits
+   [OPENSSL-X509-CERT-EXAMPLES] .
+
+
+
+Thomas                 Expires September 21, 2016               [Page 8]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+   The salt length for PSS is 32 bytes.
+
+3.3.  THRESHOLD-SHA-256
+
+   THRESHOLD-SHA-256 is assigned the type bit 2^2 = 0x04.
+
+3.3.1.  Condition
+
+   HASH = SHA256(
+     VARUINT TYPE_BIT
+     VARUINT THRESHOLD
+     VARARRAY
+       VARUINT WEIGHT
+       CONDITION
+   )
+
+   The TYPE_BIT is 0x04.  The reason we need this is because threshold
+   conditions are a structural condition.  Structural conditions can
+   have subconditions, meaning their TYPE_BITMASK can have multiple bits
+   set, including other structural conditions.  This TYPE_BIT prevents
+   the possibility that two different structural fulfillments could ever
+   generate the exact same condition.
+
+   The VARARRAY of conditions is sorted first based on length, shortest
+   first.  Elements of the same length are sorted in lexicographic (big-
+   endian) order, smallest first.
+
+3.3.2.  Fulfillment
+
+   ULFILLMENT_PAYLOAD =
+     VARUINT THRESHOLD
+     VARARRAY
+       VARUINT WEIGHT
+       FULFILLMENT
+     VARARRAY
+       VARUINT WEIGHT
+       CONDITION
+
+3.4.  ED25519-SHA-256
+
+   ED25519-SHA-256 is assigned the type bit 2^3 = 0x08.
+
+3.4.1.  Condition
+
+
+
+
+
+
+
+
+Thomas                 Expires September 21, 2016               [Page 9]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+   HASH = SHA256(
+     VARBYTES PUBLIC_KEY
+     VARBYTES MESSAGE_ID
+     VARBYTES FIXED_PREFIX
+     VARUINT DYNAMIC_MESSAGE_LENGTH
+   )
+
+3.4.2.  Fulfillment
+
+   FULFILLMENT_PAYLOAD =
+     VARBYTES PUBLIC_KEY
+     VARBYTES MESSAGE_ID
+     VARBYTES FIXED_PREFIX
+     VARUINT DYNAMIC_MESSAGE_LENGTH
+     VARBYTES DYNAMIC_MESSAGE
+     VARBYTES SIGNATURE
+
+   The MESSAGE_ID, FIXED_PREFIX, DYNAMIC_MESSAGE_LENGTH and
+   DYNAMIC_MESSAGE fields have the same meaning as in the RSA-SHA-256
+   condition type.
+
+3.4.3.  Implementation
+
+   The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE
+   are Ed25519 as defined in [I-D.irtf-cfrg-eddsa]
+
+4.  References
+
+4.1.  Normative References
+
+   [I-D.irtf-cfrg-eddsa]
+              Josefsson, S. and I. Liusvaara, "Edwards-curve Digital
+              Signature Algorithm (EdDSA)", draft-irtf-cfrg-eddsa-04
+              (work in progress), March 2016.
+
+   [PROTOCOL-BUFFERS]
+              "Protocol Buffers - Encoding - Base128 VARINTS", 01 2016,
+              <https://developers.google.com/protocol-buffers/docs/
+              encoding#varints>.
+
+   [RFC3447]  Jonsson, J. and B. Kaliski, "Public-Key Cryptography
+              Standards (PKCS) #1: RSA Cryptography Specifications
+              Version 2.1", RFC 3447, DOI 10.17487/RFC3447, February
+              2003, <http://www.rfc-editor.org/info/rfc3447>.
+
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <http://www.rfc-editor.org/info/rfc4648>.
+
+
+
+Thomas                 Expires September 21, 2016              [Page 10]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+4.2.  Informative References
+
+   [KEYLENGTH-RECOMMENDATION]
+              "BlueKrypt - Cryptographic Key Length Recommendation", 09
+              2015, <https://www.keylength.com/en/compare/>.
+
+   [LARGE-RSA-EXPONENTS]
+              "Imperial Violet - Very large RSA public exponents (17 Mar
+              2012)", 03 2012,
+              <https://www.imperialviolet.org/2012/03/17/rsados.html>.
+
+   [NIST-KEYMANAGEMENT]
+              , , , , and , "NIST - Recommendation for Key Management -
+              Part 1 - General (Revision 3)", 07 2012,
+              <http://csrc.nist.gov/publications/nistpubs/800-57/
+              sp800-57_part1_rev3_general.pdf>.
+
+   [OPENSSL-X509-CERT-EXAMPLES]
+              "OpenSSL - X509 certificate examples for testing and
+              verification", 07 2012,
+              <http://fm4dd.com/openssl/certexamples.htm>.
+
+   [RFC3110]  Eastlake 3rd, D., "RSA/SHA-1 SIGs and RSA KEYs in the
+              Domain Name System (DNS)", RFC 3110, DOI 10.17487/RFC3110,
+              May 2001, <http://www.rfc-editor.org/info/rfc3110>.
+
+   [RFC4871]  Allman, E., Callas, J., Delany, M., Libbey, M., Fenton,
+              J., and M. Thomas, "DomainKeys Identified Mail (DKIM)
+              Signatures", RFC 4871, DOI 10.17487/RFC4871, May 2007,
+              <http://www.rfc-editor.org/info/rfc4871>.
+
+   [USING-RSA-EXPONENT-OF-65537]
+              "Cryptography - StackExchange - Impacts of not using RSA
+              exponent of 65537", 11 2014,
+              <http://crypto.stackexchange.com/questions/3110/
+              impacts-of-not-using-rsa-exponent-of-65537>.
+
+Appendix A.  Security Considerations
+
+   TODO
+
+Appendix B.  Test Values
+
+   TODO
+
+
+
+
+
+
+
+Thomas                 Expires September 21, 2016              [Page 11]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+Appendix C.  Acknowledgements
+
+   The editor would like to thank the following individuals for feedback
+   on and implementations of the specification (in alphabetical order):
+   TODO
+
+Appendix D.  IANA Considerations
+
+D.1.  Crypto-Condition Type Registry
+
+   The following initial entries should be added to the Crypto-Condition
+   Type registry to be created and maintained at (the suggested URI)
+   http://www.iana.org/assignments/crypto-condition-types :
+
+                  The following bitmasks are registered:
+
+              +----------+------+------+-------------------+
+              | Type Bit | Exp. | Int. |   Condition Type. |
+              +----------+------+------+-------------------+
+              |        1 |  2^0 |    1 |           SHA-256 |
+              |       10 |  2^1 |    2 |       RSA-SHA-256 |
+              |      100 |  2^2 |    4 | THRESHOLD-SHA-256 |
+              |     1000 |  2^3 |    8 |   ED25519-SHA-256 |
+              +----------+------+------+-------------------+
+
+                  Table 1: Crypto-Condition Type Bitmasks
+
+Author's Address
+
+   Stefan Thomas
+   Ripple
+   300 Montgomery Street
+   San Francisco, CA  94104
+   US
+
+   Phone: -----------------
+   Email: stefan@ripple.com
+   URI:   http://www.ripple.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thomas                 Expires September 21, 2016              [Page 12]
