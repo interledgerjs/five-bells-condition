@@ -12,6 +12,15 @@ class Mgf1 {
     this.saltLength = this.hashLength
   }
 
+  /**
+   * Generate MGF1 full domain hash.
+   *
+   * Implementation of RFC 3447, section B.2.1.
+   *
+   * @param {Buffer} seed Seed from which mask is generated.
+   * @param {Number} maskLength Intended length of the mask in bytes.
+   * @return {Buffer} Mask
+   */
   generate (seed, maskLength) {
     const result = new Buffer(maskLength)
 

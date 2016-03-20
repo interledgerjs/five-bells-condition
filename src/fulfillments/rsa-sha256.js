@@ -2,7 +2,8 @@
 
 const crypto = require('crypto')
 const constants = require('constants')
-const Pss = require('../crypto/pss.js')
+const Pss = require('../crypto/pss')
+const pem = require('../util/pem')
 const BaseSha256Fulfillment = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
@@ -92,6 +93,17 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
+   * Set the signature manually.
+   *
+   * The signature must be a valid RSA-PSS siganture.
+   *
+   * @param {Buffer} signature RSA signature.
+   */
+  setSignature (signature) {
+    this.signature = signature
+  }
+
+  /**
    * Sign the message.
    *
    * This method will take the currently configured values for the message
@@ -153,6 +165,18 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Writer} writer Subject for writing the fulfillment payload.
    */
   writePayload (writer) {
+    if (!this.message) {
+      throw new MissingDataError('Requires a dynamic message')
+    }
+
+    if (!this.signature) {
+      throw new MissingDataError('Requires a signature')
+    }
+
+    if (this.message.length > this.maxDynamicMessageLength) {
+      throw new Error('Message is larger than maximum allowed length')
+    }
+
     this.writeCommonHeader(writer)
     writer.writeVarBytes(this.message)
     writer.writeVarBytes(this.signature)
@@ -195,8 +219,34 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @return {Boolean} Whether this fulfillment is valid.
    */
   validate () {
-    // TODO: Validate signature
-    return true
+    // Verify message length
+    if (this.message.length > this.maxDynamicMessageLength) {
+      throw new Error('Dynamic message is too large (actual: ' +
+        this.message.length + ', should be <= ' +
+        this.maxDynamicMessageLength + ')')
+    }
+
+    // Verify modulus (correct length)
+    if (this.modulus.length < 128 || this.modulus.length > 512) {
+      throw new Error('Modulus length is out of range: ' + this.modulus.length)
+    }
+
+    // Verify modulus (no leading zeros)
+    if (this.modulus[0] === 0) {
+      throw new Error('Modulus may not contain leading zeros')
+    }
+
+    // Verify signature
+    const message = Buffer.concat([this.messagePrefix, this.message])
+    const publicKey = pem.modulusToPem(this.modulus)
+    const encodedMessage = crypto.publicDecrypt({
+      key: publicKey,
+      padding: constants.RSA_NO_PADDING
+    }, this.signature)
+    const pss = new Pss()
+    const modulusHighByteBitLength = this.modulus[0].toString(2).length
+    const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
+    return pss.verify(message, encodedMessage, modulusBitLength)
   }
 }
 
