@@ -485,32 +485,33 @@ FULFILLMENT_PAYLOAD =
                     </t>
                 </section>
             </section>
-            <section title="ED25519-SHA-256" anchor="ed25519-sha-256-condition-type">
+            <section title="ED25519" anchor="ed25519-condition-type">
                 <t>
-                    ED25519-SHA-256 is assigned the type bit 2^3 = 0x08.
+                    ED25519 is assigned the type bit 2^3 = 0x08.
                 </t>
-                <section title="Condition" anchor="ed25519-sha-256-condition-type-condition">
+                <section title="Condition" anchor="ed25519-condition-type-condition">
                     <figure>
                         <artwork><![CDATA[
-HASH = SHA256(
-  VARBYTES PUBLIC_KEY
-)
+HASH = UINT256 PUBLIC_KEY
                      ]]></artwork>
                     </figure>
+                    <t>
+                        Since the PUBLIC_KEY is only 256 bits long, we do not hash it.
+                    </t>
                 </section>
-                <section title="Fulfillment" anchor="ed25519-sha-256-condition-type-fulfillment">
+                <section title="Fulfillment" anchor="ed25519-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
 FULFILLMENT_PAYLOAD =
-  VARBYTES PUBLIC_KEY
-  VARBYTES SIGNATURE
+  UINT256 PUBLIC_KEY
+  UINT512 SIGNATURE
                      ]]></artwork>
                     </figure>
                 </section>
-                <section title="Implementation" anchor="ed25519-sha-256-condition-type-implementation">
+                <section title="Implementation" anchor="ed25519-condition-type-implementation">
                     <t>
                         The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE are Ed25519 as defined in
-                        <xref target="I-D.irtf-cfrg-eddsa" />
+                        <xref target="I-D.irtf-cfrg-eddsa" />. SHA-512 is used as the hashing function.
                     </t>
                 </section>
             </section>
@@ -651,7 +652,7 @@ FULFILLMENT_PAYLOAD =
 
                     <c>8</c>
 
-                    <c>ED25519-SHA-256</c>
+                    <c>ED25519</c>
 
                 </texttable>
             </section>
