@@ -351,6 +351,18 @@ HASH = SHA256(
 )
                      ]]></artwork>
                     </figure>
+                    <t>
+                        The MODULUS is the RSA public modulus. The public exponent e is set to 65537 as
+                        recommended in <xref target="RFC4871" />. Very large exponents can be a DoS
+                        vector <xref target="LARGE-RSA-EXPONENTS"/> and 65537 is the largest Fermat prime,
+                        which has some nice properties <xref target="USING-RSA-EXPONENT-OF-65537"/>.
+                    </t>
+                    <t>
+                        Implementations MUST reject moduli smaller than 128 bytes (1017 bits) or greater
+                        than 512 bytes (4096 bits.) Large moduli slow down signature verification which can be
+                        a DoS vector. DNSSEC also limits the modulus to 4096 bits <xref target="RFC3110"/>.
+                        OpenSSL supports up to 16384 bits <xref target="OPENSSL-X509-CERT-EXAMPLES" />.
+                    </t>
                 </section>
                 <section title="Fulfillment" anchor="rsa-sha-256-condition-type-fulfillment">
                     <figure>
@@ -390,22 +402,13 @@ FULFILLMENT_PAYLOAD =
                         <xref target="RFC3447" />
                     </t>
                     <t>
-                        The public exponent e is set to 65537 as recommended in <xref target="RFC4871" />. Very large exponents can be a DoS
-                        vector <xref target="LARGE-RSA-EXPONENTS"/> and 65537 is the largest Fermat prime, which has
-                        some nice properties <xref target="USING-RSA-EXPONENT-OF-65537"/>.
-                    </t>
-                    <t>
                         The recommended modulus size as of 2016 is 2048 bits <xref target="KEYLENGTH-RECOMMENDATION"/>.
                         In the future we anticipate an upgrade to 3072 bits which provides approximately 128 bits of
-                        security <xref target="NIST-KEYMANAGEMENT"/>(p. 64), about the same level as SHA-256. Implementations MUST reject moduli smaller
-                        than 1024 or greater than 4096 bits. Large moduli slow down signature verification which can be
-                        a DoS vector. DNSSEC also limits the modulus to 4096 bits <xref target="RFC3110"/>. OpenSSL
-                        supports up to 16384 bits <xref target="OPENSSL-X509-CERT-EXAMPLES" /> .
+                        security <xref target="NIST-KEYMANAGEMENT"/>(p. 64), about the same level as SHA-256.
                     </t>
                     <t>
                         The salt length for PSS is 32 bytes.
                     </t>
-
                 </section>
             </section>
             <section title="THRESHOLD-SHA-256" anchor="threshold-sha-256-condition-type">
