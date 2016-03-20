@@ -99,8 +99,8 @@
 
             <section anchor="features" title="Features">
                 <t>
-                    Crypto-conditions are a simple multi-algorithm, multi-message, multi-level,
-                    multi-signature standard format for expressing conditions and fulfillments.
+                    Crypto-conditions are a simple multi-algorithm, multi-level, multi-signature
+                    standard format for expressing conditions and fulfillments.
                 </t>
 
                 <section anchor="multi-algorithm" title="Multi-Algorithm">
@@ -131,8 +131,10 @@ condition &amp; ~supported == 0
                     <t>
                         The bitmask is encoded as a varint to minimize space usage.
                     </t>
-                    <t>By evaluating the bitmask of a condition actors in the system can establish, even before
-                    a fulfillment is published, if they will be able to verify the fulfilment.</t>
+                    <t>
+                        By evaluating the bitmask of a condition actors in the system can establish, even
+                        beforea fulfillment is published, if they will be able to verify the fulfilment.
+                    </t>
                 </section>
                 <section anchor="multi-signature" title="Multi-Signature">
                     <t>
@@ -157,16 +159,6 @@ condition &amp; ~supported == 0
                         Crypto-conditions add that flexibility elegantly, by applying thresholds not just to
                         signatures, but to conditions which can be signatures or further conditions. That
                         allows the creation of an arbitrary threshold boolean circuit of signatures.
-                    </t>
-                </section>
-                <section anchor="multi-message" title="Multi-Message">
-                    <t>
-                        Crypto-conditions can sign not just one, but multiple messages at the same time and
-                        by different people. These messages can then be used as inputs for other algorithms.
-                    </t>
-                    <t>
-                        This allows resource-controlling systems to perform their functions without knowing the
-                        details of the higher-level protocols that these functions are a part of.
                     </t>
                 </section>
             </section>
@@ -255,7 +247,7 @@ condition &amp; ~supported == 0
                         </preamble>
                         <artwork><![CDATA[
 "cc:" BASE10(VERSION) ":" BASE16(TYPE_BITMASK) ":"
-    BASE64URL(HASH) ":" BASE10(MAX_FULFILLMENT_LENGTH)
+    BASE64URL(HASH) ":" BASE10(FULFILLMENT_LENGTH)
                      ]]></artwork>
                     </figure>
                 </section>
@@ -268,7 +260,7 @@ condition &amp; ~supported == 0
 CONDITION =
   VARUINT TYPE_BITMASK
   VARBYTES HASH
-  VARUINT MAX_FULFILLMENT_LENGTH
+  VARUINT FULFILLMENT_LENGTH
                      ]]></artwork>
                     </figure>
                 </section>
@@ -345,9 +337,6 @@ FULFILLMENT_PAYLOAD =
                         <artwork><![CDATA[
 HASH = SHA256(
   VARBYTES MODULUS
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
 )
                      ]]></artwork>
                     </figure>
@@ -369,31 +358,19 @@ HASH = SHA256(
                         <artwork><![CDATA[
 FULFILLMENT_PAYLOAD =
   VARBYTES MODULUS
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
-  VARBYTES DYNAMIC_MESSAGE
   VARBYTES SIGNATURE
                      ]]></artwork>
                     </figure>
                     <t>
-                        The SIGNATURE must have the exact same number of octets as the MODULUS. So
-                        theoretically we could omit the length prefix for the SIGNATURE field. But for
-                        consistency, we include the length prefix. Implementations MUST verify that the
-                        SIGNATURE and MODULUS are of the same length.
+                        The SIGNATURE MUST have the exact same number of octets as the MODULUS, even if
+                        that means adding leading zeros. This ensures that the fulfillment size is
+                        constant and known ahead of time. Note that the field is still length-prefixed for
+                        consistency. Implementations MUST verify that the SIGNATURE and MODULUS consist
+                        of the same number of octets. SIGNATURE must be numerically less than MODULUS.
                     </t>
                     <t>
-                        The DYNAMIC_MESSAGE_LENGTH is included to provide a maximum length for DYNAMIC_MESSAGE
-                        even if the actual message suffix length is different. This value is used to calculate
-                        the MAX_FULFILLMENT_LENGTH in the condition.
-                    </t>
-                    <t>
-                        The MESSAGE_ID represents an identifier for the message. All messages in a
-                        cryptocondition that have a common identifier must match, otherwise the condition is
-                        invalid. Implementations may return messages as a map of MESSAGE_ID => MESSAGE pairs.
-                    </t>
-                    <t>
-                        The message to be signed is the concatenation of the FIXED_PREFIX and DYNAMIC_MESSAGE.
+                        The message to be signed is provided separately by the user. If no message is
+                        provided, the message is assumed to be the empty string.
                     </t>
                 </section>
                 <section title="Implementation" anchor="rsa-sha-256-condition-type-implementation">
@@ -423,6 +400,7 @@ HASH = SHA256(
   VARUINT THRESHOLD
   VARARRAY
     VARUINT WEIGHT
+    VARBYTES PREFIX
     CONDITION
 )
                      ]]></artwork>
@@ -442,16 +420,69 @@ HASH = SHA256(
                 <section title="Fulfillment" anchor="threshold-sha-256-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
-ULFILLMENT_PAYLOAD =
+FULFILLMENT_PAYLOAD =
   VARUINT THRESHOLD
   VARARRAY
-    VARUINT WEIGHT
-    FULFILLMENT
-  VARARRAY
-    VARUINT WEIGHT
-    CONDITION
+    UINT8 FLAGS
+    OPTIONAL VARUINT WEIGHT   ; if  FLAGS & 0x40
+    OPTIONAL VARBYTES PREFIX  ; if  FLAGS & 0x20
+    OPTIONAL FULFILLMENT      ; if  FLAGS & 0x80
+    OPTIONAL CONDITION        ; if ~FLAGS & 0x80
                      ]]></artwork>
                     </figure>
+                    <t>
+                        THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1.
+                    </t>
+                    <texttable anchor="crypto-condition-type-bitmasks" title="Crypto-Condition Type Bitmasks">
+                        <preamble>FLAGS is a bitfield where:</preamble>
+
+                        <ttcol align="right">Type Bit</ttcol>
+
+                        <ttcol align="right">Exp.</ttcol>
+
+                        <ttcol align="right">Hex</ttcol>
+
+                        <ttcol align="right">Name</ttcol>
+
+                        <c>1___ ____</c>
+
+                        <c>2^7</c>
+
+                        <c>0x80</c>
+
+                        <c>IS_FULFILLMENT</c>
+
+                        <c>_1__ ____</c>
+
+                        <c>2^6</c>
+
+                        <c>0x40</c>
+
+                        <c>IS_WEIGHTED</c>
+
+                        <c>__1_ ____</c>
+
+                        <c>2^5</c>
+
+                        <c>0x20</c>
+
+                        <c>IS_PREFIXED</c>
+
+                    </texttable>
+                    <t>
+                        IS_FULFILLMENT specifies whether this subcondition is provided as a fulfillment.
+                        Otherwise it is provided as a condition.
+                    </t>
+                    <t>
+                        IS_WEIGHTED specifies whether the subcondition has a weight other than 1. If true,
+                        the weight is given as WEIGHT and must be an integer in the range 1 ... 2^32 - 1.
+                    </t>
+                    <t>
+                        IS_PREFIXED specifies whether a prefix should be added before passing the message
+                        to this subcondition. Prefixes can be used to progressively narrow the scope of a
+                        condition without knowing its internal structure. If true, the prefix is provided
+                        as PREFIX.
+                    </t>
                 </section>
             </section>
             <section title="ED25519-SHA-256" anchor="ed25519-sha-256-condition-type">
@@ -463,9 +494,6 @@ ULFILLMENT_PAYLOAD =
                         <artwork><![CDATA[
 HASH = SHA256(
   VARBYTES PUBLIC_KEY
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
 )
                      ]]></artwork>
                     </figure>
@@ -475,17 +503,9 @@ HASH = SHA256(
                         <artwork><![CDATA[
 FULFILLMENT_PAYLOAD =
   VARBYTES PUBLIC_KEY
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
-  VARBYTES DYNAMIC_MESSAGE
   VARBYTES SIGNATURE
                      ]]></artwork>
                     </figure>
-                    <t>
-                        The MESSAGE_ID, FIXED_PREFIX, DYNAMIC_MESSAGE_LENGTH and DYNAMIC_MESSAGE fields have the same
-                        meaning as in the RSA-SHA-256 condition type.
-                    </t>
                 </section>
                 <section title="Implementation" anchor="ed25519-sha-256-condition-type-implementation">
                     <t>
