@@ -2,9 +2,11 @@
 
 > Implementation of crypto-conditions
 
-## Spec
+## Specification
 
-You can find the draft specification under [**docs/spec.md**](docs/spec.md).
+Editor's Draft: [**draft-thomas-crypto-conditions-01**](https://interledger.org/five-bells-condition/spec.html)
+
+This specification is only a draft at this stage and has not been submitted.
 
 ## Usage
 
