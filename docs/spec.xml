@@ -433,7 +433,7 @@ FULFILLMENT_PAYLOAD =
                     <t>
                         THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1.
                     </t>
-                    <texttable anchor="crypto-condition-type-bitmasks" title="Crypto-Condition Type Bitmasks">
+                    <texttable anchor="threshold-sha-256-condition-type-fulfillment-flags" title="Threshold Fulfillment Flags">
                         <preamble>FLAGS is a bitfield where:</preamble>
 
                         <ttcol align="right">Type Bit</ttcol>
