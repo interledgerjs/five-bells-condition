@@ -17,6 +17,9 @@ deployment:
     branch: master
     commands:
       # Publish spec
+      - git config --global user.email "info@circleci.com"
+      - git config --global user.name "CircleCI"
+      - git config --global push.default simple
       - scripts/publish_spec.sh
       # Push NPM package if not yet published
       - mv npmrc-env .npmrc
