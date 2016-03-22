@@ -431,7 +431,9 @@ FULFILLMENT_PAYLOAD =
                      ]]></artwork>
                     </figure>
                     <t>
-                        THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1.
+                        THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a
+                        threshold condition, the weights of the provided fulfillments MUST be greater than or
+                        equal to the threshold.
                     </t>
                     <texttable anchor="threshold-sha-256-condition-type-fulfillment-flags" title="Threshold Fulfillment Flags">
                         <preamble>FLAGS is a bitfield where:</preamble>
