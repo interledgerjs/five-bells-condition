@@ -380,7 +380,6 @@
 <link href="#rfc.section.1.2.1" rel="Chapter" title="1.2.1 Multi-Algorithm"/>
 <link href="#rfc.section.1.2.2" rel="Chapter" title="1.2.2 Multi-Signature"/>
 <link href="#rfc.section.1.2.3" rel="Chapter" title="1.2.3 Multi-Level"/>
-<link href="#rfc.section.1.2.4" rel="Chapter" title="1.2.4 Multi-Message"/>
 <link href="#rfc.section.2" rel="Chapter" title="2 Format"/>
 <link href="#rfc.section.2.1" rel="Chapter" title="2.1 Bitmask"/>
 <link href="#rfc.section.2.2" rel="Chapter" title="2.2 Binary Types"/>
@@ -402,7 +401,7 @@
 <link href="#rfc.section.3.3" rel="Chapter" title="3.3 THRESHOLD-SHA-256"/>
 <link href="#rfc.section.3.3.1" rel="Chapter" title="3.3.1 Condition"/>
 <link href="#rfc.section.3.3.2" rel="Chapter" title="3.3.2 Fulfillment"/>
-<link href="#rfc.section.3.4" rel="Chapter" title="3.4 ED25519-SHA-256"/>
+<link href="#rfc.section.3.4" rel="Chapter" title="3.4 ED25519"/>
 <link href="#rfc.section.3.4.1" rel="Chapter" title="3.4.1 Condition"/>
 <link href="#rfc.section.3.4.2" rel="Chapter" title="3.4.2 Fulfillment"/>
 <link href="#rfc.section.3.4.3" rel="Chapter" title="3.4.3 Implementation"/>
@@ -422,7 +421,7 @@
 
   <meta name="dct.creator" content="Thomas, S." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-thomas-crypto-conditions-01" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-3-20" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-3-22" />
   <meta name="dct.abstract" content="Crypto-conditions provide a mechanism to describe a signed message such that multiple actors in a distributed system can all verify the same signed message and agree on whether it matches the description.  This provides a useful primitive for event-based systems that are distributed on the Internet since we can describe events in a standard deterministic manner (represented by signed messages) and therefore define generic authenticated event handlers.  " />
   <meta name="description" content="Crypto-conditions provide a mechanism to describe a signed message such that multiple actors in a distributed system can all verify the same signed message and agree on whether it matches the description.  This provides a useful primitive for event-based systems that are distributed on the Internet since we can describe events in a standard deterministic manner (represented by signed messages) and therefore define generic authenticated event handlers.  " />
 
@@ -443,10 +442,10 @@
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">March 20, 2016</td>
+  <td class="right">March 22, 2016</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 21, 2016</td>
+  <td class="left">Expires: September 23, 2016</td>
   <td class="right"></td>
 </tr>
 
@@ -471,7 +470,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 21, 2016.</p>
+<p>This Internet-Draft will expire on September 23, 2016.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -489,7 +488,6 @@
 <ul><li>1.2.1.   <a href="#rfc.section.1.2.1">Multi-Algorithm</a></li>
 <li>1.2.2.   <a href="#rfc.section.1.2.2">Multi-Signature</a></li>
 <li>1.2.3.   <a href="#rfc.section.1.2.3">Multi-Level</a></li>
-<li>1.2.4.   <a href="#rfc.section.1.2.4">Multi-Message</a></li>
 </ul></ul><li>2.   <a href="#rfc.section.2">Format</a></li>
 <ul><li>2.1.   <a href="#rfc.section.2.1">Bitmask</a></li>
 <li>2.2.   <a href="#rfc.section.2.2">Binary Types</a></li>
@@ -511,7 +509,7 @@
 </ul><li>3.3.   <a href="#rfc.section.3.3">THRESHOLD-SHA-256</a></li>
 <ul><li>3.3.1.   <a href="#rfc.section.3.3.1">Condition</a></li>
 <li>3.3.2.   <a href="#rfc.section.3.3.2">Fulfillment</a></li>
-</ul><li>3.4.   <a href="#rfc.section.3.4">ED25519-SHA-256</a></li>
+</ul><li>3.4.   <a href="#rfc.section.3.4">ED25519</a></li>
 <ul><li>3.4.1.   <a href="#rfc.section.3.4.1">Condition</a></li>
 <li>3.4.2.   <a href="#rfc.section.3.4.2">Fulfillment</a></li>
 <li>3.4.3.   <a href="#rfc.section.3.4.3">Implementation</a></li>
@@ -538,7 +536,7 @@
 <p id="rfc.section.1.1.p.4">The description can be hashed and compared to a condition. If the message matches the description and the hash of the description matches the condition, we say that the fulfillment fulfills the condition.  </p>
 <p id="rfc.section.1.1.p.5">A "hashlock" is a tuple consisting of a bytestring and its hash where the hash is published first and the publication of the corresponding bytestring acts as a one-bit, one-time signature.  </p>
 <h1 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2.</a> <a href="#features" id="features">Features</a></h1>
-<p id="rfc.section.1.2.p.1">Crypto-conditions are a simple multi-algorithm, multi-message, multi-level, multi-signature standard format for expressing conditions and fulfillments.  </p>
+<p id="rfc.section.1.2.p.1">Crypto-conditions are a simple multi-algorithm, multi-level, multi-signature standard format for expressing conditions and fulfillments.  </p>
 <h1 id="rfc.section.1.2.1"><a href="#rfc.section.1.2.1">1.2.1.</a> <a href="#multi-algorithm" id="multi-algorithm">Multi-Algorithm</a></h1>
 <p id="rfc.section.1.2.1.p.1">Crypto-conditions can support several different signature and hash algorithms and support for new ones can be added in the future.  </p>
 <p/>
@@ -550,16 +548,13 @@ condition &amp;amp; ~supported == 0
 <p>where &amp; is the bitwise AND operator and ~ is the bitwise NOT operator.  </p>
 <p id="rfc.section.1.2.1.p.3">Any new high bit can redefine the meaning of any existing lower bits as long as it is set. This can be used to remove obsolete algorithms.  </p>
 <p id="rfc.section.1.2.1.p.4">The bitmask is encoded as a varint to minimize space usage.  </p>
-<p id="rfc.section.1.2.1.p.5">By evaluating the bitmask of a condition actors in the system can establish, even before a fulfillment is published, if they will be able to verify the fulfilment.</p>
+<p id="rfc.section.1.2.1.p.5">By evaluating the bitmask of a condition actors in the system can establish, even beforea fulfillment is published, if they will be able to verify the fulfilment.  </p>
 <h1 id="rfc.section.1.2.2"><a href="#rfc.section.1.2.2">1.2.2.</a> <a href="#multi-signature" id="multi-signature">Multi-Signature</a></h1>
 <p id="rfc.section.1.2.2.p.1">Crypto-conditions can abstract away many of the details of multi-sign. When a party provides a condition, other parties can treat it opaquely and do not need to know about its internal structure. That allows parties to define arbitrary multi-signature setups without breaking compatibility.  </p>
 <p id="rfc.section.1.2.2.p.2">Protocol designers can use crypto-conditions as a drop-in replacement for public key signature algorithms and add multi-signature support to their protocols without adding any additional complexity.  </p>
 <h1 id="rfc.section.1.2.3"><a href="#rfc.section.1.2.3">1.2.3.</a> <a href="#multi-level" id="multi-level">Multi-Level</a></h1>
 <p id="rfc.section.1.2.3.p.1">Basic multi-sign is single-level and does not support more complex trust relationships such as "I trust Alice and Bob, but only when Candice also agrees". In single level 2-of-3 Alice and Bob could sign on their own, without Candice's approval.  </p>
 <p id="rfc.section.1.2.3.p.2">Crypto-conditions add that flexibility elegantly, by applying thresholds not just to signatures, but to conditions which can be signatures or further conditions. That allows the creation of an arbitrary threshold boolean circuit of signatures.  </p>
-<h1 id="rfc.section.1.2.4"><a href="#rfc.section.1.2.4">1.2.4.</a> <a href="#multi-message" id="multi-message">Multi-Message</a></h1>
-<p id="rfc.section.1.2.4.p.1">Crypto-conditions can sign not just one, but multiple messages at the same time and by different people. These messages can then be used as inputs for other algorithms.  </p>
-<p id="rfc.section.1.2.4.p.2">This allows resource-controlling systems to perform their functions without knowing the details of the higher-level protocols that these functions are a part of.  </p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#format" id="format">Format</a></h1>
 <p id="rfc.section.2.p.1">Conditions and fulfillments are expressed in a standard format with both string and binary encoding supported.  </p>
 <h1 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a> <a href="#bitmask" id="bitmask">Bitmask</a></h1>
@@ -599,7 +594,7 @@ condition &amp;amp; ~supported == 0
 <p>Conditions are ASCII encoded as: </p>
 <pre>
 "cc:" BASE10(VERSION) ":" BASE16(TYPE_BITMASK) ":"
-    BASE64URL(HASH) ":" BASE10(MAX_FULFILLMENT_LENGTH)
+    BASE64URL(HASH) ":" BASE10(FULFILLMENT_LENGTH)
                      </pre>
 <h1 id="rfc.section.2.4.2"><a href="#rfc.section.2.4.2">2.4.2.</a> <a href="#binary-condition-format" id="binary-condition-format">Binary Format</a></h1>
 <p>Conditions are binary encoded as: </p>
@@ -607,7 +602,7 @@ condition &amp;amp; ~supported == 0
 CONDITION =
   VARUINT TYPE_BITMASK
   VARBYTES HASH
-  VARUINT MAX_FULFILLMENT_LENGTH
+  VARUINT FULFILLMENT_LENGTH
                      </pre>
 <h1 id="rfc.section.2.5"><a href="#rfc.section.2.5">2.5.</a> <a href="#fulfillment-format" id="fulfillment-format">Fulfillment</a></h1>
 <p id="rfc.section.2.5.p.1">Below are the string and binary encoding formats for a fulfillment. In both the TYPE_BIT is the single bit representing the top level condition type.  </p>
@@ -645,30 +640,22 @@ FULFILLMENT_PAYLOAD =
 <pre>
 HASH = SHA256(
   VARBYTES MODULUS
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
 )
                      </pre>
+<p id="rfc.section.3.2.1.p.1">The MODULUS is the RSA public modulus. The public exponent e is set to 65537 as recommended in <a href="#RFC4871">[RFC4871]</a>. Very large exponents can be a DoS vector <a href="#LARGE-RSA-EXPONENTS">[LARGE-RSA-EXPONENTS]</a> and 65537 is the largest Fermat prime, which has some nice properties <a href="#USING-RSA-EXPONENT-OF-65537">[USING-RSA-EXPONENT-OF-65537]</a>.  </p>
+<p id="rfc.section.3.2.1.p.2">Implementations MUST reject moduli smaller than 128 bytes (1017 bits) or greater than 512 bytes (4096 bits.) Large moduli slow down signature verification which can be a DoS vector. DNSSEC also limits the modulus to 4096 bits <a href="#RFC3110">[RFC3110]</a>.  OpenSSL supports up to 16384 bits <a href="#OPENSSL-X509-CERT-EXAMPLES">[OPENSSL-X509-CERT-EXAMPLES]</a>.  </p>
 <h1 id="rfc.section.3.2.2"><a href="#rfc.section.3.2.2">3.2.2.</a> <a href="#rsa-sha-256-condition-type-fulfillment" id="rsa-sha-256-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
 FULFILLMENT_PAYLOAD =
   VARBYTES MODULUS
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
-  VARBYTES DYNAMIC_MESSAGE
   VARBYTES SIGNATURE
                      </pre>
-<p id="rfc.section.3.2.2.p.1">The SIGNATURE must have the exact same number of octets as the MODULUS. So theoretically we could omit the length prefix for the SIGNATURE field. But for consistency, we include the length prefix. Implementations MUST verify that the SIGNATURE and MODULUS are of the same length.  </p>
-<p id="rfc.section.3.2.2.p.2">The DYNAMIC_MESSAGE_LENGTH is included to provide a maximum length for DYNAMIC_MESSAGE even if the actual message suffix length is different. This value is used to calculate the MAX_FULFILLMENT_LENGTH in the condition.  </p>
-<p id="rfc.section.3.2.2.p.3">The MESSAGE_ID represents an identifier for the message. All messages in a cryptocondition that have a common identifier must match, otherwise the condition is invalid. Implementations may return messages as a map of MESSAGE_ID =&gt; MESSAGE pairs.  </p>
-<p id="rfc.section.3.2.2.p.4">The message to be signed is the concatenation of the FIXED_PREFIX and DYNAMIC_MESSAGE.  </p>
+<p id="rfc.section.3.2.2.p.1">The SIGNATURE MUST have the exact same number of octets as the MODULUS, even if that means adding leading zeros. This ensures that the fulfillment size is constant and known ahead of time. Note that the field is still length-prefixed for consistency. Implementations MUST verify that the SIGNATURE and MODULUS consist of the same number of octets. SIGNATURE must be numerically less than MODULUS.  </p>
+<p id="rfc.section.3.2.2.p.2">The message to be signed is provided separately by the user. If no message is provided, the message is assumed to be the empty string.  </p>
 <h1 id="rfc.section.3.2.3"><a href="#rfc.section.3.2.3">3.2.3.</a> <a href="#rsa-sha-256-condition-type-implementation" id="rsa-sha-256-condition-type-implementation">Implementation</a></h1>
 <p id="rfc.section.3.2.3.p.1">The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.  <a href="#RFC3447">[RFC3447]</a> </p>
-<p id="rfc.section.3.2.3.p.2">The public exponent e is set to 65537 as recommended in <a href="#RFC4871">[RFC4871]</a>. Very large exponents can be a DoS vector <a href="#LARGE-RSA-EXPONENTS">[LARGE-RSA-EXPONENTS]</a> and 65537 is the largest Fermat prime, which has some nice properties <a href="#USING-RSA-EXPONENT-OF-65537">[USING-RSA-EXPONENT-OF-65537]</a>.  </p>
-<p id="rfc.section.3.2.3.p.3">The recommended modulus size as of 2016 is 2048 bits <a href="#KEYLENGTH-RECOMMENDATION">[KEYLENGTH-RECOMMENDATION]</a>.  In the future we anticipate an upgrade to 3072 bits which provides approximately 128 bits of security <a href="#NIST-KEYMANAGEMENT">[NIST-KEYMANAGEMENT]</a>(p. 64), about the same level as SHA-256. Implementations MUST reject moduli smaller than 1024 or greater than 4096 bits. Large moduli slow down signature verification which can be a DoS vector. DNSSEC also limits the modulus to 4096 bits <a href="#RFC3110">[RFC3110]</a>. OpenSSL supports up to 16384 bits <a href="#OPENSSL-X509-CERT-EXAMPLES">[OPENSSL-X509-CERT-EXAMPLES]</a> .  </p>
-<p id="rfc.section.3.2.3.p.4">The salt length for PSS is 32 bytes.  </p>
+<p id="rfc.section.3.2.3.p.2">The recommended modulus size as of 2016 is 2048 bits <a href="#KEYLENGTH-RECOMMENDATION">[KEYLENGTH-RECOMMENDATION]</a>.  In the future we anticipate an upgrade to 3072 bits which provides approximately 128 bits of security <a href="#NIST-KEYMANAGEMENT">[NIST-KEYMANAGEMENT]</a>(p. 64), about the same level as SHA-256.  </p>
+<p id="rfc.section.3.2.3.p.3">The salt length for PSS is 32 bytes.  </p>
 <h1 id="rfc.section.3.3"><a href="#rfc.section.3.3">3.3.</a> <a href="#threshold-sha-256-condition-type" id="threshold-sha-256-condition-type">THRESHOLD-SHA-256</a></h1>
 <p id="rfc.section.3.3.p.1">THRESHOLD-SHA-256 is assigned the type bit 2^2 = 0x04.  </p>
 <h1 id="rfc.section.3.3.1"><a href="#rfc.section.3.3.1">3.3.1.</a> <a href="#threshold-sha-256-condition-type-condition" id="threshold-sha-256-condition-type-condition">Condition</a></h1>
@@ -678,6 +665,7 @@ HASH = SHA256(
   VARUINT THRESHOLD
   VARARRAY
     VARUINT WEIGHT
+    VARBYTES PREFIX
     CONDITION
 )
                      </pre>
@@ -685,39 +673,68 @@ HASH = SHA256(
 <p id="rfc.section.3.3.1.p.2">The VARARRAY of conditions is sorted first based on length, shortest first. Elements of the same length are sorted in lexicographic (big-endian) order, smallest first.  </p>
 <h1 id="rfc.section.3.3.2"><a href="#rfc.section.3.3.2">3.3.2.</a> <a href="#threshold-sha-256-condition-type-fulfillment" id="threshold-sha-256-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
-ULFILLMENT_PAYLOAD =
+FULFILLMENT_PAYLOAD =
   VARUINT THRESHOLD
   VARARRAY
-    VARUINT WEIGHT
-    FULFILLMENT
-  VARARRAY
-    VARUINT WEIGHT
-    CONDITION
+    UINT8 FLAGS
+    OPTIONAL VARUINT WEIGHT   ; if  FLAGS &amp; 0x40
+    OPTIONAL VARBYTES PREFIX  ; if  FLAGS &amp; 0x20
+    OPTIONAL FULFILLMENT      ; if  FLAGS &amp; 0x80
+    OPTIONAL CONDITION        ; if ~FLAGS &amp; 0x80
                      </pre>
-<h1 id="rfc.section.3.4"><a href="#rfc.section.3.4">3.4.</a> <a href="#ed25519-sha-256-condition-type" id="ed25519-sha-256-condition-type">ED25519-SHA-256</a></h1>
-<p id="rfc.section.3.4.p.1">ED25519-SHA-256 is assigned the type bit 2^3 = 0x08.  </p>
-<h1 id="rfc.section.3.4.1"><a href="#rfc.section.3.4.1">3.4.1.</a> <a href="#ed25519-sha-256-condition-type-condition" id="ed25519-sha-256-condition-type-condition">Condition</a></h1>
+<p id="rfc.section.3.3.2.p.1">THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a threshold condition, the weights of the provided fulfillments MUST be greater than or equal to the threshold.  </p>
+<div id="rfc.table.1"/>
+<div id="threshold-sha-256-condition-type-fulfillment-flags"/>
+<p>FLAGS is a bitfield where:</p>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+  <caption>Threshold Fulfillment Flags</caption>
+  <thead>
+    <tr>
+      <th class="right">Type Bit</th>
+      <th class="right">Exp.</th>
+      <th class="right">Hex</th>
+      <th class="right">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="right">1___ ____</td>
+      <td class="right">2^7</td>
+      <td class="right">0x80</td>
+      <td class="right">IS_FULFILLMENT</td>
+    </tr>
+    <tr>
+      <td class="right">_1__ ____</td>
+      <td class="right">2^6</td>
+      <td class="right">0x40</td>
+      <td class="right">IS_WEIGHTED</td>
+    </tr>
+    <tr>
+      <td class="right">__1_ ____</td>
+      <td class="right">2^5</td>
+      <td class="right">0x20</td>
+      <td class="right">IS_PREFIXED</td>
+    </tr>
+  </tbody>
+</table>
+<p id="rfc.section.3.3.2.p.2">IS_FULFILLMENT specifies whether this subcondition is provided as a fulfillment.  Otherwise it is provided as a condition.  </p>
+<p id="rfc.section.3.3.2.p.3">IS_WEIGHTED specifies whether the subcondition has a weight other than 1. If true, the weight is given as WEIGHT and must be an integer in the range 1 ... 2^32 - 1.  </p>
+<p id="rfc.section.3.3.2.p.4">IS_PREFIXED specifies whether a prefix should be added before passing the message to this subcondition. Prefixes can be used to progressively narrow the scope of a condition without knowing its internal structure. If true, the prefix is provided as PREFIX.  </p>
+<h1 id="rfc.section.3.4"><a href="#rfc.section.3.4">3.4.</a> <a href="#ed25519-condition-type" id="ed25519-condition-type">ED25519</a></h1>
+<p id="rfc.section.3.4.p.1">ED25519 is assigned the type bit 2^3 = 0x08.  </p>
+<h1 id="rfc.section.3.4.1"><a href="#rfc.section.3.4.1">3.4.1.</a> <a href="#ed25519-condition-type-condition" id="ed25519-condition-type-condition">Condition</a></h1>
 <pre>
-HASH = SHA256(
-  VARBYTES PUBLIC_KEY
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
-)
+HASH = UINT256 PUBLIC_KEY
                      </pre>
-<h1 id="rfc.section.3.4.2"><a href="#rfc.section.3.4.2">3.4.2.</a> <a href="#ed25519-sha-256-condition-type-fulfillment" id="ed25519-sha-256-condition-type-fulfillment">Fulfillment</a></h1>
+<p id="rfc.section.3.4.1.p.1">Since the PUBLIC_KEY is only 256 bits long, we do not hash it.  </p>
+<h1 id="rfc.section.3.4.2"><a href="#rfc.section.3.4.2">3.4.2.</a> <a href="#ed25519-condition-type-fulfillment" id="ed25519-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
 FULFILLMENT_PAYLOAD =
-  VARBYTES PUBLIC_KEY
-  VARBYTES MESSAGE_ID
-  VARBYTES FIXED_PREFIX
-  VARUINT DYNAMIC_MESSAGE_LENGTH
-  VARBYTES DYNAMIC_MESSAGE
-  VARBYTES SIGNATURE
+  UINT256 PUBLIC_KEY
+  UINT512 SIGNATURE
                      </pre>
-<p id="rfc.section.3.4.2.p.1">The MESSAGE_ID, FIXED_PREFIX, DYNAMIC_MESSAGE_LENGTH and DYNAMIC_MESSAGE fields have the same meaning as in the RSA-SHA-256 condition type.  </p>
-<h1 id="rfc.section.3.4.3"><a href="#rfc.section.3.4.3">3.4.3.</a> <a href="#ed25519-sha-256-condition-type-implementation" id="ed25519-sha-256-condition-type-implementation">Implementation</a></h1>
-<p id="rfc.section.3.4.3.p.1">The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE are Ed25519 as defined in <a href="#I-D.irtf-cfrg-eddsa">[I-D.irtf-cfrg-eddsa]</a> </p>
+<h1 id="rfc.section.3.4.3"><a href="#rfc.section.3.4.3">3.4.3.</a> <a href="#ed25519-condition-type-implementation" id="ed25519-condition-type-implementation">Implementation</a></h1>
+<p id="rfc.section.3.4.3.p.1">The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE are Ed25519 as defined in <a href="#I-D.irtf-cfrg-eddsa">[I-D.irtf-cfrg-eddsa]</a>. SHA-512 is used as the hashing function.  </p>
 <h1 id="rfc.references"><a href="#rfc.references">4.</a> References</h1>
 <h1 id="rfc.references.1"><a href="#rfc.references.1">4.1.</a> Normative References</h1>
 <table>
@@ -774,7 +791,7 @@ FULFILLMENT_PAYLOAD =
 <h1 id="rfc.appendix.D"><a href="#rfc.appendix.D">Appendix D.</a> <a href="#appendix-c" id="appendix-c">IANA Considerations</a></h1>
 <h1 id="rfc.appendix.D.1"><a href="#rfc.appendix.D.1">D.1.</a> <a href="#crypto-conditions-type-registry" id="crypto-conditions-type-registry">Crypto-Condition Type Registry</a></h1>
 <p id="rfc.section.D.1.p.1">The following initial entries should be added to the Crypto-Condition Type registry to be created and maintained at (the suggested URI) <a href="http://www.iana.org/assignments/crypto-condition-types">http://www.iana.org/assignments/crypto-condition-types</a>: </p>
-<div id="rfc.table.1"/>
+<div id="rfc.table.2"/>
 <div id="crypto-condition-type-bitmasks"/>
 <p>The following bitmasks are registered:</p>
 <table cellpadding="3" cellspacing="0" class="tt full center">
@@ -810,7 +827,7 @@ FULFILLMENT_PAYLOAD =
       <td class="right">1000</td>
       <td class="right">2^3</td>
       <td class="right">8</td>
-      <td class="right">ED25519-SHA-256</td>
+      <td class="right">ED25519</td>
     </tr>
   </tbody>
 </table>
