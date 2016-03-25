@@ -423,11 +423,10 @@ HASH = SHA256(
 FULFILLMENT_PAYLOAD =
   VARUINT THRESHOLD
   VARARRAY
-    UINT8 FLAGS
-    OPTIONAL VARUINT WEIGHT   ; if  FLAGS & 0x40
-    OPTIONAL VARBYTES PREFIX  ; if  FLAGS & 0x20
-    OPTIONAL FULFILLMENT      ; if  FLAGS & 0x80
-    OPTIONAL CONDITION        ; if ~FLAGS & 0x80
+    VARUINT WEIGHT
+    VARBYTES PREFIX
+    VARBYTES FULFILLMENT
+    VARBYTES CONDITION
                      ]]></artwork>
                     </figure>
                     <t>

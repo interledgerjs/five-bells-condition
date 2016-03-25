@@ -93,7 +93,7 @@ describe('Sha256Fulfillment', function () {
         this.preimage = new Buffer(preimageHex, 'hex')
       })
 
-      it('generates fulfillment ' + fulfillmentUri, function () {
+      it('generates correct fulfillment', function () {
         const f = new condition.Sha256Fulfillment()
         f.setPreimage(this.preimage)
         const uri = f.serializeUri()
