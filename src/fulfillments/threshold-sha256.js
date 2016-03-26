@@ -450,12 +450,18 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * This will validate the subfulfillments and verify that there are enough
    * subfulfillments to meet the threshold.
    *
+   * @param {Buffer} message Message to validate against.
    * @return {Boolean} Whether this fulfillment is valid.
    */
-  validate () {
-    // TODO: Verify subfulfillments
-    // TODO: Verify threshold
-    return true
+  validate (message) {
+    const fulfillments = this.subconditions.filter((cond) => cond.type === FULFILLMENT)
+    const totalWeight = fulfillments.reduce((total, cond) => total + cond.weight, 0)
+    if (totalWeight < this.threshold) {
+      throw new Error('Threshold not met')
+    }
+
+    // Ensure all subfulfillments are valid
+    return fulfillments.every((f) => f.body.validate(message))
   }
 }
 
