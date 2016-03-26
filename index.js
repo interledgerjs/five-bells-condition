@@ -25,14 +25,14 @@ const validate = (serializedCondition) => {
   }
 }
 
-const validateFulfillment = (serializedFulfillment) => {
+const validateFulfillment = (serializedFulfillment, message) => {
   try {
     // Parse fulfillment, throw on error
     const fulfillment = Fulfillment.fromUri(serializedFulfillment)
 
     // Validate fulfillment, throw on error
     return {
-      valid: fulfillment.validate(),
+      valid: fulfillment.validate(message),
       condition: fulfillment.getCondition().serializeUri(),
       error: null
     }

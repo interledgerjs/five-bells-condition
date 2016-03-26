@@ -64,10 +64,8 @@ console.log(parsedCondition.serializeUri())
 // Create an RSA-SHA256 condition
 const rsaFulfillment = new condition.RsaSha256Fulfillment()
 rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
-rsaFulfillment.setMessagePrefix(new Buffer('Hello world!'))
-rsaFulfillment.setMaxDynamicMessageLength(32) // defaults to 0
 console.log(rsaFulfillment.getCondition().serializeUri())
-// prints 'cc:1:2:fIE-iexHu64M34Sc43_vkUhsR6zQd44HtUOLEQeCgFo:307'
+// prints 'cc:1:2:o7pDZs_kmXt7FgpjsQpnyo2_7-mXn9mcq_dGSTOIWsU:260'
 
 // Fulfill an RSA-SHA256 condition
 const privateKey =
@@ -87,12 +85,11 @@ const privateKey =
   '/zGekAwjBZDKpc+H0jC14JjMzRRKeWVEpDU3k2cfBH0=\n' +
   '-----END RSA PRIVATE KEY-----\n'
 
-rsaFulfillment.setMessage(new Buffer(' Conditions are here!'))
 // rsaFulfillment.setSignature(new Buffer('...'))
 // -- or --
-rsaFulfillment.sign(privateKey)
+rsaFulfillment.sign(new Buffer('Hello World! Conditions are here!'), privateKey)
 console.log(rsaFulfillment.serializeUri().length)
-// prints '402'
+// prints '354'
 
 // Create a threshold condition
 const thresholdFulfillment = new condition.ThresholdSha256Fulfillment()
@@ -100,14 +97,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:b:to-QPnEpUgdOrkAZwgBefFlbvUum5RBlpuJUmnZYsro:348'
+// prints 'cc:1:b:SCEUQo43SIU7u2PHIBvOuOhIt5F-YfTVZzH4ulBUI-M:301'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
 // thresholdFulfillmentUri.length === 66
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:8:AQIBAQEAAAECIHyBPonsR7uuDN-EnON_75FIbEes0HeOB7VDixEHgoBaswI'
+// prints 'cf:1:8:AQIBAQEAAAECIKO6Q2bP5Jl7exYKY7EKZ8qNv-_pl5_ZnKv3RkkziFrFhAI'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 
@@ -118,19 +115,16 @@ console.log(reserializedFulfillment)
 // Create an ED25519-SHA-256 condition
 const ed25519Fulfillment = new condition.Ed25519Sha256Fulfillment()
 ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
-ed25519Fulfillment.setMessagePrefix(new Buffer('Hello world!'))
-ed25519Fulfillment.setMaxDynamicMessageLength(32) // defaults to 0
 console.log(ed25519Fulfillment.getCondition().serializeUri())
-// prints 'cc:1:10:fSI9XT3pgK5pyGBQZAt92tVNlbFK8YOYWNtdzB9ptIk:113'
+// prints 'cc:1:10:U0si58xUnE5MnLYcFfSN3yCukNrb6MjO_X7axuwZcRY:66'
 
 // Fulfill an ED25519-SHA-256 condition
 const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
 
-ed25519Fulfillment.setMessage(new Buffer(' Conditions are here!'))
 // ed25519Fulfillment.setSignature(new Buffer('...'))
 // -- or --
-ed25519Fulfillment.sign(edPrivateKey)
+ed25519Fulfillment.sign(new Buffer('Hello World! Conditions are here!'), edPrivateKey)
 console.log(ed25519Fulfillment.serializeUri())
-// prints 'cf:1:10:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_DEhlbGxvIHdvcmxkISAVIENvbmRpdGlvbnMgYXJlIGhlcmUhQENbql531PbCJlRUvKjP56k0XKJMOrIGo2F66ueuTtRnYrJB2t2ZttdfXM4gzD_87eH1nZTpu4rTkAx81hSdpwI'
+// prints 'cf:1:10:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_QLYikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
 
 ```

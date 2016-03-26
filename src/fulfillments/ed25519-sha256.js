@@ -8,8 +8,8 @@ const MissingDataError = require('../errors/missing-data-error')
 class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   constructor () {
     super()
-    this.messagePrefix = new Buffer('')
-    this.maxDynamicMessageLength = 0
+    this.publicKey = null
+    this.signature = null
   }
 
   /**
@@ -29,37 +29,6 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
     }
 
     writer.writeVarBytes(this.publicKey)
-    writer.writeVarBytes(this.messagePrefix)
-    writer.writeVarUInt(this.maxDynamicMessageLength)
-  }
-
-  /**
-   * Set the fixed message prefix.
-   *
-   * The fixed prefix is the portion of the message that is determined when the
-   * condition is first created.
-   *
-   * @param {Buffer} messagePrefix Static portion of the message
-   */
-  setMessagePrefix (messagePrefix) {
-    this.messagePrefix = messagePrefix
-  }
-
-  /**
-   * Set the maximum length of the dynamic message component.
-   *
-   * The dynamic message is the part of the signed message that is determined at
-   * fulfillment time. However, when the condition is first created, we need to
-   * know the maximum fulfillment length, which in turn requires us to put a
-   * limit on the length of the dynamic message component.
-   *
-   * If this method is not called, the maximum dynamic message length defaults
-   * to zero.
-   *
-   * @param {Number} maxDynamicMessageLength Maximum length in bytes
-   */
-  setMaxDynamicMessageLength (maxDynamicMessageLength) {
-    this.maxDynamicMessageLength = maxDynamicMessageLength
   }
 
   /**
@@ -82,24 +51,6 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
-   * Set the dynamic message portion.
-   *
-   * Part of the signed message (the suffix) can be determined when the
-   * condition is being fulfilled.
-   *
-   * Length may not exceed the maximum dynamic message length.
-   *
-   * @param {Buffer} message Binary form of dynamic message.
-   */
-  setMessage (message) {
-    if (!Buffer.isBuffer(message)) {
-      throw new Error('Message must be a Buffer')
-    }
-
-    this.message = message
-  }
-
-  /**
    * Set the signature.
    *
    * Instead of using the private key to sign using the sign() method, we can
@@ -116,20 +67,17 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
-   * Sign the message.
+   * Sign a message.
    *
-   * This method will take the currently configured values for the message
-   * prefix and suffix and create a signature using the provided Ed25519 private
-   * key.
+   * This method will take a message and an Ed25519 private key and store a
+   * corresponding signature in this fulfillment.
    *
-   * @param {String} privateKey Ed25519 private key
+   * @param {Buffer} message Message to sign.
+   * @param {String} privateKey Ed25519 private key.
    */
-  sign (privateKey) {
-    if (!Buffer.isBuffer(this.messagePrefix)) {
-      throw new MissingDataError('Requires a message prefix')
-    }
-    if (!Buffer.isBuffer(this.message)) {
-      throw new MissingDataError('Requires a message')
+  sign (message, privateKey) {
+    if (!Buffer.isBuffer(message)) {
+      throw new MissingDataError('Message must be a Buffer')
     }
     if (!Buffer.isBuffer(privateKey)) {
       throw new Error('Private key must be a Buffer')
@@ -138,10 +86,9 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
     const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
     this.setPublicKey(new Buffer(keyPair.publicKey))
 
-    const message = Buffer.concat([this.messagePrefix, this.message])
     // This would be the Ed25519ph version:
-    // const message = crypto.createHash('sha512')
-    //   .update(Buffer.concat([this.messagePrefix, this.message]))
+    // message = crypto.createHash('sha512')
+    //   .update(message)
     //   .digest()
     this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
   }
@@ -169,9 +116,6 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
    */
   parsePayload (reader) {
     this.setPublicKey(reader.readVarBytes())
-    this.setMessagePrefix(reader.readVarBytes())
-    this.setMaxDynamicMessageLength(reader.readVarUInt())
-    this.setMessage(reader.readVarBytes())
     this.setSignature(reader.readVarBytes())
   }
 
@@ -184,17 +128,16 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
    */
   writePayload (writer) {
     this.writeCommonHeader(writer)
-    writer.writeVarBytes(this.message)
     writer.writeVarBytes(this.signature)
   }
 
   /**
-   * Calculates the longest possible fulfillment length.
+   * Calculates the fulfillment length.
    *
-   * The longest fulfillment for an Ed25519 condition is the length of a
-   * fulfillment where the dynamic message length equals its maximum length.
+   * Ed25519 signatures are constant size. Consequently fulfillments for this
+   * type of condition are also constant size.
    *
-   * @return {Number} Maximum length of the fulfillment payload
+   * @return {Number} Length of the fulfillment payload.
    */
   calculateMaxFulfillmentLength () {
     const predictor = new Predictor()
@@ -205,10 +148,6 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
 
     // Calculate the length that the common header would have
     this.writeCommonHeader(predictor)
-
-    // Message suffix
-    predictor.writeVarUInt(this.maxDynamicMessageLength)
-    predictor.skip(this.maxDynamicMessageLength)
 
     // Signature
     predictor.writeVarBytes(this.publicKey)
@@ -222,11 +161,11 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
    * The signature of this Ed25519 fulfillment is verified against the provided
    * message and public key.
    *
+   * @param {Buffer} message Message to validate against.
    * @return {Boolean} Whether this fulfillment is valid.
    */
-  validate () {
-    // TODO: Validate signature
-    return true
+  validate (message) {
+    return nacl.sign.detached.verify(message, this.signature, this.publicKey)
   }
 }
 

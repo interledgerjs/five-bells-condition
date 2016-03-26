@@ -11,8 +11,8 @@ const MissingDataError = require('../errors/missing-data-error')
 class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   constructor () {
     super()
-    this.messagePrefix = new Buffer('')
-    this.maxDynamicMessageLength = 0
+    this.modulus = null
+    this.signature = null
   }
 
   /**
@@ -32,37 +32,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
     }
 
     writer.writeVarBytes(this.modulus)
-    writer.writeVarBytes(this.messagePrefix)
-    writer.writeVarUInt(this.maxDynamicMessageLength)
-  }
-
-  /**
-   * Set the fixed message prefix.
-   *
-   * The fixed prefix is the portion of the message that is determined when the
-   * condition is first created.
-   *
-   * @param {Buffer} messagePrefix Static portion of the message
-   */
-  setMessagePrefix (messagePrefix) {
-    this.messagePrefix = messagePrefix
-  }
-
-  /**
-   * Set the maximum length of the dynamic message component.
-   *
-   * The dynamic message is the part of the signed message that is determined at
-   * fulfillment time. However, when the condition is first created, we need to
-   * know the maximum fulfillment length, which in turn requires us to put a
-   * limit on the length of the dynamic message component.
-   *
-   * If this method is not called, the maximum dynamic message length defaults
-   * to zero.
-   *
-   * @param {Number} maxDynamicMessageLength Maximum length in bytes
-   */
-  setMaxDynamicMessageLength (maxDynamicMessageLength) {
-    this.maxDynamicMessageLength = maxDynamicMessageLength
   }
 
   /**
@@ -79,20 +48,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
-   * Set the dynamic message portion.
-   *
-   * Part of the signed message (the suffix) can be determined when the
-   * condition is being fulfilled.
-   *
-   * Length may not exceed the maximum dynamic message length.
-   *
-   * @param {Buffer} message Binary form of dynamic message.
-   */
-  setMessage (message) {
-    this.message = message
-  }
-
-  /**
    * Set the signature manually.
    *
    * The signature must be a valid RSA-PSS siganture.
@@ -106,18 +61,18 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   /**
    * Sign the message.
    *
-   * This method will take the currently configured values for the message
-   * prefix and suffix and create a signature using the provided RSA private
-   * key.
+   * This method will take the provided message and create a signature using the
+   * provided RSA private key. The resulting signature is stored in the
+   * fulfillment.
    *
    * The key should be provided as a PEM encoded private key string.
    *
    * The message is padded using RSA-PSS with SHA256.
    *
+   * @param {Buffer} message Message to sign.
    * @param {String} privateKey RSA private key
    */
-  sign (privateKey) {
-    const message = Buffer.concat([this.messagePrefix, this.message])
+  sign (message, privateKey) {
     const pss = new Pss()
     const modulusHighByteBitLength = this.modulus[0].toString(2).length
     const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
@@ -151,9 +106,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    */
   parsePayload (reader) {
     this.setPublicModulus(reader.readVarBytes())
-    this.setMessagePrefix(reader.readVarBytes())
-    this.setMaxDynamicMessageLength(reader.readVarUInt())
-    this.setMessage(reader.readVarBytes())
     this.setSignature(reader.readVarBytes())
   }
 
@@ -165,20 +117,11 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Writer} writer Subject for writing the fulfillment payload.
    */
   writePayload (writer) {
-    if (!this.message) {
-      throw new MissingDataError('Requires a dynamic message')
-    }
-
     if (!this.signature) {
       throw new MissingDataError('Requires a signature')
     }
 
-    if (this.message.length > this.maxDynamicMessageLength) {
-      throw new Error('Message is larger than maximum allowed length')
-    }
-
     this.writeCommonHeader(writer)
-    writer.writeVarBytes(this.message)
     writer.writeVarBytes(this.signature)
   }
 
@@ -200,10 +143,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
     // Calculate the length that the common header would have
     this.writeCommonHeader(predictor)
 
-    // Message suffix
-    predictor.writeVarUInt(this.maxDynamicMessageLength)
-    predictor.skip(this.maxDynamicMessageLength)
-
     // Signature
     predictor.writeVarBytes(this.modulus)
 
@@ -214,18 +153,12 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * Verify the signature of this RSA fulfillment.
    *
    * The signature of this RSA fulfillment is verified against the provided
-   * message and public modulus.
+   * message and the condition's public modulus.
    *
+   * @param {Buffer} message Message to verify.
    * @return {Boolean} Whether this fulfillment is valid.
    */
-  validate () {
-    // Verify message length
-    if (this.message.length > this.maxDynamicMessageLength) {
-      throw new Error('Dynamic message is too large (actual: ' +
-        this.message.length + ', should be <= ' +
-        this.maxDynamicMessageLength + ')')
-    }
-
+  validate (message) {
     // Verify modulus (correct length)
     if (this.modulus.length < 128 || this.modulus.length > 512) {
       throw new Error('Modulus length is out of range: ' + this.modulus.length)
@@ -237,7 +170,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
     }
 
     // Verify signature
-    const message = Buffer.concat([this.messagePrefix, this.message])
     const publicKey = pem.modulusToPem(this.modulus)
     const encodedMessage = crypto.publicDecrypt({
       key: publicKey,
