@@ -364,8 +364,6 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
     writer.writeVarUInt(this.threshold)
     writer.writeVarUInt(optimizedSubfulfillments.length)
     sortedSubconditions.forEach(writer.write.bind(writer))
-
-    return writer.getBuffer()
   }
 
   /**
@@ -465,6 +463,6 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-ThresholdSha256Fulfillment.TYPE_BIT = 0x04
+ThresholdSha256Fulfillment.TYPE_BIT = 0x08
 
 module.exports = ThresholdSha256Fulfillment

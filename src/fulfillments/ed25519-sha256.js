@@ -230,6 +230,6 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-Ed25519Sha256Fulfillment.TYPE_BIT = 0x08
+Ed25519Sha256Fulfillment.TYPE_BIT = 0x10
 
 module.exports = Ed25519Sha256Fulfillment

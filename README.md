@@ -100,14 +100,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:7:5WsTdKCyJm0h7lTv_hgAN9hNXfO0YSy7dtx2AUcoW84:350'
+// prints 'cc:1:b:2S5b-DDaXp_dcjst6X0M3noVohIsMZPT7cn7GmB1-uc:350'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
 // thresholdFulfillmentUri.length === 69
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:4:AQIBAQABAAABAAIgfIE-iexHu64M34Sc43_vkUhsR6zQd44HtUOLEQeCgFqzAg'
+// prints 'cf:1:8:AQIBAQABAAABAAIgfIE-iexHu64M34Sc43_vkUhsR6zQd44HtUOLEQeCgFqzAg'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 
@@ -121,7 +121,7 @@ ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c354
 ed25519Fulfillment.setMessagePrefix(new Buffer('Hello world!'))
 ed25519Fulfillment.setMaxDynamicMessageLength(32) // defaults to 0
 console.log(ed25519Fulfillment.getCondition().serializeUri())
-// prints 'cc:1:8:qQINW2um59C4DB9JSVXH1igqAmaYGGqryllHUgCpfPU:113'
+// prints 'cc:1:10:fSI9XT3pgK5pyGBQZAt92tVNlbFK8YOYWNtdzB9ptIk:113'
 
 // Fulfill an ED25519-SHA-256 condition
 const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
@@ -131,6 +131,6 @@ ed25519Fulfillment.setMessage(new Buffer(' Conditions are here!'))
 // -- or --
 ed25519Fulfillment.sign(edPrivateKey)
 console.log(ed25519Fulfillment.serializeUri())
-// prints 'cf:1:8:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_DEhlbGxvIHdvcmxkISAVIENvbmRpdGlvbnMgYXJlIGhlcmUhQENbql531PbCJlRUvKjP56k0XKJMOrIGo2F66ueuTtRnYrJB2t2ZttdfXM4gzD_87eH1nZTpu4rTkAx81hSdpwI'
+// prints 'cf:1:10:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_DEhlbGxvIHdvcmxkISAVIENvbmRpdGlvbnMgYXJlIGhlcmUhQENbql531PbCJlRUvKjP56k0XKJMOrIGo2F66ueuTtRnYrJB2t2ZttdfXM4gzD_87eH1nZTpu4rTkAx81hSdpwI'
 
 ```
