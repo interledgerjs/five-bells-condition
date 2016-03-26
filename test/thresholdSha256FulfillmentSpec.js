@@ -15,8 +15,8 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.emptySha256
     ],
     1,
-    'cf:1:8:AQEBAQABAA',
-    'cc:1:9:Atmus9zDi-5XDQwkSx41ABwBpWP04aXlsdc5Nrdjqss:39'
+    'cf:1:8:AQEBAQEA',
+    'cc:1:9:vM9AH5sVJ-OTnSVZljFwlr4uhJ__YipcXbePy5YNCzs:38'
   )
 
   testFromFulfillments(
@@ -25,8 +25,8 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.tinySha256
     ],
     1,
-    'cf:1:8:AQIBAQABAQAAAQAQIIwJDpTAx9JoRObgShxmqyyG3a9luI7sZMV2r8sWaIzxRQ',
-    'cc:1:19:2Alprb_bzlblF72lV02fpBtJTanxN9WzMs_39To7gmA:112'
+    'cf:1:8:AQIBAQEBAAABECCMCQ6UwMfSaETm4EocZqssht2vZbiO7GTFdq_LFmiM8UU',
+    'cc:1:19:oywTVwi7YszBK7hVf0EIfmZyGYwZJTZXGkmHq3t0A6E:110'
   )
 
   testFromFulfillments(
@@ -35,8 +35,8 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.edSha256_1
     ],
     1,
-    'cf:1:8:AQIBAQABAQAAAQAQIIwJDpTAx9JoRObgShxmqyyG3a9luI7sZMV2r8sWaIzxRQ',
-    'cc:1:19:2Alprb_bzlblF72lV02fpBtJTanxN9WzMs_39To7gmA:112'
+    'cf:1:8:AQIBAQEBAAABECCMCQ6UwMfSaETm4EocZqssht2vZbiO7GTFdq_LFmiM8UU',
+    'cc:1:19:oywTVwi7YszBK7hVf0EIfmZyGYwZJTZXGkmHq3t0A6E:110'
   )
 
   testFromFulfillments(
@@ -45,8 +45,8 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.edSha256_1
     ],
     2,
-    'cf:1:8:AgIBAQABAQABAQAQIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1AAADYWJjQK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE',
-    'cc:1:19:7yPwI9XYVJ_L2pksHMAEFRzsMyPgFEJO5FygnmOgw70:79'
+    'cf:1:8:AgIBAQEBAAEBECB2oVkgRKbk9REmW8pzpgTZCwUp0d9gK-MKGakldmDR9QAAA2FiY0CuxqtqkSKv8PfcuWZ_9hMTaJRzK254wm9bZzEB4mf-Litl-k1T2tR4oa2mTVD9Hf232Ukg3D4aVkpkexy6NWAB',
+    'cc:1:19:r3nfy5lqRY_CABMbnXRuxHa4kgesLy_-hudt1jbFU-g:77'
   )
 
   function testFromFulfillments (fulfillments, threshold, fulfillmentUri, conditionUri) {

@@ -10,8 +10,6 @@ const MissingDataError = require('../errors/missing-data-error')
 const CONDITION = 'condition'
 const FULFILLMENT = 'fulfillment'
 
-const EMPTY_BUFFER = new Buffer(0)
-
 class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   constructor () {
     super()
@@ -28,33 +26,23 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * threshold fulfillment.
    *
    * @param {Condition} subcondition Condition to add
-   * @param {Object} [opts] Subcondition parameters
-   * @param {Number} [opts.weight=1] Integer weight of the subcondition.
-   * @param {Buffer} [opts.prefix] Message prefix to apply to the subcondition.
+   * @param {Number} [weight=1] Integer weight of the subcondition.
    */
-  addSubcondition (subcondition, opts) {
+  addSubcondition (subcondition, weight) {
     if (!(subcondition instanceof Condition)) {
       throw new Error('Subconditions must be objects of type Condition')
     }
 
-    opts = opts || {}
-    if (typeof opts.weight === 'undefined') {
-      opts.weight = 1
-    } else if (!Number.isInteger(opts.weight)) {
-      throw new Error('Invalid weight, not an integer: ' + opts.weight)
-    }
-
-    if (typeof opts.prefix === 'undefined') {
-      opts.prefix = EMPTY_BUFFER
-    } else if (!Buffer.isBuffer(opts.prefix)) {
-      throw new Error('Invalid prefix, not a buffer: ' + opts.prefix)
+    if (typeof weight === 'undefined') {
+      weight = 1
+    } else if (!Number.isInteger(weight)) {
+      throw new Error('Invalid weight, not an integer: ' + weight)
     }
 
     this.subconditions.push({
       type: CONDITION,
       body: subcondition,
-      weight: opts.weight,
-      prefix: opts.prefix
+      weight: weight
     })
   }
 
@@ -69,33 +57,23 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * be added automatically.
    *
    * @param {Fulfillment} Fulfillment to add
-   * @param {Object} [opts] Subcondition parameters
-   * @param {Number} [opts.weight] Integer weight of the subcondition.
-   * @param {Buffer} [opts.prefix] Message prefix to apply to the subcondition.
+   * @param {Number} [weight=1] Integer weight of the subcondition.
    */
-  addSubfulfillment (subfulfillment, opts) {
+  addSubfulfillment (subfulfillment, weight) {
     if (!(subfulfillment instanceof Fulfillment)) {
       throw new Error('Subfulfillments must be objects of type Fulfillment')
     }
 
-    opts = opts || {}
-    if (typeof opts.weight === 'undefined') {
-      opts.weight = 1
-    } else if (!Number.isInteger(opts.weight)) {
-      throw new Error('Invalid weight, not an integer: ' + opts.weight)
-    }
-
-    if (typeof opts.prefix === 'undefined') {
-      opts.prefix = EMPTY_BUFFER
-    } else if (!Buffer.isBuffer(opts.prefix)) {
-      throw new Error('Invalid prefix, not a buffer: ' + opts.prefix)
+    if (typeof weight === 'undefined') {
+      weight = 1
+    } else if (!Number.isInteger(weight)) {
+      throw new Error('Invalid weight, not an integer: ' + weight)
     }
 
     this.subconditions.push({
       type: FULFILLMENT,
       body: subfulfillment,
-      weight: opts.weight,
-      prefix: opts.prefix
+      weight: weight
     })
   }
 
@@ -147,11 +125,10 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
     }
 
     const subconditions = this.subconditions
-      // Serialize each subcondition with weight and prefix
+      // Serialize each subcondition with weight
       .map((c) => {
         const writer = new Writer()
         writer.writeVarUInt(c.weight)
-        writer.writeVarBytes(c.prefix)
         writer.write(
           c.type === FULFILLMENT
             ? c.body.getCondition().serializeBinary()
@@ -221,7 +198,6 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
     this.subconditions.forEach((cond) => {
       predictor.writeUInt8()                // IS_FULFILLMENT
       predictor.writeVarUInt(cond.weight)   // WEIGHT
-      predictor.writeVarBytes(cond.prefix)  // PREFIX
     })
     // Represents the sum of CONDITION/FULFILLMENT values
     predictor.skip(worstCaseFulfillmentsLength)
@@ -300,14 +276,12 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
     for (let i = 0; i < conditionCount; i++) {
       const isFulfillment = reader.readUInt8()
       const weight = reader.readVarUInt()
-      const prefix = reader.readVarBytes()
-      const opts = { weight, prefix }
 
       // IS_FULFILLMENT?
       if (isFulfillment) {
-        this.addSubfulfillment(Fulfillment.fromBinary(reader), opts)
+        this.addSubfulfillment(Fulfillment.fromBinary(reader), weight)
       } else {
-        this.addSubcondition(Condition.fromBinary(reader), opts)
+        this.addSubcondition(Condition.fromBinary(reader), weight)
       }
     }
   }
@@ -354,7 +328,6 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
         const writer = new Writer()
         writer.writeUInt8(cond.type === FULFILLMENT ? 1 : 0)
         writer.writeVarUInt(cond.weight)
-        writer.writeVarBytes(cond.prefix)
         writer.write(cond.body.serializeBinary())
         return writer.getBuffer()
       })
