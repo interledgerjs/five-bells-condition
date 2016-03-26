@@ -25,8 +25,8 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.tinySha256
     ],
     1,
-    'cf:1:8:AQIBAQEBAAABECBOjidMY5uDWyCspCSAf4ydktj1wT-JZXJGHITSC3lnSEI',
-    'cc:1:19:nZmVGIs9eijAg38QI6i1K1OoPJ35zSpMN4WYBOkj_cY:107'
+    'cf:1:8:AQIBAQEBAAABECB2oVkgRKbk9REmW8pzpgTZCwUp0d9gK-MKGakldmDR9WI',
+    'cc:1:19:EnS4cr9N9Um_oGTFkdK_Nzr7YqGAOfaMhu2gqLD39u0:139'
   )
 
   testFromFulfillments(
@@ -35,8 +35,8 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.edSha256_1
     ],
     1,
-    'cf:1:8:AQIBAQEBAAABECBOjidMY5uDWyCspCSAf4ydktj1wT-JZXJGHITSC3lnSEI',
-    'cc:1:19:nZmVGIs9eijAg38QI6i1K1OoPJ35zSpMN4WYBOkj_cY:107'
+    'cf:1:8:AQIBAQEBAAABECB2oVkgRKbk9REmW8pzpgTZCwUp0d9gK-MKGakldmDR9WI',
+    'cc:1:19:EnS4cr9N9Um_oGTFkdK_Nzr7YqGAOfaMhu2gqLD39u0:139'
   )
 
   testFromFulfillments(
@@ -46,7 +46,7 @@ describe('ThresholdSha256Fulfillment', function () {
     ],
     2,
     'cf:1:8:AgIBAQEBAAEBECB2oVkgRKbk9REmW8pzpgTZCwUp0d9gK-MKGakldmDR9UCuxqtqkSKv8PfcuWZ_9hMTaJRzK254wm9bZzEB4mf-Litl-k1T2tR4oa2mTVD9Hf232Ukg3D4aVkpkexy6NWAB',
-    'cc:1:19:M7FD09UBgnDjpBF0vX1Tl83P8DG4Z4-UP-iETfgbHUs:75'
+    'cc:1:19:CVevdzZHieWsxiV1epSgQKzSQEh8LjTE35rJUP_HMlM:106'
   )
 
   function testFromFulfillments (fulfillments, threshold, fulfillmentUri, conditionUri) {

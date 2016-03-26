@@ -8,7 +8,7 @@ const Sha256Fulfillment = require('./src/fulfillments/sha256')
 const RsaSha256Fulfillment = require('./src/fulfillments/rsa-sha256')
 const PrefixSha256Fulfillment = require('./src/fulfillments/prefix-sha256')
 const ThresholdSha256Fulfillment = require('./src/fulfillments/threshold-sha256')
-const Ed25519Sha256Fulfillment = require('./src/fulfillments/ed25519-sha256')
+const Ed25519Fulfillment = require('./src/fulfillments/ed25519')
 
 const validate = (serializedCondition) => {
   try {
@@ -49,7 +49,7 @@ BitmaskRegistry.registerType(Sha256Fulfillment)
 BitmaskRegistry.registerType(RsaSha256Fulfillment)
 BitmaskRegistry.registerType(PrefixSha256Fulfillment)
 BitmaskRegistry.registerType(ThresholdSha256Fulfillment)
-BitmaskRegistry.registerType(Ed25519Sha256Fulfillment)
+BitmaskRegistry.registerType(Ed25519Fulfillment)
 
 module.exports = {
   Condition,
@@ -59,7 +59,7 @@ module.exports = {
   RsaSha256Fulfillment,
   PrefixSha256Fulfillment,
   ThresholdSha256Fulfillment,
-  Ed25519Sha256Fulfillment,
+  Ed25519Fulfillment,
   validate,
   validateFulfillment,
   fromConditionUri: Condition.fromUri.bind(Condition),

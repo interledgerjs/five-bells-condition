@@ -92,7 +92,6 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Hasher} hasher Destination where the hash payload will be written.
    */
   writeHashPayload (hasher) {
-    hasher.writeVarUInt(RsaSha256Fulfillment.TYPE_BIT)
     this.writeCommonHeader(hasher)
   }
 

@@ -1,11 +1,10 @@
 'use strict'
 
 const nacl = require('tweetnacl')
-const BaseSha256Fulfillment = require('./base-sha256')
-const Predictor = require('../lib/predictor')
+const Fulfillment = require('../lib/fulfillment')
 const MissingDataError = require('../errors/missing-data-error')
 
-class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
+class Ed25519Fulfillment extends Fulfillment {
   constructor () {
     super()
     this.publicKey = null
@@ -24,10 +23,6 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Writer|Hasher|Predictor} Target for outputting the header.
    */
   writeCommonHeader (writer) {
-    if (!this.publicKey) {
-      throw new MissingDataError('Requires a public publicKey')
-    }
-
     writer.writeVarBytes(this.publicKey)
   }
 
@@ -94,16 +89,19 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
-   * Generate the contents of the condition hash.
+   * Generate the condition hash.
    *
-   * Writes the contents of the condition hash to a Hasher. Used internally by
-   * `getCondition`.
+   * Since the public key is the same size as the hash we'd be putting out here,
+   * we just return the public key.
    *
    * @param {Hasher} hasher Destination where the hash payload will be written.
    */
-  writeHashPayload (hasher) {
-    hasher.writeVarUInt(Ed25519Sha256Fulfillment.TYPE_BIT)
-    this.writeCommonHeader(hasher)
+  generateHash () {
+    if (!this.publicKey) {
+      throw new MissingDataError('Requires a public publicKey')
+    }
+
+    return this.publicKey
   }
 
   /**
@@ -127,7 +125,7 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Writer} writer Subject for writing the fulfillment payload.
    */
   writePayload (writer) {
-    this.writeCommonHeader(writer)
+    writer.writeVarBytes(this.publicKey)
     writer.writeVarBytes(this.signature)
   }
 
@@ -140,19 +138,7 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
    * @return {Number} Length of the fulfillment payload.
    */
   calculateMaxFulfillmentLength () {
-    const predictor = new Predictor()
-
-    if (!this.publicKey) {
-      throw new MissingDataError('Requires a public key')
-    }
-
-    // Calculate the length that the common header would have
-    this.writeCommonHeader(predictor)
-
-    // Signature
-    predictor.writeVarBytes(this.publicKey)
-
-    return predictor.getSize()
+    return Ed25519Fulfillment.FULFILLMENT_LENGTH
   }
 
   /**
@@ -169,6 +155,11 @@ class Ed25519Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-Ed25519Sha256Fulfillment.TYPE_BIT = 0x10
+Ed25519Fulfillment.TYPE_BIT = 0x10
+Ed25519Fulfillment.PUBKEY_LENGTH = 32
+Ed25519Fulfillment.SIGNATURE_LENGTH = 64
+Ed25519Fulfillment.FULFILLMENT_LENGTH =
+  1 + Ed25519Fulfillment.PUBKEY_LENGTH +
+  1 + Ed25519Fulfillment.SIGNATURE_LENGTH
 
-module.exports = Ed25519Sha256Fulfillment
+module.exports = Ed25519Fulfillment

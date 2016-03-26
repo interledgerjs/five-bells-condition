@@ -29,7 +29,7 @@ describe('PrefixSha256Fulfillment', function () {
     ex.edSha256_1,
     new Buffer('ff00ff00abab', 'hex'),
     'cf:1:4:Bv8A_wCrqxAgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fVArsarapEir_D33Llmf_YTE2iUcytueMJvW2cxAeJn_i4rZfpNU9rUeKGtpk1Q_R39t9lJINw-GlZKZHscujVgAQ',
-    'cc:1:14:dzCmFAhWuhSio1KZLJ8001ABRadI-mwqdqsBVjhxwK8:73'
+    'cc:1:14:9fCofL8wjsbJjFWnQSYI7v9AFLnlj0v9ZGtLOr32E4c:105'
   )
 
   function testFromFulfillment (subfulfillment, prefix, fulfillmentUri, conditionUri) {

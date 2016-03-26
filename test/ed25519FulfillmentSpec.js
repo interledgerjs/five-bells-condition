@@ -2,14 +2,14 @@ const assert = require('chai').assert
 const crypto = require('crypto')
 const condition = require('..')
 
-describe('Ed25519Sha256Fulfillment', function () {
+describe('Ed25519Fulfillment', function () {
   testFromParams(
     {
       key: new Buffer(32).fill(0),
       message: new Buffer(0)
     },
     'cf:1:10:IDtqJ7zOtqQtYqOo0CpvDXNlMhV3HeJDpjrASKGLWdopQI-JWzyv4slQYDnQ4qZjglaABGdP6NI3eFCS5A1qr0g-T8YBaHBfMfEBWWE4ziGqNXwNMqBk9CPcPuSqOr9T-AM',
-    'cc:1:10:d1wPecc4TXuP4VzcnzYTEpxZRCuWBOjuVppsiLew1KE:66'
+    'cc:1:10:O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik:98'
   )
 
   testFromParams(
@@ -18,7 +18,7 @@ describe('Ed25519Sha256Fulfillment', function () {
       message: new Buffer('616263', 'hex')
     },
     'cf:1:10:IHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE',
-    'cc:1:10:To4nTGObg1sgrKQkgH-MnZLY9cE_iWVyRhyE0gt5Z0g:66'
+    'cc:1:10:dqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fU:98'
   )
 
   testFromParams(
@@ -27,13 +27,13 @@ describe('Ed25519Sha256Fulfillment', function () {
       message: new Buffer(512).fill(0x21)
     },
     'cf:1:10:IEQpkwZQBKoeTEj03QFYGUwCNJvMZkzZbkAOommRio1RQJ9NvOCWyjlSjeLY7ZZU_ppsfV3PmTQfkMvKWLNN4vlQLRVKm1Q3hUKSG1vDHcHTSkJ5Y3LUfvyuro5NfOiT4Qc',
-    'cc:1:10:Q69RQ_AwluAfB04-gFoIJvC5EG6uKJQ0Lhbx-kJGsOY:66'
+    'cc:1:10:RCmTBlAEqh5MSPTdAVgZTAI0m8xmTNluQA6iaZGKjVE:98'
   )
 
   function testFromParams (params, fulfillmentUri, conditionUri) {
     describe('key ' + params.key.toString('hex'), function () {
       it('generates correct fulfillment uri', function () {
-        const f = new condition.Ed25519Sha256Fulfillment()
+        const f = new condition.Ed25519Fulfillment()
         f.sign(params.message, params.key)
         const uri = f.serializeUri()
 
@@ -41,7 +41,7 @@ describe('Ed25519Sha256Fulfillment', function () {
       })
 
       it('generates correct condition uri', function () {
-        const f = new condition.Ed25519Sha256Fulfillment()
+        const f = new condition.Ed25519Fulfillment()
         f.sign(params.message, params.key)
         const uri = f.getCondition().serializeUri()
 
@@ -56,7 +56,7 @@ describe('Ed25519Sha256Fulfillment', function () {
       })
 
       it('parsed condition matches generated condition', function () {
-        const f = new condition.Ed25519Sha256Fulfillment()
+        const f = new condition.Ed25519Fulfillment()
         f.sign(params.message, params.key)
         const generatedCondition = f.getCondition()
         const parsedCondition = condition.fromConditionUri(conditionUri)
