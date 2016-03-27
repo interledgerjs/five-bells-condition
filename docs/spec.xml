@@ -400,7 +400,6 @@ HASH = SHA256(
   VARUINT THRESHOLD
   VARARRAY
     VARUINT WEIGHT
-    VARBYTES PREFIX
     CONDITION
 )
                      ]]></artwork>
@@ -424,7 +423,6 @@ FULFILLMENT_PAYLOAD =
   VARUINT THRESHOLD
   VARARRAY
     VARUINT WEIGHT
-    VARBYTES PREFIX
     VARBYTES FULFILLMENT
     VARBYTES CONDITION
                      ]]></artwork>
@@ -434,55 +432,9 @@ FULFILLMENT_PAYLOAD =
                         threshold condition, the weights of the provided fulfillments MUST be greater than or
                         equal to the threshold.
                     </t>
-                    <texttable anchor="threshold-sha-256-condition-type-fulfillment-flags" title="Threshold Fulfillment Flags">
-                        <preamble>FLAGS is a bitfield where:</preamble>
-
-                        <ttcol align="right">Type Bit</ttcol>
-
-                        <ttcol align="right">Exp.</ttcol>
-
-                        <ttcol align="right">Hex</ttcol>
-
-                        <ttcol align="right">Name</ttcol>
-
-                        <c>1___ ____</c>
-
-                        <c>2^7</c>
-
-                        <c>0x80</c>
-
-                        <c>IS_FULFILLMENT</c>
-
-                        <c>_1__ ____</c>
-
-                        <c>2^6</c>
-
-                        <c>0x40</c>
-
-                        <c>IS_WEIGHTED</c>
-
-                        <c>__1_ ____</c>
-
-                        <c>2^5</c>
-
-                        <c>0x20</c>
-
-                        <c>IS_PREFIXED</c>
-
-                    </texttable>
                     <t>
-                        IS_FULFILLMENT specifies whether this subcondition is provided as a fulfillment.
-                        Otherwise it is provided as a condition.
-                    </t>
-                    <t>
-                        IS_WEIGHTED specifies whether the subcondition has a weight other than 1. If true,
-                        the weight is given as WEIGHT and must be an integer in the range 1 ... 2^32 - 1.
-                    </t>
-                    <t>
-                        IS_PREFIXED specifies whether a prefix should be added before passing the message
-                        to this subcondition. Prefixes can be used to progressively narrow the scope of a
-                        condition without knowing its internal structure. If true, the prefix is provided
-                        as PREFIX.
+                        WEIGHT refers to the weight of the condition and must be an integer in the range
+                        1 ... 2^32 - 1.
                     </t>
                 </section>
             </section>
@@ -504,8 +456,8 @@ HASH = UINT256 PUBLIC_KEY
                     <figure>
                         <artwork><![CDATA[
 FULFILLMENT_PAYLOAD =
-  UINT256 PUBLIC_KEY
-  UINT512 SIGNATURE
+  VARBYTES PUBLIC_KEY
+  VARBYTES SIGNATURE
                      ]]></artwork>
                     </figure>
                 </section>
@@ -513,6 +465,12 @@ FULFILLMENT_PAYLOAD =
                     <t>
                         The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE are Ed25519 as defined in
                         <xref target="I-D.irtf-cfrg-eddsa" />. SHA-512 is used as the hashing function.
+                    </t>
+                    <t>
+                        The PUBLIC_KEY field represents the Ed25519 public key and MUST be 32 bytes in length.
+                    </t>
+                    <t>
+                        The SIGNATURE field represents the Ed25519 signature and MUST be 64 bytes in length.
                     </t>
                 </section>
             </section>

@@ -97,14 +97,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:b:5o-I9rY3B9Xk69ISr3faJAgruzxzfA23YxnPsp7ayOQ:301'
+// prints 'cc:1:b:5o-I9rY3B9Xk69ISr3faJAgruzxzfA23YxnPsp7ayOQ:308'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
-// thresholdFulfillmentUri.length === 66
+// thresholdFulfillmentUri.length === 69
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:8:AQIBAQEAAAECIHeCz5aiLAio41JcSY1MZFfXchOXwziHa_Zk2tIbERhhhAI'
+// prints 'cf:1:8:AQIBAgEAAAEAJAIgd4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGGEAg'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 
