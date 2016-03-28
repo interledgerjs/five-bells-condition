@@ -388,9 +388,46 @@ FULFILLMENT_PAYLOAD =
                     </t>
                 </section>
             </section>
+            <section title="PREFIX-SHA-256" anchor="prefix-sha-256-condition-type">
+                <t>
+                    PREFIX-SHA-256 is assigned the type bit 2^2 = 0x04.
+                </t>
+                <section title="Condition" anchor="prefix-sha-256-condition-type-condition">
+                    <figure>
+                        <artwork><![CDATA[
+HASH = SHA256(
+  VARUINT TYPE_BIT
+  VARBYTES PREFIX
+  CONDITION
+)
+                     ]]></artwork>
+                    </figure>
+                    <t>
+                        The TYPE_BIT is 0x04. The reason we need this is because prefix conditions are a
+                        structural condition. Structural conditions can have subconditions, meaning their
+                        TYPE_BITMASK can have multiple bits set, including other structural conditions. This
+                        TYPE_BIT prevents the possibility that two different structural fulfillments could
+                        ever generate the exact same condition.
+                    </t>
+                    <t>
+                        PREFIX is an arbitrary octet string. When the prefix fulfillment is validated, it
+                        will prepend the prefix to the provided message and pass the result as the message
+                        to the subfulfillment.
+                    </t>
+                </section>
+                <section title="Fulfillment" anchor="prefix-sha-256-condition-type-fulfillment">
+                    <figure>
+                        <artwork><![CDATA[
+FULFILLMENT_PAYLOAD =
+  VARBYTES PREFIX
+  FULFILLMENT
+                     ]]></artwork>
+                    </figure>
+                </section>
+            </section>
             <section title="THRESHOLD-SHA-256" anchor="threshold-sha-256-condition-type">
                 <t>
-                    THRESHOLD-SHA-256 is assigned the type bit 2^2 = 0x04.
+                    THRESHOLD-SHA-256 is assigned the type bit 2^3 = 0x08.
                 </t>
                 <section title="Condition" anchor="threshold-sha-256-condition-type-condition">
                     <figure>
@@ -405,7 +442,7 @@ HASH = SHA256(
                      ]]></artwork>
                     </figure>
                     <t>
-                        The TYPE_BIT is 0x04. The reason we need this is because threshold conditions are a
+                        The TYPE_BIT is 0x08. The reason we need this is because threshold conditions are a
                         structural condition. Structural conditions can have subconditions, meaning their
                         TYPE_BITMASK can have multiple bits set, including other structural conditions. This
                         TYPE_BIT prevents the possibility that two different structural fulfillments could
@@ -440,7 +477,7 @@ FULFILLMENT_PAYLOAD =
             </section>
             <section title="ED25519" anchor="ed25519-condition-type">
                 <t>
-                    ED25519 is assigned the type bit 2^3 = 0x08.
+                    ED25519 is assigned the type bit 2^4 = 0x10.
                 </t>
                 <section title="Condition" anchor="ed25519-condition-type-condition">
                     <figure>
@@ -449,7 +486,7 @@ HASH = UINT256 PUBLIC_KEY
                      ]]></artwork>
                     </figure>
                     <t>
-                        Since the PUBLIC_KEY is only 256 bits long, we do not hash it.
+                        Since the PUBLIC_KEY is already only 256 bits long and this condition type is not structural, we do not hash it.
                     </t>
                 </section>
                 <section title="Fulfillment" anchor="ed25519-condition-type-fulfillment">
@@ -603,13 +640,21 @@ FULFILLMENT_PAYLOAD =
 
                     <c>4</c>
 
-                    <c>THRESHOLD-SHA-256</c>
+                    <c>PREFIX-SHA-256</c>
 
                     <c>1000</c>
 
                     <c>2^3</c>
 
                     <c>8</c>
+
+                    <c>THRESHOLD-SHA-256</c>
+
+                    <c>10000</c>
+
+                    <c>2^4</c>
+
+                    <c>10</c>
 
                     <c>ED25519</c>
 
