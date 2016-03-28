@@ -3,7 +3,7 @@
 const BaseSha256Fulfillment = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
 
-class Sha256Fulfillment extends BaseSha256Fulfillment {
+class PreimageSha256Fulfillment extends BaseSha256Fulfillment {
   /**
    * Generate the contents of the condition hash.
    *
@@ -77,6 +77,7 @@ class Sha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-Sha256Fulfillment.TYPE_BIT = 0x01
+PreimageSha256Fulfillment.TYPE_ID = 0
+PreimageSha256Fulfillment.FEATURE_BITMASK = 0x03
 
-module.exports = Sha256Fulfillment
+module.exports = PreimageSha256Fulfillment

@@ -5,9 +5,9 @@ const condition = require('..')
 
 describe('ThresholdSha256Fulfillment', function () {
   const ex = {
-    emptySha256: 'cf:1:1:AA',
-    tinySha256: 'cf:1:1:AQA',
-    edSha256_1: 'cf:1:10:IHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE'
+    emptySha256: 'cf:1:0:AA',
+    tinySha256: 'cf:1:0:AQA',
+    ed: 'cf:1:4:IHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE'
   }
 
   testFromFulfillments(
@@ -15,38 +15,38 @@ describe('ThresholdSha256Fulfillment', function () {
       ex.emptySha256
     ],
     1,
-    'cf:1:8:AQEBAgEAAA',
-    'cc:1:9:vM9AH5sVJ-OTnSVZljFwlr4uhJ__YipcXbePy5YNCzs:8'
+    'cf:1:2:AQEBAgAAAA',
+    'cc:1:b:OsKqUg4JxmXbrGJRbIhGAOzTz-ub1L2YYNMqPpIW1cY:8'
   )
 
   testFromFulfillments(
     [
-      ex.edSha256_1,
+      ex.ed,
       ex.tinySha256
     ],
     1,
-    'cf:1:8:AQIBAwEBAAABACMQIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1Yg',
-    'cc:1:19:EnS4cr9N9Um_oGTFkdK_Nzr7YqGAOfaMhu2gqLD39u0:145'
+    'cf:1:2:AQIBAwABAAABACMgIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1Yg',
+    'cc:1:2b:fUAUR2rFcOtNs1ARv_7WVkEPNrdCtFHkxLsFlEsBPbs:145'
   )
 
   testFromFulfillments(
     [
       ex.tinySha256,
-      ex.edSha256_1
+      ex.ed
     ],
     1,
-    'cf:1:8:AQIBAwEBAAABACMQIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1Yg',
-    'cc:1:19:EnS4cr9N9Um_oGTFkdK_Nzr7YqGAOfaMhu2gqLD39u0:145'
+    'cf:1:2:AQIBAwABAAABACMgIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1Yg',
+    'cc:1:2b:fUAUR2rFcOtNs1ARv_7WVkEPNrdCtFHkxLsFlEsBPbs:145'
   )
 
   testFromFulfillments(
     [
       ex.tinySha256,
-      ex.edSha256_1
+      ex.ed
     ],
     2,
-    'cf:1:8:AgIBAwEBAAABYxAgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fVArsarapEir_D33Llmf_YTE2iUcytueMJvW2cxAeJn_i4rZfpNU9rUeKGtpk1Q_R39t9lJINw-GlZKZHscujVgAQA',
-    'cc:1:19:CVevdzZHieWsxiV1epSgQKzSQEh8LjTE35rJUP_HMlM:112'
+    'cf:1:2:AgIBAwABAAABYwQgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fVArsarapEir_D33Llmf_YTE2iUcytueMJvW2cxAeJn_i4rZfpNU9rUeKGtpk1Q_R39t9lJINw-GlZKZHscujVgAQA',
+    'cc:1:2b:drdWZwjRtBLpFabd2jNFHlHV7tML7xl6j7qGQgRsbkY:112'
   )
 
   function testFromFulfillments (fulfillments, threshold, fulfillmentUri, conditionUri) {

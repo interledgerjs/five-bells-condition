@@ -155,7 +155,8 @@ class Ed25519Fulfillment extends Fulfillment {
   }
 }
 
-Ed25519Fulfillment.TYPE_BIT = 0x10
+Ed25519Fulfillment.TYPE_ID = 4
+Ed25519Fulfillment.FEATURE_BITMASK = 0x20
 Ed25519Fulfillment.PUBKEY_LENGTH = 32
 Ed25519Fulfillment.SIGNATURE_LENGTH = 64
 Ed25519Fulfillment.FULFILLMENT_LENGTH =

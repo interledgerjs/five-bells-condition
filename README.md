@@ -14,12 +14,12 @@ This specification is only a draft at this stage and has not been submitted.
 const condition = require('five-bells-condition')
 
 // Check a condition for validity
-const exampleCondition = 'cc:1:1:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
+const exampleCondition = 'cc:1:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
 const validationResult = condition.validate(exampleCondition)
 // validationResult === { valid: true, error: null }
 
 // Validate a fulfillment
-const exampleFulfillment = 'cf:1:1:AA'
+const exampleFulfillment = 'cf:1:0:AA'
 const compiled = condition.validateFulfillment(exampleFulfillment)
 // compiled === { valid: true, condition: exampleCondition, error: null }
 // Then simply verify that the fulfillment matches the condition
@@ -28,21 +28,21 @@ console.log(compiled.valid && compiled.condition === exampleCondition)
 
 // Create a SHA256 condition
 const myCondition = new condition.Condition()
-myCondition.setBitmask(condition.Sha256Fulfillment.TYPE_BIT)
+myCondition.setBitmask(condition.PreimageSha256Fulfillment.FEATURE_BITMASK)
 myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
 myCondition.setMaxFulfillmentLength(1)
 console.log(myCondition.serializeUri())
 // prints exampleCondition
 
 // Create a SHA256 fulfillment
-const myFulfillment = new condition.Sha256Fulfillment()
+const myFulfillment = new condition.PreimageSha256Fulfillment()
 myFulfillment.setPreimage(new Buffer(''))
 console.log(myFulfillment.serializeUri())
 // prints exampleFulfillment
 
 // Parse a fulfillment
 const parsedFulfillment = condition.fromFulfillmentUri(exampleFulfillment)
-// parsedFulfillment instanceof condition.Sha256Fulfillment === true
+// parsedFulfillment instanceof condition.PreimageSha256Fulfillment === true
 // Note: Merely parsing a fulfillment DOES NOT validate it.
 
 // Validate a fulfillment
@@ -65,7 +65,7 @@ console.log(parsedCondition.serializeUri())
 const rsaFulfillment = new condition.RsaSha256Fulfillment()
 rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
 console.log(rsaFulfillment.getCondition().serializeUri())
-// prints 'cc:1:2:d4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGE:260'
+// prints 'cc:1:11:d4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGE:260'
 
 // Fulfill an RSA-SHA256 condition
 const privateKey =
@@ -97,14 +97,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:b:5o-I9rY3B9Xk69ISr3faJAgruzxzfA23YxnPsp7ayOQ:308'
+// prints 'cc:1:1b:nXCiu2GjMxzsCMaM6IhXPQavllDOXc1LplmfDkaN83g:308'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
 // thresholdFulfillmentUri.length === 69
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:8:AQIBAgEAAAEAJAIgd4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGGEAg'
+// prints 'cf:1:2:AQIBAgAAAAEAJBEgd4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGGEAg'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 
@@ -116,7 +116,7 @@ console.log(reserializedFulfillment)
 const ed25519Fulfillment = new condition.Ed25519Fulfillment()
 ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
 console.log(ed25519Fulfillment.getCondition().serializeUri())
-// prints 'cc:1:10:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:98'
+// prints 'cc:1:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:98'
 
 // Fulfill an ED25519-SHA-256 condition
 const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
@@ -125,6 +125,6 @@ const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755
 // -- or --
 ed25519Fulfillment.sign(new Buffer('Hello World! Conditions are here!'), edPrivateKey)
 console.log(ed25519Fulfillment.serializeUri())
-// prints 'cf:1:10:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_QLYikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
+// prints 'cf:1:4:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_QLYikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
 
 ```

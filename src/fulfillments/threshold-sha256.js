@@ -106,7 +106,7 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * @return {Number} Complete bitmask for this fulfillment.
    */
   getBitmask () {
-    let bitmask = this.getTypeBit()
+    let bitmask = super.getBitmask()
 
     for (let cond of this.subconditions) {
       bitmask |= cond.body.getBitmask()
@@ -468,6 +468,7 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-ThresholdSha256Fulfillment.TYPE_BIT = 0x08
+ThresholdSha256Fulfillment.TYPE_ID = 2
+ThresholdSha256Fulfillment.FEATURE_BITMASK = 0x09
 
 module.exports = ThresholdSha256Fulfillment

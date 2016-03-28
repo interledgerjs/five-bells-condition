@@ -109,23 +109,14 @@
                         and support for new ones can be added in the future.
                     </t>
                     <t>
-                        <figure>
-                            <preamble>
-                                Implementations can state their supported algorithms simply by providing a
-                                bitmask. It is easy to verify that a given implementation will be able to
-                                verify the fulfillment to a given condition, by verifying that the condition's
-                                bitmask and its own bitmask of supported algorithms satisfies:
-                            </preamble>
-                            <artwork><![CDATA[
-condition &amp; ~supported == 0
-                         ]]></artwork>
-                            <postamble>
-                                where &amp; is the bitwise AND operator and ~ is the bitwise NOT operator.
-                            </postamble>
-                        </figure>
+                        Implementations can state their supported algorithms simply by providing a
+                        bitmask. It is easy to verify that a given implementation will be able to
+                        verify the fulfillment to a given condition, by verifying that all bits
+                        that are set in the condition's bitmask are also set in the implementation's
+                        supported features bitmask.
                     </t>
                     <t>
-                        Any new high bit can redefine the meaning of any existing lower bits as long as
+                        Any new high bit can redefine the meaning of any existing lower bits when
                         it is set. This can be used to remove obsolete algorithms.
                     </t>
                     <t>
@@ -236,9 +227,9 @@ condition &amp; ~supported == 0
             </section>
             <section title="Condition" anchor="condition-format">
                 <t>
-                    Below are the string and binary encoding formats for a condition. In both, the TYPE_BITMASK
-                    is the boolean OR of the TYPE_BITs of the condition type and all subcondition types,
-                    recursively.
+                    Below are the string and binary encoding formats for a condition. In both, the FEATURE_BITMASK
+                    is the boolean OR of the FEATURE_BITMASK of the top-level condition type and all subcondition
+                    types, recursively.
                 </t>
                 <section title="String" anchor="string-condition-format">
                     <figure>
@@ -246,7 +237,7 @@ condition &amp; ~supported == 0
                             Conditions are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cc:" BASE10(VERSION) ":" BASE16(TYPE_BITMASK) ":"
+"cc:" BASE10(VERSION) ":" BASE16(FEATURE_BITMASK) ":"
     BASE64URL(HASH) ":" BASE10(FULFILLMENT_LENGTH)
                      ]]></artwork>
                     </figure>
@@ -258,7 +249,7 @@ condition &amp; ~supported == 0
                         </preamble>
                         <artwork><![CDATA[
 CONDITION =
-  VARUINT TYPE_BITMASK
+  VARUINT FEATURE_BITMASK
   VARBYTES HASH
   VARUINT FULFILLMENT_LENGTH
                      ]]></artwork>
@@ -268,7 +259,7 @@ CONDITION =
             <section title="Fulfillment" anchor="fulfillment-format">
                 <t>
                     Below are the string and binary encoding formats for a fulfillment. In both the
-                    TYPE_BIT is the single bit representing the top level condition type.
+                    TYPE_ID is the numeric type identifier representing the top level condition type.
                 </t>
                 <section title="String Format" anchor="string-fulfillment-format">
                     <figure>
@@ -276,7 +267,7 @@ CONDITION =
                             Fulfillments are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cf:" BASE10(VERSION) ":" BASE16(TYPE_BIT) ":"
+"cf:" BASE10(VERSION) ":" BASE16(TYPE_ID) ":"
     BASE64URL(FULFILLMENT_PAYLOAD)
                      ]]></artwork>
                     </figure>
@@ -288,38 +279,126 @@ CONDITION =
                         </preamble>
                         <artwork><![CDATA[
 FULFILLMENT =
-  VARUINT TYPE_BIT
+  VARUINT TYPE_ID
   FULFILLMENT_PAYLOAD
                      ]]></artwork>
                     </figure>
                 </section>
             </section>
         </section>
-        <section title="Condition Types" anchor="condition-types">
+
+        <section title="Feature Suites" anchor="feature-suites">
             <t>
-                The following condition types are defined in this version of the specification. New types may
-                be defined in future and will be registered in the IANA maintained <xref
-                    target="crypto-conditions-type-registry">Crypto-Condition Type Registry</xref>
+                The following feature suites are defined in this version of the specification. New feature
+                suites may be defined in the future and will be registered in the IANA maintained
+                <xref target="crypto-conditions-type-registry">Crypto-Condition Type Registry</xref>
             </t>
-            <section title="SHA-256" anchor="sha-256-condition-type">
+            <t>
+                Support for a condition MUST depend on one or more feature suites. Future versions of
+                this spec MAY introduce new feature bits and condition types. However, all new
+                condition types MUST always depend on at least one of the new feature suites. This
+                ensures that all previously creates implementations correctly signal that they do
+                not support the new type.
+            </t>
+            <t>
+                Feature suites are chosen such that they represent reasonable clusters of functionality.
+                For instance, it is reasonable to require that an implementation which supports SHA-256
+                in one context MUST support it in all contexts, since it already needed to implement
+                the algorithm.
+            </t>
+            <t>
+                An implementation which supports a certain set of feature suites MUST accept all
+                condition types which depend only on that set or any subset of feature suites.
+            </t>
+            <section title="SHA-256" anchor="sha-256-feature-suite">
                 <t>
-                    SHA-256 is assigned the type bit 2^0 = 0x01.
+                    SHA-256 is a hashing algorithm and is assigned the feature suite bit 2^0 = 0x01.
+                </t>
+            </section>
+            <section title="PREIMAGE" anchor="preimage-feature-suite">
+                <t>
+                    PREIMAGE is a hashlock condition and is assigned the feature suite bit 2^1 = 0x02.
                 </t>
                 <t>
-                    This type of condition is also called a hashlock. We can use revealing the preimage as
-                    a type of one bit signature.
+                    A preimage condition is the hash of its own fulfillment. In order to fulfill a
+                    preimage condition, a valid preimage must be provided.
+                </t>
+                <t>
+                    Preimage conditions can be used as a so-called hashlock. Since cryptographically
+                    secure hashing functions are preimage-resistant, only the original creator of
+                    a preimage condition can feasibly produce the preimage if it contains a large
+                    amount of random entropy.
+                </t>
+            </section>
+            <section title="PREFIX" anchor="preimage-feature-suite">
+                <t>
+                    PREFIX is a structural condition and is assigned the feature suite bit 2^2 = 0x04.
+                </t>
+                <t>
+                    A prefix condition condition contains exactly one subcondition. When validated it
+                    simply prepends the message to be validated with a constant string before passing
+                    it on to the subcondition's validation function.
+                </t>
+            </section>
+            <section title="THRESHOLD" anchor="threshold-feature-suite">
+                <t>
+                    THRESHOLD is a structural condition and is assigned the feature suite bit 2^3 = 0x08.
+                </t>
+                <t>
+                    Threshold conditions provide a way to create m-of-n threshold combinations of other
+                    conditions such that m of the n subconditions have to be fulfilled in order for the
+                    threshold condition to be fulfilled.
+                </t>
+                <t>
+                    Weights are also supported which allow one subcondition to count as multiple
+                    fulfilled subconditions towards the threshold.
+                </t>
+            </section>
+            <section title="RSA-PSS" anchor="rsa-pss-feature-suite">
+                <t>
+                    RSA-PSS is a signature algorithm and is assigned the feature suite bit 2^4 = 0x10.
+                </t>
+            </section>
+            <section title="ED25519" anchor="ed25519-feature-suite">
+                <t>
+                    ED25519 is a signature algorithm and is assigned the feature suite bit 2^5 = 0x20.
+                </t>
+                <t>
+                    ED25519 is a compact elliptic curve based signature algorithm.
+                </t>
+            </section>
+        </section>
+
+        <section title="Condition Types" anchor="condition-types">
+            <t>
+                The following condition types are defined in this version of the specification. New
+                types may be defined in the future and will be registered in the IANA maintained <xref
+                    target="crypto-conditions-type-registry">Crypto-Condition Type Registry</xref>
+            </t>
+            <section title="PREIMAGE-SHA-256" anchor="preimage-sha-256-condition-type">
+                <t>
+                    PREIMAGE-SHA-256 is assigned the type ID 0. It relies on the SHA-256 and PREIMAGE
+                    feature suites which corresponds to a feature bitmask of 0x03.
+                </t>
+                <t>
+                    This type of condition is also called a hashlock. By creating a hash of a
+                    difficult-to-guess 256-bit random or pseudo-random integer it is possible to
+                    create a condition which the creator can trivially fulfill by publishing the
+                    random value. However, for anyone else, the condition is cryptgraphically hard
+                    to fulfill, because they would have to find a preimage for the given condition
+                    hash.
                 </t>
                 <t>
                     Bitcoin supports this type of condition via the OP_HASH256 operator.
                 </t>
-                <section title="Condition" anchor="sha-256-condition-type-condition">
+                <section title="Condition" anchor="preimage-sha-256-condition-type-condition">
                     <figure>
                         <artwork><![CDATA[
 HASH = SHA256(PREIMAGE)
                      ]]></artwork>
                     </figure>
                 </section>
-                <section title="Fulfillment" anchor="sha-256-condition-type-fulfillment">
+                <section title="Fulfillment" anchor="preimage-sha-256-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
 FULFILLMENT_PAYLOAD =
@@ -328,9 +407,99 @@ FULFILLMENT_PAYLOAD =
                     </figure>
                 </section>
             </section>
+            <section title="PREFIX-SHA-256" anchor="prefix-sha-256-condition-type">
+                <t>
+                    PREFIX-SHA-256 is assigned the type ID 1. It relies on the SHA-256 and PREFIX
+                    feature suites which corresponds to a feature bitmask of 0x05.
+                </t>
+                <section title="Condition" anchor="prefix-sha-256-condition-type-condition">
+                    <figure>
+                        <artwork><![CDATA[
+HASH = SHA256(
+  VARUINT TYPE_ID
+  VARBYTES PREFIX
+  CONDITION
+)
+                     ]]></artwork>
+                    </figure>
+                    <t>
+                        The TYPE_ID is 1. The reason we need this field is because prefix conditions are a
+                        structural condition. Structural conditions can have subconditions, meaning their
+                        FEATURE_BITMASK can have multiple bits set, including other structural conditions.
+                        The TYPE_ID makes it very unlikely that two different structural fulfillments
+                        could ever generate the exact same condition.
+                    </t>
+                    <t>
+                        PREFIX is an arbitrary octet string. When the prefix fulfillment is validated, it
+                        will prepend the prefix to the provided message and pass the result as the message
+                        to the subfulfillment.
+                    </t>
+                </section>
+                <section title="Fulfillment" anchor="prefix-sha-256-condition-type-fulfillment">
+                    <figure>
+                        <artwork><![CDATA[
+FULFILLMENT_PAYLOAD =
+  VARBYTES PREFIX
+  FULFILLMENT
+                     ]]></artwork>
+                    </figure>
+                </section>
+            </section>
+            <section title="THRESHOLD-SHA-256" anchor="threshold-sha-256-condition-type">
+                <t>
+                    THRESHOLD-SHA-256 is assigned the type ID 2. It relies on the SHA-256 and THRESHOLD
+                    feature suites which corresponds to a feature bitmask of 0x09.
+                </t>
+                <section title="Condition" anchor="threshold-sha-256-condition-type-condition">
+                    <figure>
+                        <artwork><![CDATA[
+HASH = SHA256(
+  VARUINT TYPE_ID
+  VARUINT THRESHOLD
+  VARARRAY
+    VARUINT WEIGHT
+    CONDITION
+)
+                     ]]></artwork>
+                    </figure>
+                    <t>
+                        The TYPE_ID is 2. The reason we need this field is because threshold conditions are a
+                        structural condition. Structural conditions can have subconditions, meaning their
+                        FEATURE_BITMASK can have multiple bits set, including other structural conditions.
+                        The TYPE_ID makes it very unlikely that two different structural fulfillments
+                        could ever generate the exact same condition.
+                    </t>
+                    <t>
+                        The VARARRAY of conditions is sorted first based on length, shortest first. Elements of the
+                        same length are sorted in lexicographic (big-endian) order, smallest first.
+                    </t>
+                </section>
+                <section title="Fulfillment" anchor="threshold-sha-256-condition-type-fulfillment">
+                    <figure>
+                        <artwork><![CDATA[
+FULFILLMENT_PAYLOAD =
+  VARUINT THRESHOLD
+  VARARRAY
+    VARUINT WEIGHT
+    VARBYTES FULFILLMENT
+    VARBYTES CONDITION
+                     ]]></artwork>
+                    </figure>
+                    <t>
+                        THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a
+                        threshold condition, the weights of the provided fulfillments MUST be greater than or
+                        equal to the threshold.
+                    </t>
+                    <t>
+                        WEIGHT refers to the weight of the condition and must be an integer in the range
+                        1 ... 2^32 - 1.
+                    </t>
+                </section>
+            </section>
             <section title="RSA-SHA-256" anchor="rsa-sha-256-condition-type">
                 <t>
-                    RSA-SHA-256 is assigned the type bit 2^1 = 0x02.
+                    RSA-SHA-256 is assigned the type ID 3. It relies on the SHA-256 and RSA-PSS feature suites
+                    which corresponds to a feature bitmask of 0x11.
                 </t>
                 <section title="Condition" anchor="rsa-sha-256-condition-type-condition">
                     <figure>
@@ -388,96 +557,16 @@ FULFILLMENT_PAYLOAD =
                     </t>
                 </section>
             </section>
-            <section title="PREFIX-SHA-256" anchor="prefix-sha-256-condition-type">
-                <t>
-                    PREFIX-SHA-256 is assigned the type bit 2^2 = 0x04.
-                </t>
-                <section title="Condition" anchor="prefix-sha-256-condition-type-condition">
-                    <figure>
-                        <artwork><![CDATA[
-HASH = SHA256(
-  VARUINT TYPE_BIT
-  VARBYTES PREFIX
-  CONDITION
-)
-                     ]]></artwork>
-                    </figure>
-                    <t>
-                        The TYPE_BIT is 0x04. The reason we need this is because prefix conditions are a
-                        structural condition. Structural conditions can have subconditions, meaning their
-                        TYPE_BITMASK can have multiple bits set, including other structural conditions. This
-                        TYPE_BIT prevents the possibility that two different structural fulfillments could
-                        ever generate the exact same condition.
-                    </t>
-                    <t>
-                        PREFIX is an arbitrary octet string. When the prefix fulfillment is validated, it
-                        will prepend the prefix to the provided message and pass the result as the message
-                        to the subfulfillment.
-                    </t>
-                </section>
-                <section title="Fulfillment" anchor="prefix-sha-256-condition-type-fulfillment">
-                    <figure>
-                        <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARBYTES PREFIX
-  FULFILLMENT
-                     ]]></artwork>
-                    </figure>
-                </section>
-            </section>
-            <section title="THRESHOLD-SHA-256" anchor="threshold-sha-256-condition-type">
-                <t>
-                    THRESHOLD-SHA-256 is assigned the type bit 2^3 = 0x08.
-                </t>
-                <section title="Condition" anchor="threshold-sha-256-condition-type-condition">
-                    <figure>
-                        <artwork><![CDATA[
-HASH = SHA256(
-  VARUINT TYPE_BIT
-  VARUINT THRESHOLD
-  VARARRAY
-    VARUINT WEIGHT
-    CONDITION
-)
-                     ]]></artwork>
-                    </figure>
-                    <t>
-                        The TYPE_BIT is 0x08. The reason we need this is because threshold conditions are a
-                        structural condition. Structural conditions can have subconditions, meaning their
-                        TYPE_BITMASK can have multiple bits set, including other structural conditions. This
-                        TYPE_BIT prevents the possibility that two different structural fulfillments could
-                        ever generate the exact same condition.
-                    </t>
-                    <t>
-                        The VARARRAY of conditions is sorted first based on length, shortest first. Elements of the
-                        same length are sorted in lexicographic (big-endian) order, smallest first.
-                    </t>
-                </section>
-                <section title="Fulfillment" anchor="threshold-sha-256-condition-type-fulfillment">
-                    <figure>
-                        <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARUINT THRESHOLD
-  VARARRAY
-    VARUINT WEIGHT
-    VARBYTES FULFILLMENT
-    VARBYTES CONDITION
-                     ]]></artwork>
-                    </figure>
-                    <t>
-                        THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a
-                        threshold condition, the weights of the provided fulfillments MUST be greater than or
-                        equal to the threshold.
-                    </t>
-                    <t>
-                        WEIGHT refers to the weight of the condition and must be an integer in the range
-                        1 ... 2^32 - 1.
-                    </t>
-                </section>
-            </section>
             <section title="ED25519" anchor="ed25519-condition-type">
                 <t>
-                    ED25519 is assigned the type bit 2^4 = 0x10.
+                    ED25519 is assigned the type ID 4. It relies only on the ED25519 feature suite which
+                    corresponds to a bitmask of 0x20.
+                </t>
+                <t>
+                    Ed25519 uses SHA-512 internally, but this specification is not defining the SHA-512
+                    versions of other condition types and we are already adding a feature set which
+                    includes this condition type. Therefore we intentionally did not introduce a SHA-512
+                    feature suite in this specification.
                 </t>
                 <section title="Condition" anchor="ed25519-condition-type-condition">
                     <figure>
@@ -607,22 +696,22 @@ FULFILLMENT_PAYLOAD =
                         http://www.iana.org/assignments/crypto-condition-types</eref>:
                 </t>
 
-                <texttable anchor="crypto-condition-type-bitmasks" title="Crypto-Condition Type Bitmasks">
-                    <preamble>The following bitmasks are registered:</preamble>
+                <texttable anchor="crypto-condition-feature-suites" title="Crypto-Condition Feature Suites">
+                    <preamble>The following feature suite bits are registered:</preamble>
 
                     <ttcol align="right">Type Bit</ttcol>
 
                     <ttcol align="right">Exp.</ttcol>
 
-                    <ttcol align="right">Int.</ttcol>
+                    <ttcol align="right">Hex</ttcol>
 
-                    <ttcol align="right">Condition Type.</ttcol>
+                    <ttcol align="right">Condition Types</ttcol>
 
                     <c>1</c>
 
                     <c>2^0</c>
 
-                    <c>1</c>
+                    <c>0x01</c>
 
                     <c>SHA-256</c>
 
@@ -630,31 +719,80 @@ FULFILLMENT_PAYLOAD =
 
                     <c>2^1</c>
 
-                    <c>2</c>
+                    <c>0x02</c>
 
-                    <c>RSA-SHA-256</c>
+                    <c>PREIMAGE</c>
 
                     <c>100</c>
 
                     <c>2^2</c>
 
-                    <c>4</c>
+                    <c>0x04</c>
 
-                    <c>PREFIX-SHA-256</c>
+                    <c>PREFIX</c>
 
                     <c>1000</c>
 
                     <c>2^3</c>
 
-                    <c>8</c>
+                    <c>0x08</c>
 
-                    <c>THRESHOLD-SHA-256</c>
+                    <c>THRESHOLD</c>
 
                     <c>10000</c>
 
                     <c>2^4</c>
 
-                    <c>10</c>
+                    <c>0x10</c>
+
+                    <c>RSA</c>
+
+                    <c>100000</c>
+
+                    <c>2^5</c>
+
+                    <c>0x20</c>
+
+                    <c>ED25519</c>
+
+                </texttable>
+
+                <texttable anchor="crypto-condition-types" title="Crypto-Condition Types">
+                    <preamble>The following types are registered:</preamble>
+
+                    <ttcol align="right">Type ID</ttcol>
+
+                    <ttcol align="right">Required Bitmask</ttcol>
+
+                    <ttcol align="right">Type Name</ttcol>
+
+                    <c>0</c>
+
+                    <c>0x03</c>
+
+                    <c>PREIMAGE-SHA-256</c>
+
+                    <c>1</c>
+
+                    <c>0x05</c>
+
+                    <c>PREFIX-SHA-256</c>
+
+                    <c>2</c>
+
+                    <c>0x09</c>
+
+                    <c>THRESHOLD-SHA-256</c>
+
+                    <c>3</c>
+
+                    <c>0x11</c>
+
+                    <c>RSA-SHA-256</c>
+
+                    <c>4</c>
+
+                    <c>0x20</c>
 
                     <c>ED25519</c>
 

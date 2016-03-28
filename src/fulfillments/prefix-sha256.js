@@ -75,7 +75,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    * @return {Number} Complete bitmask for this fulfillment.
    */
   getBitmask () {
-    return this.getTypeBit() | this.subcondition.getBitmask()
+    return super.getBitmask() | this.subcondition.getBitmask()
   }
 
   /**
@@ -175,6 +175,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-PrefixSha256Fulfillment.TYPE_BIT = 0x04
+PrefixSha256Fulfillment.TYPE_ID = 1
+PrefixSha256Fulfillment.FEATURE_BITMASK = 0x05
 
 module.exports = PrefixSha256Fulfillment

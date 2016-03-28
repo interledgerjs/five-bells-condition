@@ -181,6 +181,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-RsaSha256Fulfillment.TYPE_BIT = 0x02
+RsaSha256Fulfillment.TYPE_ID = 3
+RsaSha256Fulfillment.FEATURE_BITMASK = 0x11
 
 module.exports = RsaSha256Fulfillment
