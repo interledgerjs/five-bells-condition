@@ -400,8 +400,7 @@ HASH = SHA256(
   VARUINT THRESHOLD
   VARARRAY
     VARUINT WEIGHT
-    VARBYTES PREFIX
-    CONDITION
+    VARBTYES CONDITION
 )
                      ]]></artwork>
                     </figure>
@@ -423,11 +422,10 @@ HASH = SHA256(
 FULFILLMENT_PAYLOAD =
   VARUINT THRESHOLD
   VARARRAY
-    UINT8 FLAGS
-    OPTIONAL VARUINT WEIGHT   ; if  FLAGS & 0x40
-    OPTIONAL VARBYTES PREFIX  ; if  FLAGS & 0x20
-    OPTIONAL FULFILLMENT      ; if  FLAGS & 0x80
-    OPTIONAL CONDITION        ; if ~FLAGS & 0x80
+    VARUINT WEIGHT
+    VARBYTES FULFILLMENT
+    VARBYTES CONDITION
+
                      ]]></artwork>
                     </figure>
                     <t>
@@ -435,56 +433,13 @@ FULFILLMENT_PAYLOAD =
                         threshold condition, the weights of the provided fulfillments MUST be greater than or
                         equal to the threshold.
                     </t>
-                    <texttable anchor="threshold-sha-256-condition-type-fulfillment-flags" title="Threshold Fulfillment Flags">
-                        <preamble>FLAGS is a bitfield where:</preamble>
-
-                        <ttcol align="right">Type Bit</ttcol>
-
-                        <ttcol align="right">Exp.</ttcol>
-
-                        <ttcol align="right">Hex</ttcol>
-
-                        <ttcol align="right">Name</ttcol>
-
-                        <c>1___ ____</c>
-
-                        <c>2^7</c>
-
-                        <c>0x80</c>
-
-                        <c>IS_FULFILLMENT</c>
-
-                        <c>_1__ ____</c>
-
-                        <c>2^6</c>
-
-                        <c>0x40</c>
-
-                        <c>IS_WEIGHTED</c>
-
-                        <c>__1_ ____</c>
-
-                        <c>2^5</c>
-
-                        <c>0x20</c>
-
-                        <c>IS_PREFIXED</c>
-
-                    </texttable>
                     <t>
-                        IS_FULFILLMENT specifies whether this subcondition is provided as a fulfillment.
-                        Otherwise it is provided as a condition.
+                        WEIGHT must be an integer in the range 1 ... 2^32 - 1. 
                     </t>
                     <t>
-                        IS_WEIGHTED specifies whether the subcondition has a weight other than 1. If true,
-                        the weight is given as WEIGHT and must be an integer in the range 1 ... 2^32 - 1.
+                        Both FULFILLMENT and CONDITION can contain either a subcondition or subfulfillment in binary format or an empty VARBYTES. If neither of them is empty, this is an error.
                     </t>
-                    <t>
-                        IS_PREFIXED specifies whether a prefix should be added before passing the message
-                        to this subcondition. Prefixes can be used to progressively narrow the scope of a
-                        condition without knowing its internal structure. If true, the prefix is provided
-                        as PREFIX.
-                    </t>
+
                 </section>
             </section>
             <section title="ED25519" anchor="ed25519-condition-type">
