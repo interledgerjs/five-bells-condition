@@ -15,21 +15,21 @@ describe('PrefixSha256Fulfillment', function () {
     ex.emptySha256,
     new Buffer(0),
     'cf:1:1:AAAA',
-    'cc:1:7:dnZSIsFJ4wlvL8mwczOioDg4-2HIeAGuzkJcxf1zC3o:2'
+    'cc:1:1:7:eOC8ON6t2uIomwE0_JnM8hvaxm-fj7O2P4HsfIY9QZQ:2'
   )
 
   testFromFulfillment(
     ex.prefixSha256,
     new Buffer(0),
     'cf:1:1:AAEAAAA',
-    'cc:1:7:e3L1o9UiNqIaTjJB90MvTk9VlL3aU_YAjjO08VOVAY8:3'
+    'cc:1:1:7:uBOXmrJGdyp1Lzm20fSrBFV_Vda2KxQ8NkEkt3FRazE:3'
   )
 
   testFromFulfillment(
     ex.ed,
     new Buffer('ff00ff00abab', 'hex'),
     'cf:1:1:Bv8A_wCrqwQgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fVArsarapEir_D33Llmf_YTE2iUcytueMJvW2cxAeJn_i4rZfpNU9rUeKGtpk1Q_R39t9lJINw-GlZKZHscujVgAQ',
-    'cc:1:25:uFskYklOQ41h5M5D-EnyaKLGhpsQt5DXl5RQRDHC3is:105'
+    'cc:1:1:25:yG4wq-9QHKNuqy9zLl8GrlcPDP_uGSmYyGZ-8u7Bjps:105'
   )
 
   function testFromFulfillment (subfulfillment, prefix, fulfillmentUri, conditionUri) {

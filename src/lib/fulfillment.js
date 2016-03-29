@@ -105,6 +105,7 @@ class Fulfillment {
    */
   getCondition () {
     const condition = new Condition()
+    condition.setTypeId(this.getTypeId())
     condition.setBitmask(this.getBitmask())
     condition.setHash(this.generateHash())
     condition.setMaxFulfillmentLength(this.calculateMaxFulfillmentLength())

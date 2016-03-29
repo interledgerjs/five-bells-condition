@@ -9,7 +9,7 @@ describe('Ed25519Fulfillment', function () {
       message: new Buffer(0)
     },
     'cf:1:4:IDtqJ7zOtqQtYqOo0CpvDXNlMhV3HeJDpjrASKGLWdopQI-JWzyv4slQYDnQ4qZjglaABGdP6NI3eFCS5A1qr0g-T8YBaHBfMfEBWWE4ziGqNXwNMqBk9CPcPuSqOr9T-AM',
-    'cc:1:20:O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik:98'
+    'cc:1:4:20:O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik:98'
   )
 
   testFromParams(
@@ -18,7 +18,7 @@ describe('Ed25519Fulfillment', function () {
       message: new Buffer('616263', 'hex')
     },
     'cf:1:4:IHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE',
-    'cc:1:20:dqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fU:98'
+    'cc:1:4:20:dqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fU:98'
   )
 
   testFromParams(
@@ -27,7 +27,7 @@ describe('Ed25519Fulfillment', function () {
       message: new Buffer(512).fill(0x21)
     },
     'cf:1:4:IEQpkwZQBKoeTEj03QFYGUwCNJvMZkzZbkAOommRio1RQJ9NvOCWyjlSjeLY7ZZU_ppsfV3PmTQfkMvKWLNN4vlQLRVKm1Q3hUKSG1vDHcHTSkJ5Y3LUfvyuro5NfOiT4Qc',
-    'cc:1:20:RCmTBlAEqh5MSPTdAVgZTAI0m8xmTNluQA6iaZGKjVE:98'
+    'cc:1:4:20:RCmTBlAEqh5MSPTdAVgZTAI0m8xmTNluQA6iaZGKjVE:98'
   )
 
   function testFromParams (params, fulfillmentUri, conditionUri) {

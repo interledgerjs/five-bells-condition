@@ -237,7 +237,7 @@
                             Conditions are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cc:" BASE10(VERSION) ":" BASE16(FEATURE_BITMASK) ":"
+"cc:" BASE10(VERSION) ":" BASE10(TYPE_ID) ":" BASE16(FEATURE_BITMASK) ":"
     BASE64URL(HASH) ":" BASE10(FULFILLMENT_LENGTH)
                      ]]></artwork>
                     </figure>
@@ -249,6 +249,7 @@
                         </preamble>
                         <artwork><![CDATA[
 CONDITION =
+  VARUINT TYPE_ID
   VARUINT FEATURE_BITMASK
   VARBYTES HASH
   VARUINT FULFILLMENT_LENGTH
