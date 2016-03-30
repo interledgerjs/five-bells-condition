@@ -89,6 +89,10 @@ class Writer {
    * @return {Buffer} Result data.
    */
   getBuffer () {
+    // ST: The following debug statement is very useful, so I finally decided to
+    // commit it...
+    // console.log(this.components.map((x) => x.toString('hex')).join(' '))
+
     return Buffer.concat(this.components)
   }
 }

@@ -3,11 +3,12 @@
 require('babel-polyfill')
 const Condition = require('./src/lib/condition')
 const Fulfillment = require('./src/lib/fulfillment')
-const BitmaskRegistry = require('./src/lib/bitmask-registry')
-const Sha256Fulfillment = require('./src/fulfillments/sha256')
-const RsaSha256Fulfillment = require('./src/fulfillments/rsa-sha256')
+const TypeRegistry = require('./src/lib/type-registry')
+const PreimageSha256Fulfillment = require('./src/fulfillments/preimage-sha256')
+const PrefixSha256Fulfillment = require('./src/fulfillments/prefix-sha256')
 const ThresholdSha256Fulfillment = require('./src/fulfillments/threshold-sha256')
-const Ed25519Sha256Fulfillment = require('./src/fulfillments/ed25519-sha256')
+const RsaSha256Fulfillment = require('./src/fulfillments/rsa-sha256')
+const Ed25519Fulfillment = require('./src/fulfillments/ed25519')
 
 const validate = (serializedCondition) => {
   try {
@@ -24,14 +25,14 @@ const validate = (serializedCondition) => {
   }
 }
 
-const validateFulfillment = (serializedFulfillment) => {
+const validateFulfillment = (serializedFulfillment, message) => {
   try {
     // Parse fulfillment, throw on error
     const fulfillment = Fulfillment.fromUri(serializedFulfillment)
 
     // Validate fulfillment, throw on error
     return {
-      valid: fulfillment.validate(),
+      valid: fulfillment.validate(message),
       condition: fulfillment.getCondition().serializeUri(),
       error: null
     }
@@ -44,19 +45,21 @@ const validateFulfillment = (serializedFulfillment) => {
   }
 }
 
-BitmaskRegistry.registerType(Sha256Fulfillment)
-BitmaskRegistry.registerType(RsaSha256Fulfillment)
-BitmaskRegistry.registerType(ThresholdSha256Fulfillment)
-BitmaskRegistry.registerType(Ed25519Sha256Fulfillment)
+TypeRegistry.registerType(PreimageSha256Fulfillment)
+TypeRegistry.registerType(PrefixSha256Fulfillment)
+TypeRegistry.registerType(ThresholdSha256Fulfillment)
+TypeRegistry.registerType(RsaSha256Fulfillment)
+TypeRegistry.registerType(Ed25519Fulfillment)
 
 module.exports = {
   Condition,
   Fulfillment,
-  BitmaskRegistry,
-  Sha256Fulfillment,
+  TypeRegistry,
+  PreimageSha256Fulfillment,
   RsaSha256Fulfillment,
+  PrefixSha256Fulfillment,
   ThresholdSha256Fulfillment,
-  Ed25519Sha256Fulfillment,
+  Ed25519Fulfillment,
   validate,
   validateFulfillment,
   fromConditionUri: Condition.fromUri.bind(Condition),
