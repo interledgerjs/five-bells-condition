@@ -100,8 +100,8 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * This is a type of condition that can contain subconditions. A complete
    * bitmask must contain the set of types that must be supported in order to
    * validate this fulfillment. Therefore, we need to calculate the bitwise OR
-   * of this condition's TYPE_BIT and all subcondition's and subfulfillment's
-   * bitmasks.
+   * of this condition's FEATURE_BITMASK and all subcondition's and
+   * subfulfillment's bitmasks.
    *
    * @return {Number} Complete bitmask for this fulfillment.
    */
@@ -143,10 +143,9 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
     // Canonically sort all conditions, first by length, then lexicographically
     const sortedSubconditions = this.constructor.sortBuffers(subconditions)
 
-    hasher.writeVarUInt(ThresholdSha256Fulfillment.TYPE_BIT)
-    hasher.writeVarUInt(this.threshold)
+    hasher.writeUInt32(this.threshold)
     hasher.writeVarUInt(sortedSubconditions.length)
-    sortedSubconditions.forEach(hasher.write.bind(hasher))
+    sortedSubconditions.forEach((c) => hasher.write(c))
   }
 
   /**
@@ -187,17 +186,19 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
         subconditions
       )
 
-    if (worstCaseFulfillmentsLength === -1) {
+    if (worstCaseFulfillmentsLength === -Infinity) {
       throw new MissingDataError('Insufficient subconditions/weights to meet the threshold')
     }
 
     // Calculate resulting total maximum fulfillment size
     const predictor = new Predictor()
-    predictor.writeVarUInt(this.threshold)  // THRESHOLD
-    predictor.writeVarUInt(this.subconditions.length)
+    predictor.writeUInt32(this.threshold)              // threshold
+    predictor.writeVarUInt(this.subconditions.length)  // count
     this.subconditions.forEach((cond) => {
-      predictor.writeUInt8()                // IS_FULFILLMENT
-      predictor.writeVarUInt(cond.weight)   // WEIGHT
+      predictor.writeUInt8()                 // presence bitmask
+      if (cond.weight !== 1) {
+        predictor.writeUInt32(cond.weight)   // weight
+      }
     })
     // Represents the sum of CONDITION/FULFILLMENT values
     predictor.skip(worstCaseFulfillmentsLength)
@@ -206,17 +207,9 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   static predictSubconditionLength (cond) {
-    const conditionLength = cond.type === FULFILLMENT
+    return cond.type === FULFILLMENT
       ? cond.body.getCondition().serializeBinary().length
       : cond.body.serializeBinary().length
-
-    const predictor = new Predictor()
-    predictor.writeVarUInt(cond.weight)     // WEIGHT
-    predictor.writeVarBytes(EMPTY_BUFFER)   // FULFILLMENT
-    predictor.writeVarUInt(conditionLength) // CONDITION
-    predictor.skip(conditionLength)
-
-    return predictor.getSize()
   }
 
   static predictSubfulfillmentLength (cond) {
@@ -225,10 +218,9 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
       : cond.body.getMaxFulfillmentLength()
 
     const predictor = new Predictor()
-    predictor.writeVarUInt(cond.weight)       // WEIGHT
-    predictor.writeVarUInt(fulfillmentLength) // FULFILLMENT
-    predictor.skip(fulfillmentLength)
-    predictor.writeVarBytes(EMPTY_BUFFER)     // CONDITION
+    predictor.writeUInt8()                                       // version
+    predictor.writeUInt16()                                      // type
+    predictor.writeVarOctetString({ length: fulfillmentLength }) // payload
 
     return predictor.getSize()
   }
@@ -262,7 +254,7 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Number} [index=0] Current index in the subconditions array (used by
    *   the recursive calls.)
    * @return {Number} Maximum size of a valid, minimal set of fulfillments or
-   *   -1 if there is no valid set.
+   *   -Infinity if there is no valid set.
    */
   static calculateWorstCaseLength (threshold, subconditions, index) {
     index = index || 0
@@ -303,8 +295,8 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
     const conditionCount = reader.readVarUInt()
     for (let i = 0; i < conditionCount; i++) {
       const weight = reader.readVarUInt()
-      const fulfillment = reader.readVarBytes()
-      const condition = reader.readVarBytes()
+      const fulfillment = reader.readVarOctetString()
+      const condition = reader.readVarOctetString()
 
       if (fulfillment.length && condition.length) {
         throw new ParseError('Subconditions may not provide both subcondition and fulfillment.')
@@ -359,8 +351,8 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
       .map((cond) => {
         const writer = new Writer()
         writer.writeVarUInt(cond.weight)
-        writer.writeVarBytes(cond.type === FULFILLMENT ? cond.body.serializeBinary() : EMPTY_BUFFER)
-        writer.writeVarBytes(cond.type === CONDITION ? cond.body.serializeBinary() : EMPTY_BUFFER)
+        writer.writeVarOctetString(cond.type === FULFILLMENT ? cond.body.serializeBinary() : EMPTY_BUFFER)
+        writer.writeVarOctetString(cond.type === CONDITION ? cond.body.serializeBinary() : EMPTY_BUFFER)
         return writer.getBuffer()
       })
 

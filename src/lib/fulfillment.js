@@ -31,8 +31,8 @@ class Fulfillment {
       throw new PrefixError('Serialized fulfillment must start with "cf:"')
     }
 
-    if (pieces[1] !== '1') {
-      throw new PrefixError('Fulfillment must be version 1')
+    if (pieces[1] !== String(Condition.VERSION)) {
+      throw new PrefixError('Fulfillment must be version ' + Condition.VERSION)
     }
 
     if (!FULFILLMENT_REGEX.exec(serializedFulfillment)) {
@@ -61,7 +61,11 @@ class Fulfillment {
   static fromBinary (reader) {
     reader = Reader.from(reader)
 
-    const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readVarUInt())
+    const version = reader.readUInt8()
+    if (version !== Condition.VERSION) {
+      throw new ParseError('Invalid version ' + version)
+    }
+    const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readUInt16())
 
     const condition = new ConditionClass()
     condition.parsePayload(reader)
@@ -146,8 +150,9 @@ class Fulfillment {
    * @return {String} Fulfillment as a URI
    */
   serializeUri () {
-    return 'cf:1:' + this.getTypeId().toString(16) + ':' +
-      base64url.encode(this.serializePayload())
+    return 'cf:' + Condition.VERSION +
+      ':' + this.getTypeId().toString(16) +
+      ':' + base64url.encode(this.serializePayload())
   }
 
   /**
@@ -161,7 +166,8 @@ class Fulfillment {
    */
   serializeBinary () {
     const writer = new Writer()
-    writer.writeVarUInt(this.getTypeId())
+    writer.writeUInt8(Condition.VERSION)
+    writer.writeUInt16(this.getTypeId())
     this.writePayload(writer)
     return writer.getBuffer()
   }

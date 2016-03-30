@@ -6,44 +6,70 @@ class Predictor {
   }
 
   /**
-   * Add one byte to the predicted size.
+   * Add the size of a fixed-length integer to the predicted size.
+   *
+   * @params {Number} value Value of integer. Irrelevant here, but included in
+   *   order to have the same interface as the Writer.
+   * @params {Number} length Size of integer in bytes.
    */
-  writeUInt8 () {
-    this.size++
+  writeUInt (value, length) {
+    this.size += length
   }
 
   /**
-   * Calculate the size of a VARUINT.
+   * Calculate the size of a variable-length integer.
    *
    * A VARUINT is a variable length integer encoded as base128 where the highest
    * bit indicates that another byte is following. The first byte contains the
    * seven least significant bits of the number represented.
    *
-   * @param {Number} val Integer to be encoded
+   * @param {Number} value Integer to be encoded
    */
-  writeVarUInt (val) {
-    if (val === 0) {
-      this.size++
-    } else if (val < 0) {
-      throw new Error('Variable length integer cannot be negative')
-    } else if (val > Math.MAX_SAFE_INTEGER) {
-      throw new Error('Variable length integer too large')
-    } else {
-      // Calculate number of bits divided by seven
-      this.size += Math.ceil(val.toString(2).length / 7)
+  writeVarUInt (value) {
+    if (Buffer.isBuffer(value)) {
+      // If the integer was already passed as a buffer, we can just treat it as
+      // an octet string.
+      this.writeVarOctetString(value)
+    } else if (!Number.isInteger(value)) {
+      throw new Error('UInt must be an integer')
+    } else if (value < 0) {
+      throw new Error('UInt must be positive')
     }
+
+    const length = Math.ceil(value.toString(2).length / 8)
+    this.writeVarOctetString({ length })
   }
 
   /**
-   * Calculate the size of a VARBYTES.
+   * Skip bytes for a fixed-length octet string.
    *
-   * A VARBYTES field consists of a VARUINT followed by that many bytes.
+   * Just an alias for skip. Included to provide consistency with Writer.
    *
-   * @param {Buffer} val Contents for VARBYTES
+   * @param {Buffer} buffer Data to write.
+   * @param {Number} length Length of data according to the format.
    */
-  writeVarBytes (val) {
-    this.writeVarUInt(val.length)
-    this.size += val.length
+  writeOctetString (buffer, length) {
+    this.skip(length)
+  }
+
+  /**
+   * Calculate the size of a variable-length octet string.
+   *
+   * A variable-length octet string is a length-prefixed set of arbitrary bytes.
+   *
+   * @param {Buffer} value Contents of the octet string.
+   */
+  writeVarOctetString (buffer) {
+    // Skip initial byte
+    this.skip(1)
+
+    // Skip separate length field if there is one
+    if (buffer.length > 127) {
+      const lengthOfLength = Math.ceil(buffer.length.toString(2).length / 8)
+      this.skip(lengthOfLength)
+    }
+
+    this.skip(buffer.length)
   }
 
   /**
@@ -73,5 +99,12 @@ class Predictor {
     return this.size
   }
 }
+
+// Create writeUInt{8,16,32,64} shortcuts
+;[1, 2, 4, 8].forEach((bytes) => {
+  Predictor.prototype['writeUInt' + bytes * 8] = function (value) {
+    return this['writeUInt'](value, bytes)
+  }
+})
 
 module.exports = Predictor

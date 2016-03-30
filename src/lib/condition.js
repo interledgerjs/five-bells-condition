@@ -34,8 +34,8 @@ class Condition {
       throw new PrefixError('Serialized condition must start with "cc:"')
     }
 
-    if (pieces[1] !== '1') {
-      throw new PrefixError('Condition must be version 1')
+    if (pieces[1] !== String(Condition.VERSION)) {
+      throw new PrefixError('Condition must be version ' + Condition.VERSION)
     }
 
     if (!CONDITION_REGEX.exec(serializedCondition)) {
@@ -203,7 +203,8 @@ class Condition {
    * @return {String} Condition as a URI
    */
   serializeUri () {
-    return 'cc:1:' + this.getTypeId().toString(16) +
+    return 'cc:' + Condition.VERSION +
+      ':' + this.getTypeId().toString(16) +
       ':' + this.getBitmask().toString(16) +
       ':' + base64url.encode(this.getHash()) +
       ':' + this.getMaxFulfillmentLength()
@@ -220,10 +221,11 @@ class Condition {
    */
   serializeBinary () {
     const writer = new Writer()
-    writer.writeVarUInt(this.getTypeId())
-    writer.writeVarUInt(this.getBitmask())
-    writer.writeVarBytes(this.getHash())
-    writer.writeVarUInt(this.getMaxFulfillmentLength())
+    writer.writeUInt8(Condition.VERSION)                // version
+    writer.writeUInt16(this.getTypeId())                // type
+    writer.writeVarUInt(this.getBitmask())              // requiredSuites
+    writer.writeVarOctetString(this.getHash())          // fingerprint
+    writer.writeVarUInt(this.getMaxFulfillmentLength()) // maxFulfillmentLength
     return writer.getBuffer()
   }
 
@@ -236,10 +238,13 @@ class Condition {
    * @param {Reader} reader Binary stream containing the condition.
    */
   parseBinary (reader) {
-    this.setTypeId(reader.readVarUInt())
+    if (reader.readUInt8() !== Condition.VERSION) {
+      throw new ParseError('Invalid version, must be ' + Condition.VERSION)
+    }
+    this.setTypeId(reader.readUInt16())
     this.setBitmask(reader.readVarUInt())
     // TODO Ensure bitmask is supported?
-    this.setHash(reader.readVarBytes())
+    this.setHash(reader.readVarOctetString())
     this.setMaxFulfillmentLength(reader.readVarUInt())
   }
 
@@ -255,5 +260,7 @@ class Condition {
     return true
   }
 }
+
+Condition.VERSION = 1
 
 module.exports = Condition

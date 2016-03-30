@@ -157,51 +157,11 @@
         </section>
 
         <section title="Format" anchor="format">
-            <t>
-                Conditions and fulfillments are expressed in a standard format with both string and binary
-                encoding supported.
-            </t>
-            <section title="Bitmask" anchor="bitmask">
+            <section anchor="binary-encoding" title="Binary Encoding">
                 <t>
-                    Any system accepting crypto-conditions must be able to state its supported algorithms. It
-                    must be possible to verify that all algorithms used in a certain condition are indeed
-                    supported even if the fulfillment is not available yet.
-                </t>
-                <t>
-                    In order to meet these design goals, we define a bitmask to express the supported
-                    primitives.
-                </t>
-                <t>
-                    Each bit represents a different crypto-condition type. The list of known types is
-                    maintained in the IANA maintained <xref target="crypto-conditions-type-registry">
-                    Crypto-Condition Type Registry</xref>.
-                </t>
-                <t>
-                    Conditions contain a bitmask of types which they require the implementation to support.
-                    Implementations provide a bitmask of types they support.
-                </t>
-
-            </section>
-            <section anchor="binary-types" title="Binary Types">
-                <t>
-                    <list hangIndent="8" style="hanging">
-                        <t hangText="VARUINT">
-                            Unsigned variable-length integer. Implementation matches Base128 Varints in Protocol Buffers
-                            <xref target="PROTOCOL-BUFFERS"/>. Implementations MAY define different maximum lengths for
-                            their varints, as long as that length is long enough to cover their bitmask and their
-                            maximum supported fulfillment length. (This is safe, because no larger varuint can
-                            appear in a valid crypto-condition.)
-                        </t>
-
-                        <t hangText="VARBYTES">
-                            Consists of a VARUINT length field followed by that many bytes.
-                        </t>
-
-                        <t hangText="VARARRAY">
-                            Consists of a VARUINT length fields followed by that many bytes filled with
-                            elements of the array.
-                        </t>
-                    </list>
+                    An description of crypto-conditions is provided in this document using Abstract Syntax
+                    Notation One (ASN.1) as defined in <xref target="ITU.X680.2015"/>. Implementations of this spec MUST
+                    support encoding and decoding using Octet Encoding Rules (OER) as defined in <xref target="ITU.X696.2015"/>.
                 </t>
             </section>
             <section anchor="string-types" title="String Types">
@@ -225,10 +185,33 @@
                     </list>
                 </t>
             </section>
+            <section title="Bitmask" anchor="bitmask">
+                <t>
+                    Any system accepting crypto-conditions must be able to state its supported algorithms. It
+                    must be possible to verify that all algorithms used in a certain condition are indeed
+                    supported even if the fulfillment is not available yet.
+                </t>
+                <t>
+                    In order to meet these design goals, we define a bitmask to express the supported
+                    primitives.
+                </t>
+                <t>
+                    Each bit represents a different suite of features. Each type of condition depends on one or
+                    more feature suites. If an implementation supports all feature suites that a certain type
+                    depends on, the implementation MUST support that condition type. The list of known types and
+                    feature suites is the IANA maintained <xref target="crypto-conditions-type-registry">
+                    Crypto-Condition Type Registry</xref>.
+                </t>
+                <t>
+                    Conditions contain a bitmask of types which they require the implementation to support.
+                    Implementations provide a bitmask of types they support.
+                </t>
+
+            </section>
             <section title="Condition" anchor="condition-format">
                 <t>
-                    Below are the string and binary encoding formats for a condition. In both, the FEATURE_BITMASK
-                    is the boolean OR of the FEATURE_BITMASK of the top-level condition type and all subcondition
+                    Below are the string and binary encoding formats for a condition. In both, the featureBitmask
+                    is the boolean OR of the featureBitmask of the top-level condition type and all subcondition
                     types, recursively.
                 </t>
                 <section title="String" anchor="string-condition-format">
@@ -237,7 +220,7 @@
                             Conditions are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cc:" BASE10(VERSION) ":" BASE10(TYPE_ID) ":" BASE16(FEATURE_BITMASK) ":"
+"cc:" BASE10(VERSION) ":" BASE10(TYPE_ID) ":" BASE16(featureBitmask) ":"
     BASE64URL(HASH) ":" BASE10(FULFILLMENT_LENGTH)
                      ]]></artwork>
                     </figure>
@@ -248,11 +231,21 @@
                             Conditions are binary encoded as:
                         </preamble>
                         <artwork><![CDATA[
-CONDITION =
-  VARUINT TYPE_ID
-  VARUINT FEATURE_BITMASK
-  VARBYTES HASH
-  VARUINT FULFILLMENT_LENGTH
+Condition ::= SEQUENCE {
+  version INTEGER (0..255),
+  type ConditionType,
+  featureBitmask OCTET STRING,
+  fingerprint OCTET STRING,
+  maxFulfillmentLength INTEGER (0..MAX)
+}
+
+ConditionType ::= INTEGER {
+  preimageSha256(0),
+  rsaSha256(1),
+  prefixSha256(2),
+  thresholdSha256(3),
+  ed25519(4)
+} (0..65535)
                      ]]></artwork>
                     </figure>
                 </section>
@@ -279,9 +272,11 @@ CONDITION =
                             Fulfillments are binary encoded as:
                         </preamble>
                         <artwork><![CDATA[
-FULFILLMENT =
-  VARUINT TYPE_ID
-  FULFILLMENT_PAYLOAD
+Fulfillment ::= SEQUENCE {
+  version INTEGER (0..255),
+  type ConditionType,
+  payload OCTET STRING
+}
                      ]]></artwork>
                     </figure>
                 </section>
@@ -313,12 +308,12 @@ FULFILLMENT =
             </t>
             <section title="SHA-256" anchor="sha-256-feature-suite">
                 <t>
-                    SHA-256 is a hashing algorithm and is assigned the feature suite bit 2^0 = 0x01.
+                    SHA-256 is a hashing algorithm and is assigned the feature bit 2^0 = 0x01.
                 </t>
             </section>
             <section title="PREIMAGE" anchor="preimage-feature-suite">
                 <t>
-                    PREIMAGE is a hashlock condition and is assigned the feature suite bit 2^1 = 0x02.
+                    PREIMAGE refers to hashlock conditions and is assigned the feature bit 2^1 = 0x02.
                 </t>
                 <t>
                     A preimage condition is the hash of its own fulfillment. In order to fulfill a
@@ -331,9 +326,9 @@ FULFILLMENT =
                     amount of random entropy.
                 </t>
             </section>
-            <section title="PREFIX" anchor="preimage-feature-suite">
+            <section title="PREFIX" anchor="prefix-feature-suite">
                 <t>
-                    PREFIX is a structural condition and is assigned the feature suite bit 2^2 = 0x04.
+                    PREFIX is a structural condition and is assigned the feature bit 2^2 = 0x04.
                 </t>
                 <t>
                     A prefix condition condition contains exactly one subcondition. When validated it
@@ -343,7 +338,7 @@ FULFILLMENT =
             </section>
             <section title="THRESHOLD" anchor="threshold-feature-suite">
                 <t>
-                    THRESHOLD is a structural condition and is assigned the feature suite bit 2^3 = 0x08.
+                    THRESHOLD is a structural condition and is assigned the feature bit 2^3 = 0x08.
                 </t>
                 <t>
                     Threshold conditions provide a way to create m-of-n threshold combinations of other
@@ -357,12 +352,12 @@ FULFILLMENT =
             </section>
             <section title="RSA-PSS" anchor="rsa-pss-feature-suite">
                 <t>
-                    RSA-PSS is a signature algorithm and is assigned the feature suite bit 2^4 = 0x10.
+                    RSA-PSS is a signature algorithm and is assigned the feature bit 2^4 = 0x10.
                 </t>
             </section>
             <section title="ED25519" anchor="ed25519-feature-suite">
                 <t>
-                    ED25519 is a signature algorithm and is assigned the feature suite bit 2^5 = 0x20.
+                    ED25519 is a signature algorithm and is assigned the feature bit 2^5 = 0x20.
                 </t>
                 <t>
                     ED25519 is a compact elliptic curve based signature algorithm.
@@ -393,19 +388,15 @@ FULFILLMENT =
                     Bitcoin supports this type of condition via the OP_HASH256 operator.
                 </t>
                 <section title="Condition" anchor="preimage-sha-256-condition-type-condition">
-                    <figure>
-                        <artwork><![CDATA[
-HASH = SHA256(PREIMAGE)
-                     ]]></artwork>
-                    </figure>
+                    <t>
+                        The fingerprint of a PREIMAGE-SHA-256 condition is the SHA-256 hash of the
+                        preimage.
+                    </t>
                 </section>
                 <section title="Fulfillment" anchor="preimage-sha-256-condition-type-fulfillment">
-                    <figure>
-                        <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARBYTES PREIMAGE
-                     ]]></artwork>
-                    </figure>
+                    <t>
+                        The fulfillment payload of a PREIMAGE-SHA-256 condition is the preimage.
+                    </t>
                 </section>
             </section>
             <section title="PREFIX-SHA-256" anchor="prefix-sha-256-condition-type">
@@ -414,19 +405,22 @@ FULFILLMENT_PAYLOAD =
                     feature suites which corresponds to a feature bitmask of 0x05.
                 </t>
                 <section title="Condition" anchor="prefix-sha-256-condition-type-condition">
+                    <t>
+                        The fingerprint of a PREFIX-SHA-256 condition is the SHA-256 digest of the
+                        fingerprint contents given below:
+                    </t>
                     <figure>
                         <artwork><![CDATA[
-HASH = SHA256(
-  VARUINT TYPE_ID
-  VARBYTES PREFIX
-  CONDITION
-)
+PrefixSha256FingerprintContents ::= SEQUENCE {
+  prefix OCTET STRING,
+  condition Condition
+}
                      ]]></artwork>
                     </figure>
                     <t>
                         The TYPE_ID is 1. The reason we need this field is because prefix conditions are a
                         structural condition. Structural conditions can have subconditions, meaning their
-                        FEATURE_BITMASK can have multiple bits set, including other structural conditions.
+                        featureBitmask can have multiple bits set, including other structural conditions.
                         The TYPE_ID makes it very unlikely that two different structural fulfillments
                         could ever generate the exact same condition.
                     </t>
@@ -439,9 +433,10 @@ HASH = SHA256(
                 <section title="Fulfillment" anchor="prefix-sha-256-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARBYTES PREFIX
-  FULFILLMENT
+PrefixSha256FulfillmentPayload ::= SEQUENCE {
+  prefix OCTET STRING,
+  subfulfillment Fulfillment
+}
                      ]]></artwork>
                     </figure>
                 </section>
@@ -452,47 +447,57 @@ FULFILLMENT_PAYLOAD =
                     feature suites which corresponds to a feature bitmask of 0x09.
                 </t>
                 <section title="Condition" anchor="threshold-sha-256-condition-type-condition">
+                    <t>
+                        The fingerprint of a THRESHOLD-SHA-256 condition is the SHA-256 digest of the
+                        fingerprint contents given below:
+                    </t>
                     <figure>
                         <artwork><![CDATA[
-HASH = SHA256(
-  VARUINT TYPE_ID
-  VARUINT THRESHOLD
-  VARARRAY
-    VARUINT WEIGHT
-    CONDITION
-)
+ThresholdSha256FingerprintContents ::= SEQUENCE {
+  threshold INTEGER (0..4294967295),
+  subconditions SEQUENCE OF ThresholdSubcondition
+}
+
+ThresholdSubcondition ::= SEQUENCE {
+  weight INTEGER (0..4294967295),
+  condition Condition
+}
                      ]]></artwork>
                     </figure>
                     <t>
-                        The TYPE_ID is 2. The reason we need this field is because threshold conditions are a
+                        The type is 2. We need this field because threshold conditions are a
                         structural condition. Structural conditions can have subconditions, meaning their
-                        FEATURE_BITMASK can have multiple bits set, including other structural conditions.
+                        featureBitmask can have multiple bits set, including other structural conditions.
                         The TYPE_ID makes it very unlikely that two different structural fulfillments
                         could ever generate the exact same condition.
                     </t>
                     <t>
-                        The VARARRAY of conditions is sorted first based on length, shortest first. Elements of the
+                        The list of conditions is sorted first based on length, shortest first. Elements of the
                         same length are sorted in lexicographic (big-endian) order, smallest first.
                     </t>
                 </section>
                 <section title="Fulfillment" anchor="threshold-sha-256-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARUINT THRESHOLD
-  VARARRAY
-    VARUINT WEIGHT
-    VARBYTES FULFILLMENT
-    VARBYTES CONDITION
+ThresholdSha256FulfillmentPayload ::= SEQUENCE {
+  threshold INTEGER (0..4294967295),
+  subfulfillments SEQUENCE OF ThresholdSubfulfillment
+}
+
+ThresholdSubfulfillment ::= SEQUENCE {
+  weight INTEGER (0..4294967295) DEFAULT 1,
+  condition Condition OPTIONAL,
+  fulfillment Fulfillment OPTIONAL
+}
                      ]]></artwork>
                     </figure>
                     <t>
-                        THRESHOLD MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a
+                        threshold MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a
                         threshold condition, the weights of the provided fulfillments MUST be greater than or
                         equal to the threshold.
                     </t>
                     <t>
-                        WEIGHT refers to the weight of the condition and must be an integer in the range
+                        weight refers to the weight of the condition and must be an integer in the range
                         1 ... 2^32 - 1.
                     </t>
                 </section>
@@ -503,11 +508,13 @@ FULFILLMENT_PAYLOAD =
                     which corresponds to a feature bitmask of 0x11.
                 </t>
                 <section title="Condition" anchor="rsa-sha-256-condition-type-condition">
+                    <t>
+                        The fingerprint of a THRESHOLD-SHA-256 condition is the SHA-256 digest of the
+                        fingerprint contents given below:
+                    </t>
                     <figure>
                         <artwork><![CDATA[
-HASH = SHA256(
-  VARBYTES MODULUS
-)
+RsaSha256FingerprintContents ::= INTEGER (0..MAX) -- modulus
                      ]]></artwork>
                     </figure>
                     <t>
@@ -526,13 +533,14 @@ HASH = SHA256(
                 <section title="Fulfillment" anchor="rsa-sha-256-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARBYTES MODULUS
-  VARBYTES SIGNATURE
+RsaSha256FulfillmentPayload ::= SEQUENCE {
+  modulus OCTET STRING (SIZE(128..512)),
+  signature OCTET STRING (SIZE(128..512))
+}
                      ]]></artwork>
                     </figure>
                     <t>
-                        The SIGNATURE MUST have the exact same number of octets as the MODULUS, even if
+                        The signature MUST have the exact same number of octets as the MODULUS, even if
                         that means adding leading zeros. This ensures that the fulfillment size is
                         constant and known ahead of time. Note that the field is still length-prefixed for
                         consistency. Implementations MUST verify that the SIGNATURE and MODULUS consist
@@ -570,11 +578,9 @@ FULFILLMENT_PAYLOAD =
                     feature suite in this specification.
                 </t>
                 <section title="Condition" anchor="ed25519-condition-type-condition">
-                    <figure>
-                        <artwork><![CDATA[
-HASH = UINT256 PUBLIC_KEY
-                     ]]></artwork>
-                    </figure>
+                    <t>
+                        The fingerprint of a ED25519 condition is the 32 byte public key.
+                    </t>
                     <t>
                         Since the PUBLIC_KEY is already only 256 bits long and this condition type is not structural, we do not hash it.
                     </t>
@@ -582,9 +588,10 @@ HASH = UINT256 PUBLIC_KEY
                 <section title="Fulfillment" anchor="ed25519-condition-type-fulfillment">
                     <figure>
                         <artwork><![CDATA[
-FULFILLMENT_PAYLOAD =
-  VARBYTES PUBLIC_KEY
-  VARBYTES SIGNATURE
+Ed25519FulfillmentPayload ::= SEQUENCE {
+  publicKey OCTET STRING (SIZE(32)),
+  signature OCTET STRING (SIZE(64))
+}
                      ]]></artwork>
                     </figure>
                 </section>
@@ -609,13 +616,29 @@ FULFILLMENT_PAYLOAD =
             &rfc3447;
             &rfc4648;
             &I-D.draft-irtf-cfrg-eddsa-04;
-            <reference anchor="PROTOCOL-BUFFERS"
-                       target="https://developers.google.com/protocol-buffers/docs/encoding#varints">
+            <reference anchor="ITU.X680.2015">
                 <front>
-                    <title>Protocol Buffers - Encoding - Base128 VARINTS</title>
-                    <author fullname="Google Developers"/>
-                    <date day="20" month="01" year="2016"/>
+                    <title>
+                      Information technology – Abstract Syntax Notation One (ASN.1): Specification of basic notation
+                    </title>
+                    <author>
+                        <organization>International Telecommunications Union</organization>
+                    </author>
+                    <date month="08" year="2015"/>
                 </front>
+                <seriesInfo name="ITU-T" value="Recommendation X.680"/>
+            </reference>
+            <reference anchor="ITU.X696.2015">
+                <front>
+                    <title>
+                        Information technology – ASN.1 encoding rules: Specification of Octet Encoding Rules (OER)
+                    </title>
+                    <author>
+                        <organization>International Telecommunications Union</organization>
+                    </author>
+                    <date month="08" year="2015"/>
+                </front>
+                <seriesInfo name="ITU-T" value="Recommendation X.696"/>
             </reference>
         </references>
         <references title="Informative References">
@@ -682,13 +705,175 @@ FULFILLMENT_PAYLOAD =
                 TODO
             </t>
         </section>
+        <section anchor="appendix-c" title="ASN.1 Module">
+            <figure>
+                <artwork><![CDATA[
+
+--<ASN1.PDU CryptoConditions.Condition, CryptoConditions.Fulfillment>--
+
+CryptoConditions
+DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+
+  /**
+   * CONTAINERS
+   */
+
+  Condition ::= SEQUENCE {
+    version INTEGER (0..255),
+    type ConditionType,
+    featureBitmask OCTET STRING,
+    fingerprint OCTET STRING,
+    maxFulfillmentLength INTEGER (0..MAX)
+  }
+
+  Fulfillment ::= SEQUENCE {
+    version INTEGER (0..255),
+    type ConditionType,
+    payload OCTET STRING
+  }
+
+  ConditionType ::= INTEGER {
+    preimageSha256(0),
+    rsaSha256(1),
+    prefixSha256(2),
+    thresholdSha256(3),
+    ed25519(4)
+  } (0..65535)
+
+  /**
+   * FULFILLMENT PAYLOADS
+   */
+
+  -- For preimage conditions, the payload equals the preimage
+
+  PrefixSha256FulfillmentPayload ::= SEQUENCE {
+    prefix OCTET STRING,
+    subfulfillment Fulfillment
+  }
+
+  ThresholdSha256FulfillmentPayload ::= SEQUENCE {
+    threshold INTEGER (0..4294967295),
+    subfulfillments SEQUENCE OF ThresholdSubfulfillment
+  }
+
+  ThresholdSubfulfillment ::= SEQUENCE {
+    weight INTEGER (0..4294967295) DEFAULT 1,
+    condition Condition OPTIONAL,
+    fulfillment Fulfillment OPTIONAL
+  }
+
+  RsaSha256FulfillmentPayload ::= SEQUENCE {
+    modulus OCTET STRING (SIZE(128..512)),
+    signature OCTET STRING (SIZE(128..512))
+  }
+
+  Ed25519FulfillmentPayload ::= SEQUENCE {
+    publicKey OCTET STRING (SIZE(32)),
+    signature OCTET STRING (SIZE(64))
+  }
+
+  /**
+   * FINGERPRINTS
+   */
+
+  -- SHA-256 hash of the fingerprint contents
+  Sha256Fingerprint ::= OCTET STRING (SIZE(32)) -- digest
+
+  -- 32-byte Ed25519 public key
+  Ed25519Fingerprint ::= OCTET STRING (SIZE(32)) -- publicKey
+
+  /**
+   * FINGERPRINT CONTENTS
+   *
+   * The content that will be hashed to arrive at the fingerprint.
+   */
+
+  -- The preimage type hashes the raw contents of the preimage
+
+  PrefixSha256FingerprintContents ::= SEQUENCE {
+    prefix OCTET STRING,
+    condition Condition
+  }
+
+  ThresholdSha256FingerprintContents ::= SEQUENCE {
+    threshold INTEGER (0..4294967295),
+    subconditions SEQUENCE OF ThresholdSubcondition
+  }
+
+  ThresholdSubcondition ::= SEQUENCE {
+    weight INTEGER (0..4294967295),
+    condition Condition
+  }
+
+  RsaSha256FingerprintContents ::= INTEGER (0..MAX) -- modulus
+
+  /**
+   * EXAMPLES
+   */
+
+  exampleCondition Condition ::=
+  {
+    version 1,
+    type preimageSha256,
+    featureBitmask '03'H,
+    fingerprint '
+      E3B0C442 98FC1C14 9AFBF4C8 996FB924 27AE41E4 649B934C A495991B 7852B855
+    'H,
+    maxFulfillmentLength 2
+  }
+
+  exampleFulfillment Fulfillment ::=
+  {
+    version 1,
+    type preimageSha256,
+    payload '00'H
+  }
+
+  exampleRsaSha256FulfillmentPayload RsaSha256FulfillmentPayload ::=
+  {
+    modulus '
+      B30E7A93 8783BABF 836850FF 49E14F87 E3F92D5C 46E33FEC A3E4F0B2 2358580B
+      11765995 F4B8EEA7 FB4712C2 E1E316F7 F775A953 D232216A 169D9A64 DDC00712
+      0A400B37 F2AFC077 B62FE304 DE74DE6A 119EC407 6B529C4F 6096B0BA AD4F533D
+      F0173B9B 822FD85D 65FA4BEF A92D8F52 4F69CBCA 0136BD80 D095C169 AEC0E095
+    'H,
+    signature '
+      48E8945E FE007556 D5BF4D5F 249E4808 F7307E29 511D3262 DAEF61D8 8098F9AA
+      4A8BC062 3A8C9757 38F65D6B F459D543 F289D73C BC7AF4EA 3A33FBF3 EC444044
+      7911D722 94091E56 1833628E 49A772ED 608DE6C4 4595A91E 3E17D6CF 5EC3B252
+      8D63D2AD D6463989 B12EEC57 7DF64709 60DF6832 A9D84C36 0D1C217A D64C8625
+      BDB594FB 0ADA086C DECBBDE5 80D424BF 9746D2F0 C312826D BBB00AD6 8B52C4CB
+      7D47156B A35E3A98 1C973863 792CC80D 04A18021 0A524158 65B64B3A 61774B1D
+      3975D78A 98B0821E E55CA0F8 6305D425 29E10EB0 15CEFD40 2FB59B2A BB8DEEE5
+      2A6F2447 D2284603 D219CD4E 8CF9CFFD D5498889 C3780B59 DD6A57EF 7D732620
+    'H
+  }
+
+  exampleEd25519FulfillmentPayload Ed25519FulfillmentPayload ::=
+  {
+    publicKey '
+      EC172B93 AD5E563B F4932C70 E1245034 C35467EF 2EFD4D64 EBF81968 3467E2BF
+    'H,
+    signature '
+      B62291FA D9432F8F 298B9C4A 4895DBE2 93F6FFDA 1A68DADF 0CCDEF5F 47A0C721
+      2A5FEA3C DA97A3F4 C03EA9F2 E8AC1CEC 86A51D45 2127ABDB A09D1B6F 331C070A
+    'H
+  }
+
+END
+
+                ]]></artwork>
+            </figure>
+        </section>
         <section anchor="acknowledgements" title="Acknowledgements">
             <t>
                 The editor would like to thank the following individuals for feedback on and
                 implementations of the specification (in alphabetical order): TODO
             </t>
         </section>
-        <section anchor="appendix-c" title="IANA Considerations">
+        <section anchor="appendix-d" title="IANA Considerations">
             <section anchor="crypto-conditions-type-registry" title="Crypto-Condition Type Registry">
                 <t>
                     The following initial entries should be added to the Crypto-Condition
