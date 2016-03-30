@@ -218,7 +218,6 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
       : cond.body.getMaxFulfillmentLength()
 
     const predictor = new Predictor()
-    predictor.writeUInt8()                                       // version
     predictor.writeUInt16()                                      // type
     predictor.writeVarOctetString({ length: fulfillmentLength }) // payload
 

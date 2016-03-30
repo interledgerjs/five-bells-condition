@@ -220,8 +220,8 @@
                             Conditions are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cc:" BASE10(VERSION) ":" BASE10(TYPE_ID) ":" BASE16(featureBitmask) ":"
-    BASE64URL(HASH) ":" BASE10(FULFILLMENT_LENGTH)
+"cc:" BASE10(type) ":" BASE16(featureBitmask) ":"
+    BASE64URL(fingerprint) ":" BASE10(maxFulfillmentLength)
                      ]]></artwork>
                     </figure>
                 </section>
@@ -232,7 +232,6 @@
                         </preamble>
                         <artwork><![CDATA[
 Condition ::= SEQUENCE {
-  version INTEGER (0..255),
   type ConditionType,
   featureBitmask OCTET STRING,
   fingerprint OCTET STRING,
@@ -248,6 +247,23 @@ ConditionType ::= INTEGER {
 } (0..65535)
                      ]]></artwork>
                     </figure>
+                    <t>
+                        type is the condition type ID.
+                    </t>
+                    <t>
+                        featureBitmask is the set of required features in order to parse the
+                        fulfillment to this condition.
+                    </t>
+                    <t>
+                        fingerprint is the unique identifier of the condition. For most condition
+                        types, this is a hash.
+                    </t>
+                    <t>
+                        maxFulfillmentLength is the maximum length of the fulfillment payload
+                        that can fulfill this condition. When a crypto-condition is submitted to
+                        an implementation, this implementation MUST verify that it will be able to
+                        process a fulfillment with a payload of size maxFulfillmentLength.
+                    </t>
                 </section>
             </section>
             <section title="Fulfillment" anchor="fulfillment-format">
@@ -261,8 +277,7 @@ ConditionType ::= INTEGER {
                             Fulfillments are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cf:" BASE10(VERSION) ":" BASE16(TYPE_ID) ":"
-    BASE64URL(FULFILLMENT_PAYLOAD)
+"cf:" BASE16(TYPE_ID) ":" BASE64URL(FULFILLMENT_PAYLOAD)
                      ]]></artwork>
                     </figure>
                 </section>
@@ -273,7 +288,6 @@ ConditionType ::= INTEGER {
                         </preamble>
                         <artwork><![CDATA[
 Fulfillment ::= SEQUENCE {
-  version INTEGER (0..255),
   type ConditionType,
   payload OCTET STRING
 }
@@ -721,7 +735,6 @@ BEGIN
    */
 
   Condition ::= SEQUENCE {
-    version INTEGER (0..255),
     type ConditionType,
     featureBitmask OCTET STRING,
     fingerprint OCTET STRING,
@@ -729,7 +742,6 @@ BEGIN
   }
 
   Fulfillment ::= SEQUENCE {
-    version INTEGER (0..255),
     type ConditionType,
     payload OCTET STRING
   }
@@ -815,7 +827,6 @@ BEGIN
 
   exampleCondition Condition ::=
   {
-    version 1,
     type preimageSha256,
     featureBitmask '03'H,
     fingerprint '
@@ -826,7 +837,6 @@ BEGIN
 
   exampleFulfillment Fulfillment ::=
   {
-    version 1,
     type preimageSha256,
     payload '00'H
   }

@@ -12,7 +12,7 @@ const Writer = require('../lib/writer')
 //
 // Note that this regex is very strict and specific to the set of conditions
 // supported by this implementation.
-const CONDITION_REGEX = /^cc:1:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
+const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
 
 class Condition {
   /**
@@ -34,19 +34,15 @@ class Condition {
       throw new PrefixError('Serialized condition must start with "cc:"')
     }
 
-    if (pieces[1] !== String(Condition.VERSION)) {
-      throw new PrefixError('Condition must be version ' + Condition.VERSION)
-    }
-
     if (!CONDITION_REGEX.exec(serializedCondition)) {
       throw new ParseError('Invalid condition format')
     }
 
     const condition = new Condition()
-    condition.setTypeId(parseInt(pieces[2], 16))
-    condition.setBitmask(parseInt(pieces[3], 16))
-    condition.setHash(base64url.decode(pieces[4]))
-    condition.setMaxFulfillmentLength(parseInt(pieces[5], 10))
+    condition.setTypeId(parseInt(pieces[1], 16))
+    condition.setBitmask(parseInt(pieces[2], 16))
+    condition.setHash(base64url.decode(pieces[3]))
+    condition.setMaxFulfillmentLength(parseInt(pieces[4], 10))
 
     return condition
   }
@@ -203,7 +199,7 @@ class Condition {
    * @return {String} Condition as a URI
    */
   serializeUri () {
-    return 'cc:' + Condition.VERSION +
+    return 'cc' +
       ':' + this.getTypeId().toString(16) +
       ':' + this.getBitmask().toString(16) +
       ':' + base64url.encode(this.getHash()) +
@@ -221,7 +217,6 @@ class Condition {
    */
   serializeBinary () {
     const writer = new Writer()
-    writer.writeUInt8(Condition.VERSION)                // version
     writer.writeUInt16(this.getTypeId())                // type
     writer.writeVarUInt(this.getBitmask())              // requiredSuites
     writer.writeVarOctetString(this.getHash())          // fingerprint
@@ -238,9 +233,6 @@ class Condition {
    * @param {Reader} reader Binary stream containing the condition.
    */
   parseBinary (reader) {
-    if (reader.readUInt8() !== Condition.VERSION) {
-      throw new ParseError('Invalid version, must be ' + Condition.VERSION)
-    }
     this.setTypeId(reader.readUInt16())
     this.setBitmask(reader.readVarUInt())
     // TODO Ensure bitmask is supported?
@@ -260,7 +252,5 @@ class Condition {
     return true
   }
 }
-
-Condition.VERSION = 1
 
 module.exports = Condition

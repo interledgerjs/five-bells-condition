@@ -9,7 +9,7 @@ const base64url = require('../util/base64url')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
 
-const FULFILLMENT_REGEX = /^cf:1:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]+$/
+const FULFILLMENT_REGEX = /^cf:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]+$/
 
 class Fulfillment {
   /**
@@ -31,16 +31,12 @@ class Fulfillment {
       throw new PrefixError('Serialized fulfillment must start with "cf:"')
     }
 
-    if (pieces[1] !== String(Condition.VERSION)) {
-      throw new PrefixError('Fulfillment must be version ' + Condition.VERSION)
-    }
-
     if (!FULFILLMENT_REGEX.exec(serializedFulfillment)) {
       throw new ParseError('Invalid fulfillment format')
     }
 
-    const typeId = parseInt(pieces[2], 16)
-    const payload = Reader.from(base64url.decode(pieces[3]))
+    const typeId = parseInt(pieces[1], 16)
+    const payload = Reader.from(base64url.decode(pieces[2]))
 
     const ConditionClass = TypeRegistry.getClassFromTypeId(typeId)
     const fulfillment = new ConditionClass()
@@ -61,10 +57,6 @@ class Fulfillment {
   static fromBinary (reader) {
     reader = Reader.from(reader)
 
-    const version = reader.readUInt8()
-    if (version !== Condition.VERSION) {
-      throw new ParseError('Invalid version ' + version)
-    }
     const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readUInt16())
 
     const condition = new ConditionClass()
@@ -150,7 +142,7 @@ class Fulfillment {
    * @return {String} Fulfillment as a URI
    */
   serializeUri () {
-    return 'cf:' + Condition.VERSION +
+    return 'cf' +
       ':' + this.getTypeId().toString(16) +
       ':' + base64url.encode(this.serializePayload())
   }
@@ -166,7 +158,6 @@ class Fulfillment {
    */
   serializeBinary () {
     const writer = new Writer()
-    writer.writeUInt8(Condition.VERSION)
     writer.writeUInt16(this.getTypeId())
     this.writePayload(writer)
     return writer.getBuffer()
