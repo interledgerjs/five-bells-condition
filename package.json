@@ -37,9 +37,9 @@
   "scripts": {
     "lint": "eslint .",
     "test:readme": "readme-to-test",
-    "test:mocha": "NODE_ENV=unit node node_modules/.bin/istanbul test -- _mocha",
+    "test:specs": "NODE_ENV=unit node node_modules/.bin/istanbul test -- _mocha",
     "test:phantom": "karma start --single-run",
-    "test": "npm run test:readme && npm run test:mocha && npm run test:phantom"
+    "test": "npm run test:readme && npm run test:specs && npm run test:phantom"
   },
   "repository": {
     "type": "git",
