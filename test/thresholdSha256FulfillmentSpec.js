@@ -19,6 +19,19 @@ describe('ThresholdSha256', function () {
     'cc:2:b:x07W1xU1_oBcV9zUheOzspx6Beq8vgy0vYgBVifNV1Q:10'
   )
 
+  // Having the same subfulfillment appear twice is allowed, but note
+  // how it results in a different condition URI, that is why this
+  // behavior is safe.
+  testFromFulfillments(
+    [
+      ex.emptySha256,
+      ex.emptySha256
+    ],
+    2,
+    'cf:2:AQIBAgEBAwAAAAABAQMAAAAA',
+    'cc:2:b:y93kXzLJ49Qdn3CeCe6Qtuzmdg9LhPHQIESn8H4ghE0:14'
+  )
+
   testFromFulfillments(
     [
       ex.ed,

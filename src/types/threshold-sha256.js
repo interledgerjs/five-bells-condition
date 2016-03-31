@@ -483,9 +483,23 @@ class ThresholdSha256 extends BaseSha256 {
    */
   validate (message) {
     const fulfillments = this.subconditions.filter((cond) => cond.type === FULFILLMENT)
-    const totalWeight = fulfillments.reduce((total, cond) => total + cond.weight, 0)
+
+    // Find total weight and smallest individual weight
+    let minWeight = Infinity
+    const totalWeight = fulfillments.reduce((total, cond) => {
+      minWeight = Math.min(minWeight, cond.weight)
+      return total + cond.weight
+    }, 0)
+
+    // Total weight must meet the threshold
     if (totalWeight < this.threshold) {
       throw new Error('Threshold not met')
+    }
+
+    // But the set must be minimal, there mustn't be any fulfillments
+    // we could take out
+    if (this.threshold + minWeight <= totalWeight) {
+      throw new Error('Fulfillment is not minimal')
     }
 
     // Ensure all subfulfillments are valid
