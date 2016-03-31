@@ -523,7 +523,7 @@ ThresholdSubfulfillment ::= SEQUENCE {
                 </t>
                 <section title="Condition" anchor="rsa-sha-256-condition-type-condition">
                     <t>
-                        The fingerprint of a THRESHOLD-SHA-256 condition is the SHA-256 digest of the
+                        The fingerprint of a RSA-SHA-256 condition is the SHA-256 digest of the
                         fingerprint contents given below:
                     </t>
                     <figure>

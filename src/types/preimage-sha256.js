@@ -1,8 +1,26 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const BaseSha256 = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
 
+/**
+ * PREIMAGE-SHA-256: Hashlock condition using SHA-256.
+ *
+ * This type of condition is also called a hashlock. By creating a hash
+ * of a difficult-to-guess 256-bit random or pseudo-random integer it
+ * is possible to create a condition which the creator can trivially
+ * fulfill by publishing the random value. However, for anyone else,
+ * the condition is cryptgraphically hard to fulfill, because they
+ * would have to find a preimage for the given condition hash.
+ *
+ * PREIMAGE-SHA-256 is assigned the type ID 0. It relies on the SHA-256
+ * and PREIMAGE feature suites which corresponds to a feature bitmask
+ * of 0x03.
+ */
 class PreimageSha256 extends BaseSha256 {
   /**
    * Generate the contents of the condition hash.

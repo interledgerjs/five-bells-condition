@@ -23,10 +23,12 @@
     "eslint-plugin-standard": "^1.3.0",
     "ghooks": "^1.0.3",
     "istanbul-harmony": "^0.3.16",
+    "jsdoc-to-markdown": "^1.3.3",
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.2",
     "karma-mocha": "^0.2.2",
     "karma-phantomjs-launcher": "^1.0.0",
+    "md-toc-filter": "^0.9.0",
     "mocha": "^2.3.2",
     "phantomjs-prebuilt": "^2.1.5",
     "readme-to-test": "justmoon/readme-to-test#feature/st-improvements",
@@ -39,7 +41,10 @@
     "test:readme": "readme-to-test",
     "test:specs": "NODE_ENV=unit node node_modules/.bin/istanbul test -- _mocha",
     "test:phantom": "karma start --single-run",
-    "test": "npm run test:readme && npm run test:specs && npm run test:phantom"
+    "test": "npm run test:readme && npm run test:specs && npm run test:phantom",
+    "docs:api": "jsdoc2md --global-index-format grouped \"src/**/*.js\" --template docs/README.template.md > docs/README.intermediate.md",
+    "docs:toc": "md-toc-filter docs/README.intermediate.md > README.md",
+    "docs": "npm run docs:api && npm run docs:toc"
   },
   "repository": {
     "type": "git",

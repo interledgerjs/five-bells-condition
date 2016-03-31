@@ -1,11 +1,33 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
+/**
+ * PREFIX-SHA-256: Prefix condition using SHA-256.
+ *
+ * A prefix condition will prepend a static prefix to the message before passing
+ * the prefixed message on to a single subcondition.
+ *
+ * You can use prefix conditions to effectively narrow the scope of a public key
+ * or set of public keys. Simply take the condition representing the public key
+ * and place it as a subcondition in a prefix condition. Now any message passed
+ * to the subcondition will be prepended with a prefix.
+ *
+ * Prefix conditions are especially useful in conjunction with threshold
+ * conditions. You could have a group of signers, each using a different prefix
+ * to sign a common message.
+ *
+ * PREFIX-SHA-256 is assigned the type ID 1. It relies on the SHA-256 and PREFIX
+ * feature suites which corresponds to a feature bitmask of 0x05.
+ */
 class PrefixSha256 extends BaseSha256 {
   constructor () {
     super()

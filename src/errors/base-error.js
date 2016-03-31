@@ -1,6 +1,10 @@
 'use strict'
 
 /**
+ * @module util
+ */
+
+/**
  * Extensible error class.
  *
  * The built-in Error class is not actually a constructor, but a factory. It

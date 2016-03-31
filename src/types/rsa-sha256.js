@@ -1,5 +1,9 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const crypto = require('crypto')
 const constants = require('constants')
 const Pss = require('../crypto/pss')
@@ -8,6 +12,18 @@ const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
+/**
+ * RSA-SHA-256: RSA signature condition using SHA-256.
+ *
+ * This RSA condition uses RSA-PSS padding with SHA-256. The salt length is set
+ * equal the digest length of 32 bytes.
+ *
+ * The public exponent is fixed at 65537 and the public modulus must be between
+ * 128 (1017 bits) and 512 bytes (4096 bits) long.
+ *
+ * RSA-SHA-256 is assigned the type ID 3. It relies on the SHA-256 and RSA-PSS
+ * feature suites which corresponds to a feature bitmask of 0x11.
+ */
 class RsaSha256 extends BaseSha256 {
   constructor () {
     super()

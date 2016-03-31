@@ -1,9 +1,21 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const nacl = require('tweetnacl')
 const Fulfillment = require('../lib/fulfillment')
 const MissingDataError = require('../errors/missing-data-error')
 
+/**
+ * ED25519: Ed25519 signature condition.
+ *
+ * This condition implements Ed25519 signatures.
+ *
+ * ED25519 is assigned the type ID 4. It relies only on the ED25519 feature
+ * suite which corresponds to a bitmask of 0x20.
+ */
 class Ed25519 extends Fulfillment {
   constructor () {
     super()
