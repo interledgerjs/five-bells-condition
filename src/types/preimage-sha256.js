@@ -1,9 +1,9 @@
 'use strict'
 
-const BaseSha256Fulfillment = require('./base-sha256')
+const BaseSha256 = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
 
-class PreimageSha256Fulfillment extends BaseSha256Fulfillment {
+class PreimageSha256 extends BaseSha256 {
   /**
    * Generate the contents of the condition hash.
    *
@@ -77,7 +77,7 @@ class PreimageSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-PreimageSha256Fulfillment.TYPE_ID = 0
-PreimageSha256Fulfillment.FEATURE_BITMASK = 0x03
+PreimageSha256.TYPE_ID = 0
+PreimageSha256.FEATURE_BITMASK = 0x03
 
-module.exports = PreimageSha256Fulfillment
+module.exports = PreimageSha256

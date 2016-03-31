@@ -2,7 +2,7 @@
 
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
-const BaseSha256Fulfillment = require('./base-sha256')
+const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const Writer = require('../lib/writer')
 const MissingDataError = require('../errors/missing-data-error')
@@ -13,7 +13,7 @@ const EMPTY_BUFFER = new Buffer(0)
 const CONDITION = 'condition'
 const FULFILLMENT = 'fulfillment'
 
-class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
+class ThresholdSha256 extends BaseSha256 {
   constructor () {
     super()
 
@@ -32,8 +32,10 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Number} [weight=1] Integer weight of the subcondition.
    */
   addSubcondition (subcondition, weight) {
-    if (!(subcondition instanceof Condition)) {
-      throw new Error('Subconditions must be objects of type Condition')
+    if (typeof subcondition === 'string') {
+      subcondition = Condition.fromUri(subcondition)
+    } else if (!(subcondition instanceof Condition)) {
+      throw new Error('Subconditions must be URIs or objects of type Condition')
     }
 
     if (typeof weight === 'undefined') {
@@ -50,6 +52,21 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 
   /**
+   * Add a subcondition (unfulfilled).
+   *
+   * This will automatically parse the URI and call addSubcondition.
+   *
+   * @param {String} Subcondition URI.
+   */
+  addSubconditionUri (subconditionUri) {
+    if (typeof subconditionUri !== 'string') {
+      throw new Error('Subcondition must be provided as a URI string')
+    }
+
+    this.addSubcondition(Condition.fromUri(subconditionUri))
+  }
+
+  /**
    * Add a fulfilled subcondition.
    *
    * When constructing a threshold fulfillment, this method allows you to
@@ -63,8 +80,10 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Number} [weight=1] Integer weight of the subcondition.
    */
   addSubfulfillment (subfulfillment, weight) {
-    if (!(subfulfillment instanceof Fulfillment)) {
-      throw new Error('Subfulfillments must be objects of type Fulfillment')
+    if (typeof subfulfillment === 'string') {
+      subfulfillment = Fulfillment.fromUri(subfulfillment)
+    } else if (!(subfulfillment instanceof Fulfillment)) {
+      throw new Error('Subfulfillments must be URIs or objects of type Fulfillment')
     }
 
     if (typeof weight === 'undefined') {
@@ -78,6 +97,21 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
       body: subfulfillment,
       weight: weight
     })
+  }
+
+  /**
+   * Add a fulfilled subcondition.
+   *
+   * This will automatically parse the URI and call addSubfulfillment.
+   *
+   * @param {String} Subfulfillment URI.
+   */
+  addSubfulfillmentUri (subfulfillmentUri) {
+    if (typeof subfulfillmentUri !== 'string') {
+      throw new Error('Subfulfillment must be provided as a URI string')
+    }
+
+    this.addSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
   }
 
   /**
@@ -459,7 +493,7 @@ class ThresholdSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-ThresholdSha256Fulfillment.TYPE_ID = 2
-ThresholdSha256Fulfillment.FEATURE_BITMASK = 0x09
+ThresholdSha256.TYPE_ID = 2
+ThresholdSha256.FEATURE_BITMASK = 0x09
 
-module.exports = ThresholdSha256Fulfillment
+module.exports = ThresholdSha256

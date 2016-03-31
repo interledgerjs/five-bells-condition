@@ -3,7 +3,7 @@
 const assert = require('chai').assert
 const condition = require('..')
 
-describe('PreimageSha256Fulfillment', function () {
+describe('PreimageSha256', function () {
   testFromPreimage(
     '',
     'cf:0:AA',
@@ -94,7 +94,7 @@ describe('PreimageSha256Fulfillment', function () {
       })
 
       it('generates correct fulfillment', function () {
-        const f = new condition.PreimageSha256Fulfillment()
+        const f = new condition.PreimageSha256()
         f.setPreimage(this.preimage)
         const uri = f.serializeUri()
 
@@ -102,7 +102,7 @@ describe('PreimageSha256Fulfillment', function () {
       })
 
       it('generates condition ' + conditionUri, function () {
-        const f = new condition.PreimageSha256Fulfillment()
+        const f = new condition.PreimageSha256()
         f.setPreimage(this.preimage)
         const uri = f.getCondition().serializeUri()
 
@@ -117,7 +117,7 @@ describe('PreimageSha256Fulfillment', function () {
       })
 
       it('parsed condition matches generated condition', function () {
-        const f = new condition.PreimageSha256Fulfillment()
+        const f = new condition.PreimageSha256()
         f.setPreimage(this.preimage)
         const generatedCondition = f.getCondition()
         const parsedCondition = condition.fromConditionUri(conditionUri)

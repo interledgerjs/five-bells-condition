@@ -4,11 +4,11 @@ const crypto = require('crypto')
 const constants = require('constants')
 const Pss = require('../crypto/pss')
 const pem = require('../util/pem')
-const BaseSha256Fulfillment = require('./base-sha256')
+const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
-class RsaSha256Fulfillment extends BaseSha256Fulfillment {
+class RsaSha256 extends BaseSha256 {
   constructor () {
     super()
     this.modulus = null
@@ -73,6 +73,9 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {String} privateKey RSA private key
    */
   sign (message, privateKey) {
+    if (!this.modulus) {
+      throw new MissingDataError('Requires a public modulus')
+    }
     const pss = new Pss()
     const modulusHighByteBitLength = this.modulus[0].toString(2).length
     const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
@@ -158,6 +161,10 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @return {Boolean} Whether this fulfillment is valid.
    */
   validate (message) {
+    if (!Buffer.isBuffer(message)) {
+      throw new Error('Message must be provided as a Buffer')
+    }
+
     // Verify modulus (correct length)
     if (this.modulus.length < 128 || this.modulus.length > 512) {
       throw new Error('Modulus length is out of range: ' + this.modulus.length)
@@ -181,7 +188,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-RsaSha256Fulfillment.TYPE_ID = 3
-RsaSha256Fulfillment.FEATURE_BITMASK = 0x11
+RsaSha256.TYPE_ID = 3
+RsaSha256.FEATURE_BITMASK = 0x11
 
-module.exports = RsaSha256Fulfillment
+module.exports = RsaSha256

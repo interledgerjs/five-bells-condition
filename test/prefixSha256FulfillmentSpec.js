@@ -3,7 +3,7 @@
 const assert = require('chai').assert
 const condition = require('..')
 
-describe('PrefixSha256Fulfillment', function () {
+describe('PrefixSha256', function () {
   const ex = {
     emptySha256: 'cf:0:AA',
     tinySha256: 'cf:0:AQA',
@@ -35,7 +35,7 @@ describe('PrefixSha256Fulfillment', function () {
   function testFromFulfillment (subfulfillment, prefix, fulfillmentUri, conditionUri) {
     describe(conditionUri, function () {
       it('generates the correct fulfillment uri', function () {
-        const f = new condition.PrefixSha256Fulfillment()
+        const f = new condition.PrefixSha256()
         f.setSubfulfillment(condition.fromFulfillmentUri(subfulfillment))
         f.setPrefix(prefix)
         const uri = f.serializeUri()
@@ -44,7 +44,7 @@ describe('PrefixSha256Fulfillment', function () {
       })
 
       it('generates the correct condition uri', function () {
-        const f = new condition.PrefixSha256Fulfillment()
+        const f = new condition.PrefixSha256()
         f.setSubfulfillment(condition.fromFulfillmentUri(subfulfillment))
         f.setPrefix(prefix)
         const uri = f.getCondition().serializeUri()

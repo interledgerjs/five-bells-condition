@@ -3,7 +3,7 @@
 const assert = require('chai').assert
 const condition = require('..')
 
-describe('ThresholdSha256Fulfillment', function () {
+describe('ThresholdSha256', function () {
   const ex = {
     emptySha256: 'cf:0:AA',
     tinySha256: 'cf:0:AQA',
@@ -52,7 +52,7 @@ describe('ThresholdSha256Fulfillment', function () {
   function testFromFulfillments (fulfillments, threshold, fulfillmentUri, conditionUri) {
     describe('with ' + fulfillments.length + ' subfulfillments', function () {
       it('generates the correct fulfillment uri', function () {
-        const f = new condition.ThresholdSha256Fulfillment()
+        const f = new condition.ThresholdSha256()
         f.setThreshold(threshold)
         for (let sub of fulfillments) {
           f.addSubfulfillment(condition.fromFulfillmentUri(sub))
@@ -63,7 +63,7 @@ describe('ThresholdSha256Fulfillment', function () {
       })
 
       it('generates the correct condition uri', function () {
-        const f = new condition.ThresholdSha256Fulfillment()
+        const f = new condition.ThresholdSha256()
         f.setThreshold(threshold)
         for (let sub of fulfillments) {
           f.addSubfulfillment(condition.fromFulfillmentUri(sub))
@@ -76,8 +76,8 @@ describe('ThresholdSha256Fulfillment', function () {
   }
 
   describe('calculateWorstCaseLength', function () {
-    const calc = condition.ThresholdSha256Fulfillment.calculateWorstCaseLength
-      .bind(condition.ThresholdSha256Fulfillment)
+    const calc = condition.ThresholdSha256.calculateWorstCaseLength
+      .bind(condition.ThresholdSha256)
 
     testWith(3, [1, 4], [2, 3], 3)
     testWith(200, [115, 300], [52, 9001], 9001)

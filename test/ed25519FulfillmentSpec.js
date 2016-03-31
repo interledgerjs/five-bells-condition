@@ -2,7 +2,7 @@ const assert = require('chai').assert
 const crypto = require('crypto')
 const condition = require('..')
 
-describe('Ed25519Fulfillment', function () {
+describe('Ed25519', function () {
   testFromParams(
     {
       key: new Buffer(32).fill(0),
@@ -33,7 +33,7 @@ describe('Ed25519Fulfillment', function () {
   function testFromParams (params, fulfillmentUri, conditionUri) {
     describe('key ' + params.key.toString('hex'), function () {
       it('generates correct fulfillment uri', function () {
-        const f = new condition.Ed25519Fulfillment()
+        const f = new condition.Ed25519()
         f.sign(params.message, params.key)
         const uri = f.serializeUri()
 
@@ -41,7 +41,7 @@ describe('Ed25519Fulfillment', function () {
       })
 
       it('generates correct condition uri', function () {
-        const f = new condition.Ed25519Fulfillment()
+        const f = new condition.Ed25519()
         f.sign(params.message, params.key)
         const uri = f.getCondition().serializeUri()
 
@@ -56,7 +56,7 @@ describe('Ed25519Fulfillment', function () {
       })
 
       it('parsed condition matches generated condition', function () {
-        const f = new condition.Ed25519Fulfillment()
+        const f = new condition.Ed25519()
         f.sign(params.message, params.key)
         const generatedCondition = f.getCondition()
         const parsedCondition = condition.fromConditionUri(conditionUri)

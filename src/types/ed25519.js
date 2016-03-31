@@ -4,7 +4,7 @@ const nacl = require('tweetnacl')
 const Fulfillment = require('../lib/fulfillment')
 const MissingDataError = require('../errors/missing-data-error')
 
-class Ed25519Fulfillment extends Fulfillment {
+class Ed25519 extends Fulfillment {
   constructor () {
     super()
     this.publicKey = null
@@ -113,8 +113,8 @@ class Ed25519Fulfillment extends Fulfillment {
    * @param {Reader} reader Source to read the fulfillment payload from.
    */
   parsePayload (reader) {
-    this.setPublicKey(reader.readOctetString(Ed25519Fulfillment.PUBKEY_LENGTH))
-    this.setSignature(reader.readOctetString(Ed25519Fulfillment.SIGNATURE_LENGTH))
+    this.setPublicKey(reader.readOctetString(Ed25519.PUBKEY_LENGTH))
+    this.setSignature(reader.readOctetString(Ed25519.SIGNATURE_LENGTH))
   }
 
   /**
@@ -125,8 +125,8 @@ class Ed25519Fulfillment extends Fulfillment {
    * @param {Writer} writer Subject for writing the fulfillment payload.
    */
   writePayload (writer) {
-    writer.writeOctetString(this.publicKey, Ed25519Fulfillment.PUBKEY_LENGTH)
-    writer.writeOctetString(this.signature, Ed25519Fulfillment.SIGNATURE_LENGTH)
+    writer.writeOctetString(this.publicKey, Ed25519.PUBKEY_LENGTH)
+    writer.writeOctetString(this.signature, Ed25519.SIGNATURE_LENGTH)
   }
 
   /**
@@ -138,7 +138,7 @@ class Ed25519Fulfillment extends Fulfillment {
    * @return {Number} Length of the fulfillment payload.
    */
   calculateMaxFulfillmentLength () {
-    return Ed25519Fulfillment.FULFILLMENT_LENGTH
+    return Ed25519.FULFILLMENT_LENGTH
   }
 
   /**
@@ -155,12 +155,12 @@ class Ed25519Fulfillment extends Fulfillment {
   }
 }
 
-Ed25519Fulfillment.TYPE_ID = 4
-Ed25519Fulfillment.FEATURE_BITMASK = 0x20
-Ed25519Fulfillment.PUBKEY_LENGTH = 32
-Ed25519Fulfillment.SIGNATURE_LENGTH = 64
-Ed25519Fulfillment.FULFILLMENT_LENGTH =
-  Ed25519Fulfillment.PUBKEY_LENGTH +
-  Ed25519Fulfillment.SIGNATURE_LENGTH
+Ed25519.TYPE_ID = 4
+Ed25519.FEATURE_BITMASK = 0x20
+Ed25519.PUBKEY_LENGTH = 32
+Ed25519.SIGNATURE_LENGTH = 64
+Ed25519.FULFILLMENT_LENGTH =
+  Ed25519.PUBKEY_LENGTH +
+  Ed25519.SIGNATURE_LENGTH
 
-module.exports = Ed25519Fulfillment
+module.exports = Ed25519

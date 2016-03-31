@@ -2,11 +2,11 @@
 
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
-const BaseSha256Fulfillment = require('./base-sha256')
+const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
-class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
+class PrefixSha256 extends BaseSha256 {
   constructor () {
     super()
 
@@ -24,10 +24,25 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    */
   setSubcondition (subcondition) {
     if (!(subcondition instanceof Condition)) {
-      throw new Error('Subconditions must be objects of type Condition')
+      throw new Error('Subconditions must be URIs or objects of type Condition')
     }
 
     this.subcondition = subcondition
+  }
+
+  /**
+   * Set the (unfulfilled) subcondition.
+   *
+   * This will automatically parse the URI and call setSubcondition.
+   *
+   * @param {String} Subcondition URI.
+   */
+  setSubconditionUri (subconditionUri) {
+    if (typeof subconditionUri !== 'string') {
+      throw new Error('Subcondition must be provided as a URI string')
+    }
+
+    this.setSubcondition(Condition.fromUri(subconditionUri))
   }
 
   /**
@@ -41,12 +56,27 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    *
    * @param {Fulfillment} fulfillment Fulfillment to use for the subcondition.
    */
-  setSubfulfillment (subfulfillment, opts) {
+  setSubfulfillment (subfulfillment) {
     if (!(subfulfillment instanceof Fulfillment)) {
       throw new Error('Subfulfillments must be objects of type Fulfillment')
     }
 
     this.subcondition = subfulfillment
+  }
+
+  /**
+   * Set the (fulfilled) subcondition.
+   *
+   * This will automatically parse the URI and call setSubfulfillment.
+   *
+   * @param {String} Subfulfillment URI.
+   */
+  setSubfulfillmentUri (subfulfillmentUri) {
+    if (typeof subfulfillmentUri !== 'string') {
+      throw new Error('Subfulfillment must be provided as a URI string')
+    }
+
+    this.setSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
   }
 
   /**
@@ -168,13 +198,16 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
     if (!(this.subcondition instanceof Fulfillment)) {
       throw new Error('Subcondition is not a fulfillment')
     }
+    if (!Buffer.isBuffer(message)) {
+      throw new Error('Message must be provided as a Buffer')
+    }
 
     // Ensure the subfulfillment is valid
-    return this.subcondition.validate(Buffer.concat(this.prefix, message))
+    return this.subcondition.validate(Buffer.concat([this.prefix, message]))
   }
 }
 
-PrefixSha256Fulfillment.TYPE_ID = 1
-PrefixSha256Fulfillment.FEATURE_BITMASK = 0x05
+PrefixSha256.TYPE_ID = 1
+PrefixSha256.FEATURE_BITMASK = 0x05
 
-module.exports = PrefixSha256Fulfillment
+module.exports = PrefixSha256

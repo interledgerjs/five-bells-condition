@@ -1,5 +1,6 @@
 'use strict'
 
+const TypeRegistry = require('./type-registry')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
 const MissingDataError = require('../errors/missing-data-error')
@@ -249,8 +250,27 @@ class Condition {
    * @return {Boolean} Whether the condition is valid according to local rules.
    */
   validate () {
+    // Get class for type ID, throws on error
+    TypeRegistry.getClassFromTypeId(this.getTypeId())
+
+    // Assert all requested features are supported by this implementation
+    if (this.getBitmask() & ~Condition.SUPPORTED_BITMASK) {
+      throw new Error('Condition requested unsupported feature suites')
+    }
+
+    // Assert the requested fulfillment size is supported by this implementation
+    if (this.getMaxFulfillmentLength() > Condition.MAX_FULFILLMENT_LENGTH) {
+      throw new Error('Condition requested too large of a max fulfillment size')
+    }
+
     return true
   }
 }
+
+// Feature suites supported by this implementation
+Condition.SUPPORTED_BITMASK = 0x3f
+
+// Max fulfillment size supported by this implementation
+Condition.MAX_FULFILLMENT_LENGTH = 65535
 
 module.exports = Condition
