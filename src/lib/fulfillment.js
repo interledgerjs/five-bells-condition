@@ -9,7 +9,7 @@ const base64url = require('../util/base64url')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
 
-const FULFILLMENT_REGEX = /^cf:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]+$/
+const FULFILLMENT_REGEX = /^cf:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]*$/
 
 class Fulfillment {
   /**
@@ -36,11 +36,11 @@ class Fulfillment {
     }
 
     const typeId = parseInt(pieces[1], 16)
-    const payload = Reader.from(base64url.decode(pieces[2]))
+    const payload = base64url.decode(pieces[2])
 
     const ConditionClass = TypeRegistry.getClassFromTypeId(typeId)
     const fulfillment = new ConditionClass()
-    fulfillment.parsePayload(payload)
+    fulfillment.parsePayload(Reader.from(payload), payload.length)
 
     return fulfillment
   }
@@ -60,7 +60,8 @@ class Fulfillment {
     const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readUInt16())
 
     const condition = new ConditionClass()
-    condition.parsePayload(reader)
+    const payloadLength = reader.readLengthPrefix()
+    condition.parsePayload(reader, payloadLength)
 
     return condition
   }
@@ -159,7 +160,7 @@ class Fulfillment {
   serializeBinary () {
     const writer = new Writer()
     writer.writeUInt16(this.getTypeId())
-    this.writePayload(writer)
+    writer.writeVarOctetString(this.serializePayload())
     return writer.getBuffer()
   }
 

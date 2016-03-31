@@ -16,7 +16,7 @@ This specification is only a draft at this stage and has not been submitted.
 const cc = require('five-bells-condition')
 
 // Check a condition for validity
-const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
+const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 const validationResult = cc.validateCondition(condition)
 // validationResult === true
 ```
@@ -29,8 +29,8 @@ all accepted by the current implementation.
 ``` js
 const cc = require('five-bells-condition')
 
-const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
-const fulfillment = 'cf:0:AA'
+const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
+const fulfillment = 'cf:0:'
 const validationResult = cc.validateFulfillment(fulfillment, condition)
 // validationResult === true
 ```
@@ -42,7 +42,7 @@ This validates the fulfillment and ensures that it matches the given condition.
 ``` js
 const cc = require('five-bells-condition')
 
-const fulfillment = 'cf:0:AA'
+const fulfillment = 'cf:0:'
 const condition = cc.fulfillmentToCondition(fulfillment)
 
 // You could now look up this condition in your database etc.
@@ -59,7 +59,7 @@ const cc = require('five-bells-condition')
 const myFulfillment = new cc.PreimageSha256()
 myFulfillment.setPreimage(new Buffer(''))
 console.log(myFulfillment.getCondition().serializeUri())
-// prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
+// prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 ```
 
 ### Create a PREIMAGE-SHA-256 Fullfillment (Hashlock)
@@ -70,7 +70,7 @@ const cc = require('five-bells-condition')
 const myFulfillment = new cc.PreimageSha256()
 myFulfillment.setPreimage(new Buffer(''))
 console.log(myFulfillment.serializeUri())
-// prints 'cf:0:AA'
+// prints 'cf:0:'
 ```
 
 ### Parse a Fulfillment
@@ -78,7 +78,7 @@ console.log(myFulfillment.serializeUri())
 ``` js
 const cc = require('five-bells-condition')
 
-const parsedFulfillment = cc.fromFulfillmentUri('cf:0:AA')
+const parsedFulfillment = cc.fromFulfillmentUri('cf:0:')
 // parsedFulfillment instanceof cc.PreimageSha256 === true
 // Note: Merely parsing a fulfillment DOES NOT validate it.
 
@@ -134,10 +134,10 @@ const cc = require('five-bells-condition')
 
 const thresholdFulfillment = new cc.ThresholdSha256()
 thresholdFulfillment.addSubconditionUri('cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96')
-thresholdFulfillment.addSubfulfillmentUri('cf:0:AA')
+thresholdFulfillment.addSubfulfillmentUri('cf:0:')
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:2:2b:Il6bbGNvcDcntLj8v05liPgopXQQKflmX5rKZhcNhHw:146'
+// prints 'cc:2:2b:mJUaGKCuF5n-3tfXM2U81VYtHbX-N8MP6kz8R-ASwNQ:146'
 ```
 
 ### Create a THRESHOLD-SHA-256 Fulfillment
@@ -147,10 +147,10 @@ const cc = require('five-bells-condition')
 
 const thresholdFulfillment = new cc.ThresholdSha256()
 thresholdFulfillment.addSubfulfillmentUri('cf:4:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r-2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK')
-thresholdFulfillment.addSubfulfillmentUri('cf:0:AA')
+thresholdFulfillment.addSubfulfillmentUri('cf:0:')
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:2:2b:Il6bbGNvcDcntLj8v05liPgopXQQKflmX5rKZhcNhHw:146'
+// prints 'cc:2:2b:mJUaGKCuF5n-3tfXM2U81VYtHbX-N8MP6kz8R-ASwNQ:146'
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
@@ -181,7 +181,7 @@ prefix.setPrefix(new Buffer('Hello World! '))
 prefix.setSubfulfillmentUri('cf:4:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r-2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK')
 const fulfillmentUri = prefix.serializeUri()
 console.log(fulfillmentUri)
-// prints 'cf:1:DUhlbGxvIFdvcmxkISAABOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_tiKR-tlDL48pi5xKSJXb4pP2_9oaaNrfDM3vX0egxyEqX-o82pej9MA-qfLorBzshqUdRSEnq9ugnRtvMxwHCg'
+// prints 'cf:1:DUhlbGxvIFdvcmxkISAABGDsFyuTrV5WO_STLHDhJFA0w1Rn7y79TWTr-BloNGfiv7YikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
 
 const conditionUri = prefix.getCondition().serializeUri()
 const message = new Buffer('Conditions are here!')
@@ -243,7 +243,7 @@ cc.validateFulfillment(rsaFulfillmentUri, rsaConditionUri, exampleMessage)
 const cc = require('five-bells-condition')
 
 // Parse a condition
-const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
+const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 const parsedCondition = cc.fromConditionUri(condition)
 console.log(parsedCondition.constructor.name)
 // prints 'Condition'
@@ -274,7 +274,7 @@ const myCondition = new cc.Condition()
 myCondition.setTypeId(cc.PreimageSha256.TYPE_ID)
 myCondition.setBitmask(cc.PreimageSha256.FEATURE_BITMASK)
 myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
-myCondition.setMaxFulfillmentLength(1)
+myCondition.setMaxFulfillmentLength(0)
 console.log(myCondition.serializeUri())
-// prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
+// prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 ```

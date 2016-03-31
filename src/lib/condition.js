@@ -13,7 +13,7 @@ const Writer = require('../lib/writer')
 //
 // Note that this regex is very strict and specific to the set of conditions
 // supported by this implementation.
-const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
+const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:([1-9][0-9]{0,50}|0)$/
 
 class Condition {
   /**
@@ -171,7 +171,7 @@ class Condition {
    *   fulfills this condition..
    */
   getMaxFulfillmentLength () {
-    if (!this.maxFulfillmentLength) {
+    if (typeof this.maxFulfillmentLength !== 'number') {
       throw new MissingDataError('Maximum fulfillment length not set')
     }
 
