@@ -58,7 +58,7 @@ const cc = require('five-bells-condition')
 
 const myFulfillment = new cc.PreimageSha256()
 myFulfillment.setPreimage(new Buffer(''))
-console.log(myFulfillment.getCondition().serializeUri())
+console.log(myFulfillment.getConditionUri())
 // prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 ```
 
@@ -93,7 +93,7 @@ const cc = require('five-bells-condition')
 
 const ed25519Fulfillment = new cc.Ed25519()
 ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
-console.log(ed25519Fulfillment.getCondition().serializeUri())
+console.log(ed25519Fulfillment.getConditionUri())
 // prints 'cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96'
 ```
 
@@ -109,7 +109,7 @@ const ed25519Fulfillment = new cc.Ed25519()
 // ed25519Fulfillment.setSignature(new Buffer('...'))
 // -- or --
 ed25519Fulfillment.sign(new Buffer('Hello World! Conditions are here!'), edPrivateKey)
-console.log(ed25519Fulfillment.getCondition().serializeUri())
+console.log(ed25519Fulfillment.getConditionUri())
 // prints 'cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96'
 console.log(ed25519Fulfillment.serializeUri())
 // prints 'cf:4:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r-2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK'
@@ -136,7 +136,7 @@ const thresholdFulfillment = new cc.ThresholdSha256()
 thresholdFulfillment.addSubconditionUri('cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96')
 thresholdFulfillment.addSubfulfillmentUri('cf:0:')
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
-console.log(thresholdFulfillment.getCondition().serializeUri())
+console.log(thresholdFulfillment.getConditionUri())
 // prints 'cc:2:2b:mJUaGKCuF5n-3tfXM2U81VYtHbX-N8MP6kz8R-ASwNQ:146'
 ```
 
@@ -149,7 +149,7 @@ const thresholdFulfillment = new cc.ThresholdSha256()
 thresholdFulfillment.addSubfulfillmentUri('cf:4:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r-2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK')
 thresholdFulfillment.addSubfulfillmentUri('cf:0:')
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
-console.log(thresholdFulfillment.getCondition().serializeUri())
+console.log(thresholdFulfillment.getConditionUri())
 // prints 'cc:2:2b:mJUaGKCuF5n-3tfXM2U81VYtHbX-N8MP6kz8R-ASwNQ:146'
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
@@ -167,7 +167,7 @@ const cc = require('five-bells-condition')
 const prefix = new cc.PrefixSha256()
 prefix.setPrefix(new Buffer('2016:'))
 prefix.setSubconditionUri('cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96')
-console.log(prefix.getCondition().serializeUri())
+console.log(prefix.getConditionUri())
 // prints 'cc:1:25:7myveZs3EaZMMuez-3kq6u69BDNYMYRMi_VF9yIuFLc:102'
 ```
 
@@ -183,7 +183,7 @@ const fulfillmentUri = prefix.serializeUri()
 console.log(fulfillmentUri)
 // prints 'cf:1:DUhlbGxvIFdvcmxkISAABGDsFyuTrV5WO_STLHDhJFA0w1Rn7y79TWTr-BloNGfiv7YikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
 
-const conditionUri = prefix.getCondition().serializeUri()
+const conditionUri = prefix.getConditionUri()
 const message = new Buffer('Conditions are here!')
 cc.validateFulfillment(fulfillmentUri, conditionUri, message)
 ```
@@ -195,7 +195,7 @@ const cc = require('five-bells-condition')
 
 const rsaFulfillment = new cc.RsaSha256()
 rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
-console.log(rsaFulfillment.getCondition().serializeUri())
+console.log(rsaFulfillment.getConditionUri())
 // prints 'cc:3:11:Bw-r77AGqSCL0huuMQYj3KW0Jh67Fpayeq9h_4UJctg:260'
 ```
 
@@ -234,7 +234,7 @@ console.log(rsaFulfillment.serializeUri().length)
 
 // Verify RSA-SHA256 condition
 const rsaFulfillmentUri = rsaFulfillment.serializeUri()
-const rsaConditionUri = rsaFulfillment.getCondition().serializeUri()
+const rsaConditionUri = rsaFulfillment.getConditionUri()
 cc.validateFulfillment(rsaFulfillmentUri, rsaConditionUri, exampleMessage)
 ```
 

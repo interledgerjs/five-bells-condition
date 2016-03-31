@@ -110,6 +110,28 @@ class Fulfillment {
   }
 
   /**
+   * Shorthand for getting condition URI.
+   *
+   * Stands for getCondition().serializeUri().
+   *
+   * @return {String} Condition URI.
+   */
+  getConditionUri () {
+    return this.getCondition().serializeUri()
+  }
+
+  /**
+   * Shorthand for getting condition encoded as binary.
+   *
+   * Stands for getCondition().serializeBinary().
+   *
+   * @return {Buffer} Binary encoded condition.
+   */
+  getConditionBinary () {
+    return this.getCondition().serializeBinary()
+  }
+
+  /**
    * Generate the hash of the fulfillment.
    *
    * This method is a stub and will be overridden by subclasses.

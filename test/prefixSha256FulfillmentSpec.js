@@ -47,7 +47,7 @@ describe('PrefixSha256', function () {
         const f = new condition.PrefixSha256()
         f.setSubfulfillment(condition.fromFulfillmentUri(subfulfillment))
         f.setPrefix(prefix)
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })

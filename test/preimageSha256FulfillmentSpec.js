@@ -104,14 +104,14 @@ describe('PreimageSha256', function () {
       it('generates condition ' + conditionUri, function () {
         const f = new condition.PreimageSha256()
         f.setPreimage(this.preimage)
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
 
       it('parsing fulfillment generates condition', function () {
         const f = condition.fromFulfillmentUri(fulfillmentUri)
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })

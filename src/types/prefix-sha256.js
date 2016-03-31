@@ -124,7 +124,7 @@ class PrefixSha256 extends BaseSha256 {
     hasher.write(
       this.subcondition instanceof Condition
       ? this.subcondition.serializeBinary()
-      : this.subcondition.getCondition().serializeBinary()
+      : this.subcondition.getConditionBinary()
     )
   }
 

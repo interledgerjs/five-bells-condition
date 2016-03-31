@@ -40,7 +40,7 @@ describe('RsaSha256', function () {
         const f = new condition.RsaSha256()
         f.setPublicModulus(params.modulus)
         f.sign(params.message, params.key)
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })

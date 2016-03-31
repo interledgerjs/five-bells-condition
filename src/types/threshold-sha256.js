@@ -168,7 +168,7 @@ class ThresholdSha256 extends BaseSha256 {
         writer.writeVarUInt(c.weight)
         writer.write(
           c.type === FULFILLMENT
-            ? c.body.getCondition().serializeBinary()
+            ? c.body.getConditionBinary()
             : c.body.serializeBinary()
         )
         return writer.getBuffer()
@@ -242,7 +242,7 @@ class ThresholdSha256 extends BaseSha256 {
 
   static predictSubconditionLength (cond) {
     return cond.type === FULFILLMENT
-      ? cond.body.getCondition().serializeBinary().length
+      ? cond.body.getConditionBinary().length
       : cond.body.serializeBinary().length
   }
 
@@ -357,7 +357,7 @@ class ThresholdSha256 extends BaseSha256 {
         ? Object.assign({}, x, {
           index: i,
           size: x.body.serializeBinary().length,
-          omitSize: x.body.getCondition().serializeBinary().length
+          omitSize: x.body.getConditionBinary().length
         })
         : null))
       .filter(Boolean)

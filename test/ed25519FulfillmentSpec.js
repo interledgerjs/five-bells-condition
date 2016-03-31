@@ -43,14 +43,14 @@ describe('Ed25519', function () {
       it('generates correct condition uri', function () {
         const f = new condition.Ed25519()
         f.sign(params.message, params.key)
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
 
       it('parsing fulfillment generates condition', function () {
         const f = condition.fromFulfillmentUri(fulfillmentUri)
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })

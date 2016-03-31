@@ -33,7 +33,7 @@ const validateFulfillment = (serializedFulfillment, serializedCondition, message
   const fulfillment = Fulfillment.fromUri(serializedFulfillment)
 
   // Compare condition URI, throw on error
-  const conditionUri = fulfillment.getCondition().serializeUri()
+  const conditionUri = fulfillment.getConditionUri()
   if (conditionUri !== serializedCondition) {
     throw new Error('Fulfillment does not match condition')
   }
@@ -46,7 +46,7 @@ const fulfillmentToCondition = (serializedFulfillment) => {
   // Parse fulfillment, throw on error
   const fulfillment = Fulfillment.fromUri(serializedFulfillment)
 
-  return fulfillment.getCondition().serializeUri()
+  return fulfillment.getConditionUri()
 }
 
 TypeRegistry.registerType(PreimageSha256)

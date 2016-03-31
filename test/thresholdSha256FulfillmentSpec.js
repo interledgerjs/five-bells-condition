@@ -81,7 +81,7 @@ describe('ThresholdSha256', function () {
         for (let sub of fulfillments) {
           f.addSubfulfillment(condition.fromFulfillmentUri(sub))
         }
-        const uri = f.getCondition().serializeUri()
+        const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
