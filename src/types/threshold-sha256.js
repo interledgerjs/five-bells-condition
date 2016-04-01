@@ -185,6 +185,8 @@ class ThresholdSha256 extends BaseSha256 {
    * This function is called internally by the `getCondition` method.
    *
    * @param {Hasher} hasher Hash generator
+   *
+   * @private
    */
   writeHashPayload (hasher) {
     if (!this.subconditions.length) {
@@ -225,6 +227,8 @@ class ThresholdSha256 extends BaseSha256 {
    * in the largest total fulfillment size.
    *
    * @return {Number} Maximum length of the fulfillment payload
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     // Calculate length of longest fulfillments
@@ -318,6 +322,8 @@ class ThresholdSha256 extends BaseSha256 {
    *   the recursive calls.)
    * @return {Number} Maximum size of a valid, minimal set of fulfillments or
    *   -Infinity if there is no valid set.
+   *
+   * @private
    */
   static calculateWorstCaseLength (threshold, subconditions, index) {
     index = index || 0
@@ -351,6 +357,8 @@ class ThresholdSha256 extends BaseSha256 {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
     this.setThreshold(reader.readVarUInt())
@@ -379,6 +387,8 @@ class ThresholdSha256 extends BaseSha256 {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     const subfulfillments = this.subconditions
@@ -439,6 +449,8 @@ class ThresholdSha256 extends BaseSha256 {
    * @param {Number} state.size Size of the binary so far
    * @param {Object[]} state.set Set of fulfillments that were included.
    * @return {Object} Result with size and set properties.
+   *
+   * @private
    */
   static calculateSmallestValidFulfillmentSet (threshold, fulfillments, state) {
     state = state || {
@@ -493,6 +505,8 @@ class ThresholdSha256 extends BaseSha256 {
    *
    * @param {Buffer[]} buffers Set of octet strings to sort.
    * @return {Buffer[]} Sorted buffers.
+   *
+   * @private
    */
   static sortBuffers (buffers) {
     return buffers.slice().sort((a, b) => (

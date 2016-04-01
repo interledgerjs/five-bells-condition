@@ -29,6 +29,8 @@ class PreimageSha256 extends BaseSha256 {
    * `getCondition`.
    *
    * @param {Hasher} hasher Destination where the hash payload will be written.
+   *
+   * @private
    */
   writeHashPayload (hasher) {
     if (!this.preimage) {
@@ -63,6 +65,8 @@ class PreimageSha256 extends BaseSha256 {
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
    * @param {Number} payloadSize Total size of the fulfillment payload.
+   *
+   * @private
    */
   parsePayload (reader, payloadSize) {
     this.setPreimage(reader.read(payloadSize))
@@ -74,6 +78,8 @@ class PreimageSha256 extends BaseSha256 {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     if (!this.preimage) {

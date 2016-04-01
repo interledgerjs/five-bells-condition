@@ -1,5 +1,9 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const TypeRegistry = require('./type-registry')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
@@ -15,6 +19,23 @@ const Writer = require('../lib/writer')
 // supported by this implementation.
 const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:([1-9][0-9]{0,50}|0)$/
 
+/**
+ * Crypto-condition.
+ *
+ * A primary design goal of crypto-conditions was to keep the size of conditions
+ * constant. Even a complex multi-signature can be represented by the same size
+ * condition as a simple hashlock.
+ *
+ * However, this means that a condition only carries the absolute minimum
+ * information required. It does not tell you anything about its structure.
+ *
+ * All that is included with a condition is the fingerprint (usually a hash of
+ * the parts of the fulfillment that are known up-front, e.g. public keys), the
+ * maximum fulfillment size, the set of features used and the condition type.
+ *
+ * This information is just enough that an implementation can tell with
+ * certainty whether it would be able to process the corresponding fulfillment.
+ */
 class Condition {
   /**
    * Create a Condition object from a URI.
@@ -232,6 +253,8 @@ class Condition {
    * stream.
    *
    * @param {Reader} reader Binary stream containing the condition.
+   *
+   * @private
    */
   parseBinary (reader) {
     this.setTypeId(reader.readUInt16())

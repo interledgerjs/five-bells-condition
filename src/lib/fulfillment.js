@@ -1,5 +1,9 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const TypeRegistry = require('./type-registry')
 const Condition = require('./condition')
 const Predictor = require('./predictor')
@@ -11,6 +15,9 @@ const ParseError = require('../errors/parse-error')
 
 const FULFILLMENT_REGEX = /^cf:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]*$/
 
+/**
+ * Base class for fulfillment types.
+ */
 class Fulfillment {
   /**
    * Create a Fulfillment object from a URI.
@@ -135,6 +142,10 @@ class Fulfillment {
    * Generate the hash of the fulfillment.
    *
    * This method is a stub and will be overridden by subclasses.
+   *
+   * @return {Buffer} Fingerprint of the condition.
+   *
+   * @private
    */
   generateHash () {
     throw new Error('This method should be implemented by a subclass')
@@ -148,6 +159,8 @@ class Fulfillment {
    * method with one that calculates the maximum possible length.
    *
    * @return {Number} Maximum fulfillment length
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     const predictor = new Predictor()
@@ -195,6 +208,8 @@ class Fulfillment {
    * the bitmask.
    *
    * @return {Buffer} Fulfillment payload
+   *
+   * @private
    */
   serializePayload () {
     const writer = new Writer()

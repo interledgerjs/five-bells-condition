@@ -33,15 +33,36 @@ This specification is only a draft at this stage and has not been submitted.
         - [Advanced: Parse and Reserialize a THRESHOLD-SHA-256 Fulfillment](#advanced-parse-and-reserialize-a-threshold-sha-256-fulfillment)
         - [Advanced: Manually Create a Condition](#advanced-manually-create-a-condition)
     - [API Reference](#api-reference)
+        - [types~Condition](#typescondition)
+            - [condition.getTypeId() ⇒ <code>Number</code>](#conditiongettypeid--codenumbercode)
+            - [condition.setTypeId(type)](#conditionsettypeidtype)
+            - [condition.getBitmask() ⇒ <code>Number</code>](#conditiongetbitmask--codenumbercode)
+            - [condition.setBitmask(bitmask)](#conditionsetbitmaskbitmask)
+            - [condition.getHash() ⇒ <code>Buffer</code>](#conditiongethash--codebuffercode)
+            - [condition.setHash(hash)](#conditionsethashhash)
+            - [condition.getMaxFulfillmentLength() ⇒ <code>Number</code>](#conditiongetmaxfulfillmentlength--codenumbercode)
+            - [condition.setMaxFulfillmentLength(Maximum)](#conditionsetmaxfulfillmentlengthmaximum)
+            - [condition.serializeUri() ⇒ <code>String</code>](#conditionserializeuri--codestringcode)
+            - [condition.serializeBinary() ⇒ <code>Buffer</code>](#conditionserializebinary--codebuffercode)
+            - [condition.validate() ⇒ <code>Boolean</code>](#conditionvalidate--codebooleancode)
+            - [Condition.fromUri(serializedCondition) ⇒ <code>Condition</code>](#conditionfromuriserializedcondition--codeconditioncode)
+            - [Condition.fromBinary(reader) ⇒ <code>Condition</code>](#conditionfrombinaryreader--codeconditioncode)
+        - [types~Fulfillment](#typesfulfillment)
+            - [fulfillment.getTypeId() ⇒ <code>Number</code>](#fulfillmentgettypeid--codenumbercode)
+            - [fulfillment.getBitmask() ⇒ <code>Number</code>](#fulfillmentgetbitmask--codenumbercode)
+            - [fulfillment.getCondition() ⇒ <code>Condition</code>](#fulfillmentgetcondition--codeconditioncode)
+            - [fulfillment.getConditionUri() ⇒ <code>String</code>](#fulfillmentgetconditionuri--codestringcode)
+            - [fulfillment.getConditionBinary() ⇒ <code>Buffer</code>](#fulfillmentgetconditionbinary--codebuffercode)
+            - [fulfillment.serializeUri() ⇒ <code>String</code>](#fulfillmentserializeuri--codestringcode)
+            - [fulfillment.serializeBinary() ⇒ <code>Buffer</code>](#fulfillmentserializebinary--codebuffercode)
+            - [fulfillment.validate() ⇒ <code>Boolean</code>](#fulfillmentvalidate--codebooleancode)
+            - [Fulfillment.fromUri(serializedFulfillment) ⇒ <code>Fulfillment</code>](#fulfillmentfromuriserializedfulfillment--codefulfillmentcode)
+            - [Fulfillment.fromBinary(reader) ⇒ <code>Fulfillment</code>](#fulfillmentfrombinaryreader--codefulfillmentcode)
         - [types~Ed25519](#typesed25519)
-            - [ed25519.writeCommonHeader(Target)](#ed25519writecommonheadertarget)
             - [ed25519.setPublicKey(publicKey)](#ed25519setpublickeypublickey)
             - [ed25519.setSignature(signature)](#ed25519setsignaturesignature)
             - [ed25519.sign(message, privateKey)](#ed25519signmessage-privatekey)
             - [ed25519.generateHash(hasher)](#ed25519generatehashhasher)
-            - [ed25519.parsePayload(reader)](#ed25519parsepayloadreader)
-            - [ed25519.writePayload(writer)](#ed25519writepayloadwriter)
-            - [ed25519.calculateMaxFulfillmentLength() ⇒ <code>Number</code>](#ed25519calculatemaxfulfillmentlength--codenumbercode)
             - [ed25519.validate(message) ⇒ <code>Boolean</code>](#ed25519validatemessage--codebooleancode)
         - [types~PrefixSha256](#typesprefixsha256)
             - [prefixSha256.setSubcondition(subcondition)](#prefixsha256setsubconditionsubcondition)
@@ -50,26 +71,14 @@ This specification is only a draft at this stage and has not been submitted.
             - [prefixSha256.setSubfulfillmentUri(Subfulfillment)](#prefixsha256setsubfulfillmenturisubfulfillment)
             - [prefixSha256.setPrefix(prefix)](#prefixsha256setprefixprefix)
             - [prefixSha256.getBitmask() ⇒ <code>Number</code>](#prefixsha256getbitmask--codenumbercode)
-            - [prefixSha256.writeHashPayload(hasher)](#prefixsha256writehashpayloadhasher)
-            - [prefixSha256.calculateMaxFulfillmentLength() ⇒ <code>Number</code>](#prefixsha256calculatemaxfulfillmentlength--codenumbercode)
-            - [prefixSha256.parsePayload(reader)](#prefixsha256parsepayloadreader)
-            - [prefixSha256.writePayload(writer)](#prefixsha256writepayloadwriter)
             - [prefixSha256.validate(message) ⇒ <code>Boolean</code>](#prefixsha256validatemessage--codebooleancode)
         - [types~PreimageSha256](#typespreimagesha256)
-            - [preimageSha256.writeHashPayload(hasher)](#preimagesha256writehashpayloadhasher)
             - [preimageSha256.setPreimage(preimage)](#preimagesha256setpreimagepreimage)
-            - [preimageSha256.parsePayload(reader, payloadSize)](#preimagesha256parsepayloadreader-payloadsize)
-            - [preimageSha256.writePayload(writer)](#preimagesha256writepayloadwriter)
             - [preimageSha256.validate() ⇒ <code>Boolean</code>](#preimagesha256validate--codebooleancode)
         - [types~RsaSha256](#typesrsasha256)
-            - [rsaSha256.writeCommonHeader(Target)](#rsasha256writecommonheadertarget)
             - [rsaSha256.setPublicModulus(modulus)](#rsasha256setpublicmodulusmodulus)
             - [rsaSha256.setSignature(signature)](#rsasha256setsignaturesignature)
             - [rsaSha256.sign(message, privateKey)](#rsasha256signmessage-privatekey)
-            - [rsaSha256.writeHashPayload(hasher)](#rsasha256writehashpayloadhasher)
-            - [rsaSha256.parsePayload(reader)](#rsasha256parsepayloadreader)
-            - [rsaSha256.writePayload(writer)](#rsasha256writepayloadwriter)
-            - [rsaSha256.calculateMaxFulfillmentLength() ⇒ <code>Number</code>](#rsasha256calculatemaxfulfillmentlength--codenumbercode)
             - [rsaSha256.validate(message) ⇒ <code>Boolean</code>](#rsasha256validatemessage--codebooleancode)
         - [types~ThresholdSha256](#typesthresholdsha256)
             - [thresholdSha256.addSubcondition(subcondition, [weight])](#thresholdsha256addsubconditionsubcondition-weight)
@@ -78,14 +87,7 @@ This specification is only a draft at this stage and has not been submitted.
             - [thresholdSha256.addSubfulfillmentUri(Subfulfillment)](#thresholdsha256addsubfulfillmenturisubfulfillment)
             - [thresholdSha256.setThreshold(threshold)](#thresholdsha256setthresholdthreshold)
             - [thresholdSha256.getBitmask() ⇒ <code>Number</code>](#thresholdsha256getbitmask--codenumbercode)
-            - [thresholdSha256.writeHashPayload(hasher)](#thresholdsha256writehashpayloadhasher)
-            - [thresholdSha256.calculateMaxFulfillmentLength() ⇒ <code>Number</code>](#thresholdsha256calculatemaxfulfillmentlength--codenumbercode)
-            - [thresholdSha256.parsePayload(reader)](#thresholdsha256parsepayloadreader)
-            - [thresholdSha256.writePayload(writer)](#thresholdsha256writepayloadwriter)
             - [thresholdSha256.validate(message) ⇒ <code>Boolean</code>](#thresholdsha256validatemessage--codebooleancode)
-            - [ThresholdSha256.calculateWorstCaseLength(threshold, subconditions, [size], [index]) ⇒ <code>Number</code>](#thresholdsha256calculateworstcaselengththreshold-subconditions-size-index--codenumbercode)
-            - [ThresholdSha256.calculateSmallestValidFulfillmentSet(threshold, fulfillments, [state]) ⇒ <code>Object</code>](#thresholdsha256calculatesmallestvalidfulfillmentsetthreshold-fulfillments-state--codeobjectcode)
-            - [ThresholdSha256.sortBuffers(buffers) ⇒ <code>Array.&lt;Buffer&gt;</code>](#thresholdsha256sortbuffersbuffers--codearrayltbuffergtcode)
         - [util~BaseError](#utilbaseerror)
         - [util~Base64Url](#utilbase64url)
             - [base64Url.decode(base64urlString) ⇒ <code>Buffer</code>](#base64urldecodebase64urlstring--codebuffercode)
@@ -369,15 +371,40 @@ console.log(myCondition.serializeUri())
 
 
 * [types](#module_types)
+    * [~Condition](#module_types..Condition)
+        * _instance_
+            * [.getTypeId()](#module_types..Condition+getTypeId) ⇒ <code>Number</code>
+            * [.setTypeId(type)](#module_types..Condition+setTypeId)
+            * [.getBitmask()](#module_types..Condition+getBitmask) ⇒ <code>Number</code>
+            * [.setBitmask(bitmask)](#module_types..Condition+setBitmask)
+            * [.getHash()](#module_types..Condition+getHash) ⇒ <code>Buffer</code>
+            * [.setHash(hash)](#module_types..Condition+setHash)
+            * [.getMaxFulfillmentLength()](#module_types..Condition+getMaxFulfillmentLength) ⇒ <code>Number</code>
+            * [.setMaxFulfillmentLength(Maximum)](#module_types..Condition+setMaxFulfillmentLength)
+            * [.serializeUri()](#module_types..Condition+serializeUri) ⇒ <code>String</code>
+            * [.serializeBinary()](#module_types..Condition+serializeBinary) ⇒ <code>Buffer</code>
+            * [.validate()](#module_types..Condition+validate) ⇒ <code>Boolean</code>
+        * _static_
+            * [.fromUri(serializedCondition)](#module_types..Condition.fromUri) ⇒ <code>Condition</code>
+            * [.fromBinary(reader)](#module_types..Condition.fromBinary) ⇒ <code>Condition</code>
+    * [~Fulfillment](#module_types..Fulfillment)
+        * _instance_
+            * [.getTypeId()](#module_types..Fulfillment+getTypeId) ⇒ <code>Number</code>
+            * [.getBitmask()](#module_types..Fulfillment+getBitmask) ⇒ <code>Number</code>
+            * [.getCondition()](#module_types..Fulfillment+getCondition) ⇒ <code>Condition</code>
+            * [.getConditionUri()](#module_types..Fulfillment+getConditionUri) ⇒ <code>String</code>
+            * [.getConditionBinary()](#module_types..Fulfillment+getConditionBinary) ⇒ <code>Buffer</code>
+            * [.serializeUri()](#module_types..Fulfillment+serializeUri) ⇒ <code>String</code>
+            * [.serializeBinary()](#module_types..Fulfillment+serializeBinary) ⇒ <code>Buffer</code>
+            * [.validate()](#module_types..Fulfillment+validate) ⇒ <code>Boolean</code>
+        * _static_
+            * [.fromUri(serializedFulfillment)](#module_types..Fulfillment.fromUri) ⇒ <code>Fulfillment</code>
+            * [.fromBinary(reader)](#module_types..Fulfillment.fromBinary) ⇒ <code>Fulfillment</code>
     * [~Ed25519](#module_types..Ed25519)
-        * [.writeCommonHeader(Target)](#module_types..Ed25519+writeCommonHeader)
         * [.setPublicKey(publicKey)](#module_types..Ed25519+setPublicKey)
         * [.setSignature(signature)](#module_types..Ed25519+setSignature)
         * [.sign(message, privateKey)](#module_types..Ed25519+sign)
         * [.generateHash(hasher)](#module_types..Ed25519+generateHash)
-        * [.parsePayload(reader)](#module_types..Ed25519+parsePayload)
-        * [.writePayload(writer)](#module_types..Ed25519+writePayload)
-        * [.calculateMaxFulfillmentLength()](#module_types..Ed25519+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
         * [.validate(message)](#module_types..Ed25519+validate) ⇒ <code>Boolean</code>
     * [~PrefixSha256](#module_types..PrefixSha256)
         * [.setSubcondition(subcondition)](#module_types..PrefixSha256+setSubcondition)
@@ -386,44 +413,23 @@ console.log(myCondition.serializeUri())
         * [.setSubfulfillmentUri(Subfulfillment)](#module_types..PrefixSha256+setSubfulfillmentUri)
         * [.setPrefix(prefix)](#module_types..PrefixSha256+setPrefix)
         * [.getBitmask()](#module_types..PrefixSha256+getBitmask) ⇒ <code>Number</code>
-        * [.writeHashPayload(hasher)](#module_types..PrefixSha256+writeHashPayload)
-        * [.calculateMaxFulfillmentLength()](#module_types..PrefixSha256+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
-        * [.parsePayload(reader)](#module_types..PrefixSha256+parsePayload)
-        * [.writePayload(writer)](#module_types..PrefixSha256+writePayload)
         * [.validate(message)](#module_types..PrefixSha256+validate) ⇒ <code>Boolean</code>
     * [~PreimageSha256](#module_types..PreimageSha256)
-        * [.writeHashPayload(hasher)](#module_types..PreimageSha256+writeHashPayload)
         * [.setPreimage(preimage)](#module_types..PreimageSha256+setPreimage)
-        * [.parsePayload(reader, payloadSize)](#module_types..PreimageSha256+parsePayload)
-        * [.writePayload(writer)](#module_types..PreimageSha256+writePayload)
         * [.validate()](#module_types..PreimageSha256+validate) ⇒ <code>Boolean</code>
     * [~RsaSha256](#module_types..RsaSha256)
-        * [.writeCommonHeader(Target)](#module_types..RsaSha256+writeCommonHeader)
         * [.setPublicModulus(modulus)](#module_types..RsaSha256+setPublicModulus)
         * [.setSignature(signature)](#module_types..RsaSha256+setSignature)
         * [.sign(message, privateKey)](#module_types..RsaSha256+sign)
-        * [.writeHashPayload(hasher)](#module_types..RsaSha256+writeHashPayload)
-        * [.parsePayload(reader)](#module_types..RsaSha256+parsePayload)
-        * [.writePayload(writer)](#module_types..RsaSha256+writePayload)
-        * [.calculateMaxFulfillmentLength()](#module_types..RsaSha256+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
         * [.validate(message)](#module_types..RsaSha256+validate) ⇒ <code>Boolean</code>
     * [~ThresholdSha256](#module_types..ThresholdSha256)
-        * _instance_
-            * [.addSubcondition(subcondition, [weight])](#module_types..ThresholdSha256+addSubcondition)
-            * [.addSubconditionUri(Subcondition)](#module_types..ThresholdSha256+addSubconditionUri)
-            * [.addSubfulfillment(Fulfillment, [weight])](#module_types..ThresholdSha256+addSubfulfillment)
-            * [.addSubfulfillmentUri(Subfulfillment)](#module_types..ThresholdSha256+addSubfulfillmentUri)
-            * [.setThreshold(threshold)](#module_types..ThresholdSha256+setThreshold)
-            * [.getBitmask()](#module_types..ThresholdSha256+getBitmask) ⇒ <code>Number</code>
-            * [.writeHashPayload(hasher)](#module_types..ThresholdSha256+writeHashPayload)
-            * [.calculateMaxFulfillmentLength()](#module_types..ThresholdSha256+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
-            * [.parsePayload(reader)](#module_types..ThresholdSha256+parsePayload)
-            * [.writePayload(writer)](#module_types..ThresholdSha256+writePayload)
-            * [.validate(message)](#module_types..ThresholdSha256+validate) ⇒ <code>Boolean</code>
-        * _static_
-            * [.calculateWorstCaseLength(threshold, subconditions, [size], [index])](#module_types..ThresholdSha256.calculateWorstCaseLength) ⇒ <code>Number</code>
-            * [.calculateSmallestValidFulfillmentSet(threshold, fulfillments, [state])](#module_types..ThresholdSha256.calculateSmallestValidFulfillmentSet) ⇒ <code>Object</code>
-            * [.sortBuffers(buffers)](#module_types..ThresholdSha256.sortBuffers) ⇒ <code>Array.&lt;Buffer&gt;</code>
+        * [.addSubcondition(subcondition, [weight])](#module_types..ThresholdSha256+addSubcondition)
+        * [.addSubconditionUri(Subcondition)](#module_types..ThresholdSha256+addSubconditionUri)
+        * [.addSubfulfillment(Fulfillment, [weight])](#module_types..ThresholdSha256+addSubfulfillment)
+        * [.addSubfulfillmentUri(Subfulfillment)](#module_types..ThresholdSha256+addSubfulfillmentUri)
+        * [.setThreshold(threshold)](#module_types..ThresholdSha256+setThreshold)
+        * [.getBitmask()](#module_types..ThresholdSha256+getBitmask) ⇒ <code>Number</code>
+        * [.validate(message)](#module_types..ThresholdSha256+validate) ⇒ <code>Boolean</code>
 
 
 * [util](#module_util)
@@ -435,6 +441,349 @@ console.log(myCondition.serializeUri())
         * [.encodeHeader(tag, contentLength)](#module_util..Pem+encodeHeader) ⇒ <code>Buffer</code>
         * [.modulusToPem(modulus)](#module_util..Pem+modulusToPem) ⇒ <code>String</code>
 
+
+<a name="module_types..Condition"></a>
+
+### types~Condition
+Crypto-condition.
+
+A primary design goal of crypto-conditions was to keep the size of conditions
+constant. Even a complex multi-signature can be represented by the same size
+condition as a simple hashlock.
+
+However, this means that a condition only carries the absolute minimum
+information required. It does not tell you anything about its structure.
+
+All that is included with a condition is the fingerprint (usually a hash of
+the parts of the fulfillment that are known up-front, e.g. public keys), the
+maximum fulfillment size, the set of features used and the condition type.
+
+This information is just enough that an implementation can tell with
+certainty whether it would be able to process the corresponding fulfillment.
+
+**Kind**: inner class of <code>[types](#module_types)</code>  
+
+* [~Condition](#module_types..Condition)
+    * _instance_
+        * [.getTypeId()](#module_types..Condition+getTypeId) ⇒ <code>Number</code>
+        * [.setTypeId(type)](#module_types..Condition+setTypeId)
+        * [.getBitmask()](#module_types..Condition+getBitmask) ⇒ <code>Number</code>
+        * [.setBitmask(bitmask)](#module_types..Condition+setBitmask)
+        * [.getHash()](#module_types..Condition+getHash) ⇒ <code>Buffer</code>
+        * [.setHash(hash)](#module_types..Condition+setHash)
+        * [.getMaxFulfillmentLength()](#module_types..Condition+getMaxFulfillmentLength) ⇒ <code>Number</code>
+        * [.setMaxFulfillmentLength(Maximum)](#module_types..Condition+setMaxFulfillmentLength)
+        * [.serializeUri()](#module_types..Condition+serializeUri) ⇒ <code>String</code>
+        * [.serializeBinary()](#module_types..Condition+serializeBinary) ⇒ <code>Buffer</code>
+        * [.validate()](#module_types..Condition+validate) ⇒ <code>Boolean</code>
+    * _static_
+        * [.fromUri(serializedCondition)](#module_types..Condition.fromUri) ⇒ <code>Condition</code>
+        * [.fromBinary(reader)](#module_types..Condition.fromBinary) ⇒ <code>Condition</code>
+
+<a name="module_types..Condition+getTypeId"></a>
+
+#### condition.getTypeId() ⇒ <code>Number</code>
+Return the type of this condition.
+
+The type is a unique integer ID assigned to each type of condition.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Number</code> - Type corresponding to this condition.  
+<a name="module_types..Condition+setTypeId"></a>
+
+#### condition.setTypeId(type)
+Set the type.
+
+Sets the type ID for this condition.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| type | <code>Number</code> | Integer representation of type. |
+
+<a name="module_types..Condition+getBitmask"></a>
+
+#### condition.getBitmask() ⇒ <code>Number</code>
+Return the bitmask of this condition.
+
+For simple condition types this is simply the set of bits representing the
+features required by the condition type.
+
+For structural conditions, this is the bitwise OR of the bitmasks of the
+condition and all its subconditions, recursively.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Number</code> - Bitmask required to verify this condition.  
+<a name="module_types..Condition+setBitmask"></a>
+
+#### condition.setBitmask(bitmask)
+Set the bitmask.
+
+Sets the required bitmask to validate a fulfillment for this condition.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| bitmask | <code>Number</code> | Integer representation of bitmask. |
+
+<a name="module_types..Condition+getHash"></a>
+
+#### condition.getHash() ⇒ <code>Buffer</code>
+Return the hash of the condition.
+
+A primary component of all conditions is the hash. It encodes the static
+properties of the condition. This method enables the conditions to be
+constant size, no matter how complex they actually are. The data used to
+generate the hash consists of all the static properties of the condition
+and is provided later as part of the fulfillment.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Buffer</code> - Hash of the condition  
+<a name="module_types..Condition+setHash"></a>
+
+#### condition.setHash(hash)
+Validate and set the hash of this condition.
+
+Typically conditions are generated from fulfillments and the hash is
+calculated automatically. However, sometimes it may be necessary to
+construct a condition URI from a known hash. This method enables that case.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hash | <code>Buffer</code> | Hash as binary. |
+
+<a name="module_types..Condition+getMaxFulfillmentLength"></a>
+
+#### condition.getMaxFulfillmentLength() ⇒ <code>Number</code>
+Return the maximum fulfillment length.
+
+The maximum fulfillment length is the maximum allowed length for any
+fulfillment payload to fulfill this condition.
+
+The condition defines a maximum fulfillment length which all
+implementations will enforce. This allows implementations to verify that
+their local maximum fulfillment size is guaranteed to accomodate any
+possible fulfillment for this condition.
+
+Otherwise an attacker could craft a fulfillment which exceeds the maximum
+size of one implementation, but meets the maximum size of another, thereby
+violating the fundamental property that fulfillments are either valid
+everywhere or nowhere.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Number</code> - Maximum length (in bytes) of any fulfillment payload that
+  fulfills this condition..  
+<a name="module_types..Condition+setMaxFulfillmentLength"></a>
+
+#### condition.setMaxFulfillmentLength(Maximum)
+Set the maximum fulfillment length.
+
+The maximum fulfillment length is normally calculated automatically, when
+calling `Fulfillment#getCondition`. However, when
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Maximum | <code>Number</code> | fulfillment payload length in bytes. |
+
+<a name="module_types..Condition+serializeUri"></a>
+
+#### condition.serializeUri() ⇒ <code>String</code>
+Generate the URI form encoding of this condition.
+
+Turns the condition into a URI containing only URL-safe characters. This
+format is convenient for passing around conditions in URLs, JSON and other
+text-based formats.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>String</code> - Condition as a URI  
+<a name="module_types..Condition+serializeBinary"></a>
+
+#### condition.serializeBinary() ⇒ <code>Buffer</code>
+Serialize condition to a buffer.
+
+Encodes the condition as a string of bytes. This is used internally for
+encoding subconditions, but can also be used to passing around conditions
+in a binary protocol for instance.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Buffer</code> - Serialized condition  
+<a name="module_types..Condition+validate"></a>
+
+#### condition.validate() ⇒ <code>Boolean</code>
+Ensure the condition is valid according the local rules.
+
+Checks the condition against the local bitmask (supported condition types)
+and the local maximum fulfillment size.
+
+**Kind**: instance method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Boolean</code> - Whether the condition is valid according to local rules.  
+<a name="module_types..Condition.fromUri"></a>
+
+#### Condition.fromUri(serializedCondition) ⇒ <code>Condition</code>
+Create a Condition object from a URI.
+
+This method will parse a condition URI and construct a corresponding
+Condition object.
+
+**Kind**: static method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Condition</code> - Resulting object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| serializedCondition | <code>String</code> | URI representing the condition |
+
+<a name="module_types..Condition.fromBinary"></a>
+
+#### Condition.fromBinary(reader) ⇒ <code>Condition</code>
+Create a Condition object from a binary blob.
+
+This method will parse a stream of binary data and construct a
+corresponding Condition object.
+
+**Kind**: static method of <code>[Condition](#module_types..Condition)</code>  
+**Returns**: <code>Condition</code> - Resulting object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| reader | <code>Reader</code> | Binary stream implementing the Reader interface |
+
+<a name="module_types..Fulfillment"></a>
+
+### types~Fulfillment
+Base class for fulfillment types.
+
+**Kind**: inner class of <code>[types](#module_types)</code>  
+
+* [~Fulfillment](#module_types..Fulfillment)
+    * _instance_
+        * [.getTypeId()](#module_types..Fulfillment+getTypeId) ⇒ <code>Number</code>
+        * [.getBitmask()](#module_types..Fulfillment+getBitmask) ⇒ <code>Number</code>
+        * [.getCondition()](#module_types..Fulfillment+getCondition) ⇒ <code>Condition</code>
+        * [.getConditionUri()](#module_types..Fulfillment+getConditionUri) ⇒ <code>String</code>
+        * [.getConditionBinary()](#module_types..Fulfillment+getConditionBinary) ⇒ <code>Buffer</code>
+        * [.serializeUri()](#module_types..Fulfillment+serializeUri) ⇒ <code>String</code>
+        * [.serializeBinary()](#module_types..Fulfillment+serializeBinary) ⇒ <code>Buffer</code>
+        * [.validate()](#module_types..Fulfillment+validate) ⇒ <code>Boolean</code>
+    * _static_
+        * [.fromUri(serializedFulfillment)](#module_types..Fulfillment.fromUri) ⇒ <code>Fulfillment</code>
+        * [.fromBinary(reader)](#module_types..Fulfillment.fromBinary) ⇒ <code>Fulfillment</code>
+
+<a name="module_types..Fulfillment+getTypeId"></a>
+
+#### fulfillment.getTypeId() ⇒ <code>Number</code>
+Return the type ID of this fulfillment.
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Number</code> - Type ID as an integer.  
+<a name="module_types..Fulfillment+getBitmask"></a>
+
+#### fulfillment.getBitmask() ⇒ <code>Number</code>
+Return the bitmask of this fulfillment.
+
+For simple fulfillment types this is simply the bit representing this type.
+
+For meta-fulfillments, these are the bits representing the types of the
+subconditions.
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Number</code> - Bitmask corresponding to this fulfillment.  
+<a name="module_types..Fulfillment+getCondition"></a>
+
+#### fulfillment.getCondition() ⇒ <code>Condition</code>
+Generate condition corresponding to this fulfillment.
+
+An important property of crypto-conditions is that the condition can always
+be derived from the fulfillment. This makes it very easy to post
+fulfillments to a system without having to specify which condition the
+relate to. The system can keep an index of conditions and look up any
+matching events related to that condition.
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Condition</code> - Condition corresponding to this fulfillment.  
+<a name="module_types..Fulfillment+getConditionUri"></a>
+
+#### fulfillment.getConditionUri() ⇒ <code>String</code>
+Shorthand for getting condition URI.
+
+Stands for getCondition().serializeUri().
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>String</code> - Condition URI.  
+<a name="module_types..Fulfillment+getConditionBinary"></a>
+
+#### fulfillment.getConditionBinary() ⇒ <code>Buffer</code>
+Shorthand for getting condition encoded as binary.
+
+Stands for getCondition().serializeBinary().
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Buffer</code> - Binary encoded condition.  
+<a name="module_types..Fulfillment+serializeUri"></a>
+
+#### fulfillment.serializeUri() ⇒ <code>String</code>
+Generate the URI form encoding of this fulfillment.
+
+Turns the fulfillment into a URI containing only URL-safe characters. This
+format is convenient for passing around fulfillments in URLs, JSON and
+other text-based formats.
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>String</code> - Fulfillment as a URI  
+<a name="module_types..Fulfillment+serializeBinary"></a>
+
+#### fulfillment.serializeBinary() ⇒ <code>Buffer</code>
+Serialize fulfillment to a buffer.
+
+Encodes the fulfillment as a string of bytes. This is used internally for
+encoding subfulfillments, but can also be used to passing around
+fulfillments in a binary protocol for instance.
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Buffer</code> - Serialized fulfillment  
+<a name="module_types..Fulfillment+validate"></a>
+
+#### fulfillment.validate() ⇒ <code>Boolean</code>
+Validate this fulfillment.
+
+This implementation is a stub and will be overridden by the subclasses.
+
+**Kind**: instance method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Boolean</code> - Validation result  
+<a name="module_types..Fulfillment.fromUri"></a>
+
+#### Fulfillment.fromUri(serializedFulfillment) ⇒ <code>Fulfillment</code>
+Create a Fulfillment object from a URI.
+
+This method will parse a fulfillment URI and construct a corresponding
+Fulfillment object.
+
+**Kind**: static method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Fulfillment</code> - Resulting object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| serializedFulfillment | <code>String</code> | URI representing the fulfillment |
+
+<a name="module_types..Fulfillment.fromBinary"></a>
+
+#### Fulfillment.fromBinary(reader) ⇒ <code>Fulfillment</code>
+Create a Fulfillment object from a binary blob.
+
+This method will parse a stream of binary data and construct a
+corresponding Fulfillment object.
+
+**Kind**: static method of <code>[Fulfillment](#module_types..Fulfillment)</code>  
+**Returns**: <code>Fulfillment</code> - Resulting object  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| reader | <code>Reader</code> | Binary stream implementing the Reader interface |
 
 <a name="module_types..Ed25519"></a>
 
@@ -449,32 +798,11 @@ suite which corresponds to a bitmask of 0x20.
 **Kind**: inner class of <code>[types](#module_types)</code>  
 
 * [~Ed25519](#module_types..Ed25519)
-    * [.writeCommonHeader(Target)](#module_types..Ed25519+writeCommonHeader)
     * [.setPublicKey(publicKey)](#module_types..Ed25519+setPublicKey)
     * [.setSignature(signature)](#module_types..Ed25519+setSignature)
     * [.sign(message, privateKey)](#module_types..Ed25519+sign)
     * [.generateHash(hasher)](#module_types..Ed25519+generateHash)
-    * [.parsePayload(reader)](#module_types..Ed25519+parsePayload)
-    * [.writePayload(writer)](#module_types..Ed25519+writePayload)
-    * [.calculateMaxFulfillmentLength()](#module_types..Ed25519+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
     * [.validate(message)](#module_types..Ed25519+validate) ⇒ <code>Boolean</code>
-
-<a name="module_types..Ed25519+writeCommonHeader"></a>
-
-#### ed25519.writeCommonHeader(Target)
-Write static header fields.
-
-Some fields are common between the hash and the fulfillment payload. This
-method writes those field to anything implementing the Writer interface.
-It is used internally when generating the hash of the condition, when
-generating the fulfillment payload and when calculating the maximum
-fulfillment size.
-
-**Kind**: instance method of <code>[Ed25519](#module_types..Ed25519)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| Target | <code>Writer</code> &#124; <code>Hasher</code> &#124; <code>Predictor</code> | for outputting the header. |
 
 <a name="module_types..Ed25519+setPublicKey"></a>
 
@@ -532,43 +860,6 @@ we just return the public key.
 | --- | --- | --- |
 | hasher | <code>Hasher</code> | Destination where the hash payload will be written. |
 
-<a name="module_types..Ed25519+parsePayload"></a>
-
-#### ed25519.parsePayload(reader)
-Parse the payload of an Ed25519 fulfillment.
-
-Read a fulfillment payload from a Reader and populate this object with that
-fulfillment.
-
-**Kind**: instance method of <code>[Ed25519](#module_types..Ed25519)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| reader | <code>Reader</code> | Source to read the fulfillment payload from. |
-
-<a name="module_types..Ed25519+writePayload"></a>
-
-#### ed25519.writePayload(writer)
-Generate the fulfillment payload.
-
-This writes the fulfillment payload to a Writer.
-
-**Kind**: instance method of <code>[Ed25519](#module_types..Ed25519)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| writer | <code>Writer</code> | Subject for writing the fulfillment payload. |
-
-<a name="module_types..Ed25519+calculateMaxFulfillmentLength"></a>
-
-#### ed25519.calculateMaxFulfillmentLength() ⇒ <code>Number</code>
-Calculates the fulfillment length.
-
-Ed25519 signatures are constant size. Consequently fulfillments for this
-type of condition are also constant size.
-
-**Kind**: instance method of <code>[Ed25519](#module_types..Ed25519)</code>  
-**Returns**: <code>Number</code> - Length of the fulfillment payload.  
 <a name="module_types..Ed25519+validate"></a>
 
 #### ed25519.validate(message) ⇒ <code>Boolean</code>
@@ -613,10 +904,6 @@ feature suites which corresponds to a feature bitmask of 0x05.
     * [.setSubfulfillmentUri(Subfulfillment)](#module_types..PrefixSha256+setSubfulfillmentUri)
     * [.setPrefix(prefix)](#module_types..PrefixSha256+setPrefix)
     * [.getBitmask()](#module_types..PrefixSha256+getBitmask) ⇒ <code>Number</code>
-    * [.writeHashPayload(hasher)](#module_types..PrefixSha256+writeHashPayload)
-    * [.calculateMaxFulfillmentLength()](#module_types..PrefixSha256+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
-    * [.parsePayload(reader)](#module_types..PrefixSha256+parsePayload)
-    * [.writePayload(writer)](#module_types..PrefixSha256+writePayload)
     * [.validate(message)](#module_types..PrefixSha256+validate) ⇒ <code>Boolean</code>
 
 <a name="module_types..PrefixSha256+setSubcondition"></a>
@@ -702,62 +989,6 @@ of this condition's TYPE_BIT and the subcondition's bitmask.
 
 **Kind**: instance method of <code>[PrefixSha256](#module_types..PrefixSha256)</code>  
 **Returns**: <code>Number</code> - Complete bitmask for this fulfillment.  
-<a name="module_types..PrefixSha256+writeHashPayload"></a>
-
-#### prefixSha256.writeHashPayload(hasher)
-Produce the contents of the condition hash.
-
-This function is called internally by the `getCondition` method.
-
-**Kind**: instance method of <code>[PrefixSha256](#module_types..PrefixSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| hasher | <code>Hasher</code> | Hash generator |
-
-<a name="module_types..PrefixSha256+calculateMaxFulfillmentLength"></a>
-
-#### prefixSha256.calculateMaxFulfillmentLength() ⇒ <code>Number</code>
-Calculates the maximum size of any fulfillment for this condition.
-
-In a threshold condition, the maximum length of the fulfillment depends on
-the maximum lengths of the fulfillments of the subconditions. However,
-usually not all subconditions must be fulfilled in order to meet the
-threshold.
-
-Consequently, this method relies on an algorithm to determine which
-combination of fulfillments, where no fulfillment can be left out, results
-in the largest total fulfillment size.
-
-**Kind**: instance method of <code>[PrefixSha256](#module_types..PrefixSha256)</code>  
-**Returns**: <code>Number</code> - Maximum length of the fulfillment payload  
-<a name="module_types..PrefixSha256+parsePayload"></a>
-
-#### prefixSha256.parsePayload(reader)
-Parse a fulfillment payload.
-
-Read a fulfillment payload from a Reader and populate this object with that
-fulfillment.
-
-**Kind**: instance method of <code>[PrefixSha256](#module_types..PrefixSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| reader | <code>Reader</code> | Source to read the fulfillment payload from. |
-
-<a name="module_types..PrefixSha256+writePayload"></a>
-
-#### prefixSha256.writePayload(writer)
-Generate the fulfillment payload.
-
-This writes the fulfillment payload to a Writer.
-
-**Kind**: instance method of <code>[PrefixSha256](#module_types..PrefixSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| writer | <code>Writer</code> | Subject for writing the fulfillment payload. |
-
 <a name="module_types..PrefixSha256+validate"></a>
 
 #### prefixSha256.validate(message) ⇒ <code>Boolean</code>
@@ -792,25 +1023,8 @@ of 0x03.
 **Kind**: inner class of <code>[types](#module_types)</code>  
 
 * [~PreimageSha256](#module_types..PreimageSha256)
-    * [.writeHashPayload(hasher)](#module_types..PreimageSha256+writeHashPayload)
     * [.setPreimage(preimage)](#module_types..PreimageSha256+setPreimage)
-    * [.parsePayload(reader, payloadSize)](#module_types..PreimageSha256+parsePayload)
-    * [.writePayload(writer)](#module_types..PreimageSha256+writePayload)
     * [.validate()](#module_types..PreimageSha256+validate) ⇒ <code>Boolean</code>
-
-<a name="module_types..PreimageSha256+writeHashPayload"></a>
-
-#### preimageSha256.writeHashPayload(hasher)
-Generate the contents of the condition hash.
-
-Writes the contents of the condition hash to a Hasher. Used internally by
-`getCondition`.
-
-**Kind**: instance method of <code>[PreimageSha256](#module_types..PreimageSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| hasher | <code>Hasher</code> | Destination where the hash payload will be written. |
 
 <a name="module_types..PreimageSha256+setPreimage"></a>
 
@@ -829,34 +1043,6 @@ used to avoid having to store each individual preimage.
 | Param | Type | Description |
 | --- | --- | --- |
 | preimage | <code>Buffer</code> | Secret data that will be hashed to form the condition. |
-
-<a name="module_types..PreimageSha256+parsePayload"></a>
-
-#### preimageSha256.parsePayload(reader, payloadSize)
-Parse the payload of a SHA256 hashlock fulfillment.
-
-Read a fulfillment payload from a Reader and populate this object with that
-fulfillment.
-
-**Kind**: instance method of <code>[PreimageSha256](#module_types..PreimageSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| reader | <code>Reader</code> | Source to read the fulfillment payload from. |
-| payloadSize | <code>Number</code> | Total size of the fulfillment payload. |
-
-<a name="module_types..PreimageSha256+writePayload"></a>
-
-#### preimageSha256.writePayload(writer)
-Generate the fulfillment payload.
-
-This writes the fulfillment payload to a Writer.
-
-**Kind**: instance method of <code>[PreimageSha256](#module_types..PreimageSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| writer | <code>Writer</code> | Subject for writing the fulfillment payload. |
 
 <a name="module_types..PreimageSha256+validate"></a>
 
@@ -885,32 +1071,10 @@ feature suites which corresponds to a feature bitmask of 0x11.
 **Kind**: inner class of <code>[types](#module_types)</code>  
 
 * [~RsaSha256](#module_types..RsaSha256)
-    * [.writeCommonHeader(Target)](#module_types..RsaSha256+writeCommonHeader)
     * [.setPublicModulus(modulus)](#module_types..RsaSha256+setPublicModulus)
     * [.setSignature(signature)](#module_types..RsaSha256+setSignature)
     * [.sign(message, privateKey)](#module_types..RsaSha256+sign)
-    * [.writeHashPayload(hasher)](#module_types..RsaSha256+writeHashPayload)
-    * [.parsePayload(reader)](#module_types..RsaSha256+parsePayload)
-    * [.writePayload(writer)](#module_types..RsaSha256+writePayload)
-    * [.calculateMaxFulfillmentLength()](#module_types..RsaSha256+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
     * [.validate(message)](#module_types..RsaSha256+validate) ⇒ <code>Boolean</code>
-
-<a name="module_types..RsaSha256+writeCommonHeader"></a>
-
-#### rsaSha256.writeCommonHeader(Target)
-Write static header fields.
-
-Some fields are common between the hash and the fulfillment payload. This
-method writes those field to anything implementing the Writer interface.
-It is used internally when generating the hash of the condition, when
-generating the fulfillment payload and when calculating the maximum
-fulfillment size.
-
-**Kind**: instance method of <code>[RsaSha256](#module_types..RsaSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| Target | <code>Writer</code> &#124; <code>Hasher</code> &#124; <code>Predictor</code> | for outputting the header. |
 
 <a name="module_types..RsaSha256+setPublicModulus"></a>
 
@@ -959,57 +1123,6 @@ The message is padded using RSA-PSS with SHA256.
 | message | <code>Buffer</code> | Message to sign. |
 | privateKey | <code>String</code> | RSA private key |
 
-<a name="module_types..RsaSha256+writeHashPayload"></a>
-
-#### rsaSha256.writeHashPayload(hasher)
-Generate the contents of the condition hash.
-
-Writes the contents of the condition hash to a Hasher. Used internally by
-`getCondition`.
-
-**Kind**: instance method of <code>[RsaSha256](#module_types..RsaSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| hasher | <code>Hasher</code> | Destination where the hash payload will be written. |
-
-<a name="module_types..RsaSha256+parsePayload"></a>
-
-#### rsaSha256.parsePayload(reader)
-Parse the payload of an RSA fulfillment.
-
-Read a fulfillment payload from a Reader and populate this object with that
-fulfillment.
-
-**Kind**: instance method of <code>[RsaSha256](#module_types..RsaSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| reader | <code>Reader</code> | Source to read the fulfillment payload from. |
-
-<a name="module_types..RsaSha256+writePayload"></a>
-
-#### rsaSha256.writePayload(writer)
-Generate the fulfillment payload.
-
-This writes the fulfillment payload to a Writer.
-
-**Kind**: instance method of <code>[RsaSha256](#module_types..RsaSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| writer | <code>Writer</code> | Subject for writing the fulfillment payload. |
-
-<a name="module_types..RsaSha256+calculateMaxFulfillmentLength"></a>
-
-#### rsaSha256.calculateMaxFulfillmentLength() ⇒ <code>Number</code>
-Calculates the longest possible fulfillment length.
-
-The longest fulfillment for an RSA condition is the length of a fulfillment
-where the dynamic message length equals its maximum length.
-
-**Kind**: instance method of <code>[RsaSha256](#module_types..RsaSha256)</code>  
-**Returns**: <code>Number</code> - Maximum length of the fulfillment payload  
 <a name="module_types..RsaSha256+validate"></a>
 
 #### rsaSha256.validate(message) ⇒ <code>Boolean</code>
@@ -1056,22 +1169,13 @@ THRESHOLD feature suites which corresponds to a feature bitmask of 0x09.
 **Kind**: inner class of <code>[types](#module_types)</code>  
 
 * [~ThresholdSha256](#module_types..ThresholdSha256)
-    * _instance_
-        * [.addSubcondition(subcondition, [weight])](#module_types..ThresholdSha256+addSubcondition)
-        * [.addSubconditionUri(Subcondition)](#module_types..ThresholdSha256+addSubconditionUri)
-        * [.addSubfulfillment(Fulfillment, [weight])](#module_types..ThresholdSha256+addSubfulfillment)
-        * [.addSubfulfillmentUri(Subfulfillment)](#module_types..ThresholdSha256+addSubfulfillmentUri)
-        * [.setThreshold(threshold)](#module_types..ThresholdSha256+setThreshold)
-        * [.getBitmask()](#module_types..ThresholdSha256+getBitmask) ⇒ <code>Number</code>
-        * [.writeHashPayload(hasher)](#module_types..ThresholdSha256+writeHashPayload)
-        * [.calculateMaxFulfillmentLength()](#module_types..ThresholdSha256+calculateMaxFulfillmentLength) ⇒ <code>Number</code>
-        * [.parsePayload(reader)](#module_types..ThresholdSha256+parsePayload)
-        * [.writePayload(writer)](#module_types..ThresholdSha256+writePayload)
-        * [.validate(message)](#module_types..ThresholdSha256+validate) ⇒ <code>Boolean</code>
-    * _static_
-        * [.calculateWorstCaseLength(threshold, subconditions, [size], [index])](#module_types..ThresholdSha256.calculateWorstCaseLength) ⇒ <code>Number</code>
-        * [.calculateSmallestValidFulfillmentSet(threshold, fulfillments, [state])](#module_types..ThresholdSha256.calculateSmallestValidFulfillmentSet) ⇒ <code>Object</code>
-        * [.sortBuffers(buffers)](#module_types..ThresholdSha256.sortBuffers) ⇒ <code>Array.&lt;Buffer&gt;</code>
+    * [.addSubcondition(subcondition, [weight])](#module_types..ThresholdSha256+addSubcondition)
+    * [.addSubconditionUri(Subcondition)](#module_types..ThresholdSha256+addSubconditionUri)
+    * [.addSubfulfillment(Fulfillment, [weight])](#module_types..ThresholdSha256+addSubfulfillment)
+    * [.addSubfulfillmentUri(Subfulfillment)](#module_types..ThresholdSha256+addSubfulfillmentUri)
+    * [.setThreshold(threshold)](#module_types..ThresholdSha256+setThreshold)
+    * [.getBitmask()](#module_types..ThresholdSha256+getBitmask) ⇒ <code>Number</code>
+    * [.validate(message)](#module_types..ThresholdSha256+validate) ⇒ <code>Boolean</code>
 
 <a name="module_types..ThresholdSha256+addSubcondition"></a>
 
@@ -1163,62 +1267,6 @@ subfulfillment's bitmasks.
 
 **Kind**: instance method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
 **Returns**: <code>Number</code> - Complete bitmask for this fulfillment.  
-<a name="module_types..ThresholdSha256+writeHashPayload"></a>
-
-#### thresholdSha256.writeHashPayload(hasher)
-Produce the contents of the condition hash.
-
-This function is called internally by the `getCondition` method.
-
-**Kind**: instance method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| hasher | <code>Hasher</code> | Hash generator |
-
-<a name="module_types..ThresholdSha256+calculateMaxFulfillmentLength"></a>
-
-#### thresholdSha256.calculateMaxFulfillmentLength() ⇒ <code>Number</code>
-Calculates the longest possible fulfillment length.
-
-In a threshold condition, the maximum length of the fulfillment depends on
-the maximum lengths of the fulfillments of the subconditions. However,
-usually not all subconditions must be fulfilled in order to meet the
-threshold.
-
-Consequently, this method relies on an algorithm to determine which
-combination of fulfillments, where no fulfillment can be left out, results
-in the largest total fulfillment size.
-
-**Kind**: instance method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-**Returns**: <code>Number</code> - Maximum length of the fulfillment payload  
-<a name="module_types..ThresholdSha256+parsePayload"></a>
-
-#### thresholdSha256.parsePayload(reader)
-Parse a fulfillment payload.
-
-Read a fulfillment payload from a Reader and populate this object with that
-fulfillment.
-
-**Kind**: instance method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| reader | <code>Reader</code> | Source to read the fulfillment payload from. |
-
-<a name="module_types..ThresholdSha256+writePayload"></a>
-
-#### thresholdSha256.writePayload(writer)
-Generate the fulfillment payload.
-
-This writes the fulfillment payload to a Writer.
-
-**Kind**: instance method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| writer | <code>Writer</code> | Subject for writing the fulfillment payload. |
-
 <a name="module_types..ThresholdSha256+validate"></a>
 
 #### thresholdSha256.validate(message) ⇒ <code>Boolean</code>
@@ -1233,71 +1281,6 @@ subfulfillments to meet the threshold.
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>Buffer</code> | Message to validate against. |
-
-<a name="module_types..ThresholdSha256.calculateWorstCaseLength"></a>
-
-#### ThresholdSha256.calculateWorstCaseLength(threshold, subconditions, [size], [index]) ⇒ <code>Number</code>
-Calculate the worst case length of a set of conditions.
-
-This implements a recursive algorithm to determine the longest possible
-length for a valid, minimal (no fulfillment can be removed) set of
-subconditions.
-
-Note that the input array of subconditions must be sorted by weight
-descending.
-
-The algorithm works by recursively adding and not adding each subcondition.
-Finally, it determines the maximum of all valid solutions.
-
-**Kind**: static method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-**Returns**: <code>Number</code> - Maximum size of a valid, minimal set of fulfillments or
-  -Infinity if there is no valid set.  
-**Author:** Evan Schwartz <evan@ripple.com>  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| threshold | <code>Number</code> |  | Threshold that the remaining subconditions have   to meet. |
-| subconditions | <code>Array.&lt;Object&gt;</code> |  | Set of subconditions. |
-| subconditions[].weight | <code>Number</code> |  | Weight of the subcondition |
-| subconditions[].size | <code>Number</code> |  | Maximum number of bytes added to the   size if the fulfillment is included. |
-| subconditions[].omitSize | <code>Number</code> |  | Maximum number of bytes added to   the size if the fulfillment is omitted (and the condition is added   instead.) |
-| [size] | <code>Number</code> | <code>0</code> | Size the fulfillment already has (used by the   recursive calls.) |
-| [index] | <code>Number</code> | <code>0</code> | Current index in the subconditions array (used by   the recursive calls.) |
-
-<a name="module_types..ThresholdSha256.calculateSmallestValidFulfillmentSet"></a>
-
-#### ThresholdSha256.calculateSmallestValidFulfillmentSet(threshold, fulfillments, [state]) ⇒ <code>Object</code>
-Select the smallest valid set of fulfillments.
-
-From a set of fulfillments, selects the smallest combination of
-fulfillments which meets the given threshold.
-
-**Kind**: static method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-**Returns**: <code>Object</code> - Result with size and set properties.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| threshold | <code>Number</code> | (Remaining) threshold that must be met. |
-| fulfillments | <code>Array.&lt;Object&gt;</code> | Set of fulfillments |
-| [state] | <code>Object</code> | Used for recursion |
-| state.index | <code>Number</code> | Current index being processed. |
-| state.size | <code>Number</code> | Size of the binary so far |
-| state.set | <code>Array.&lt;Object&gt;</code> | Set of fulfillments that were included. |
-
-<a name="module_types..ThresholdSha256.sortBuffers"></a>
-
-#### ThresholdSha256.sortBuffers(buffers) ⇒ <code>Array.&lt;Buffer&gt;</code>
-Sort buffers according to spec.
-
-Buffers must be sorted first by length. Buffers with the same length are
-sorted lexicographically.
-
-**Kind**: static method of <code>[ThresholdSha256](#module_types..ThresholdSha256)</code>  
-**Returns**: <code>Array.&lt;Buffer&gt;</code> - Sorted buffers.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| buffers | <code>Array.&lt;Buffer&gt;</code> | Set of octet strings to sort. |
 
 
 <a name="module_util..BaseError"></a>

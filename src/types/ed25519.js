@@ -33,6 +33,8 @@ class Ed25519 extends Fulfillment {
    * fulfillment size.
    *
    * @param {Writer|Hasher|Predictor} Target for outputting the header.
+   *
+   * @private
    */
   writeCommonHeader (writer) {
     writer.writeVarOctetString(this.publicKey)
@@ -123,6 +125,8 @@ class Ed25519 extends Fulfillment {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
     this.setPublicKey(reader.readOctetString(Ed25519.PUBKEY_LENGTH))
@@ -135,6 +139,8 @@ class Ed25519 extends Fulfillment {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     writer.writeOctetString(this.publicKey, Ed25519.PUBKEY_LENGTH)
@@ -148,6 +154,8 @@ class Ed25519 extends Fulfillment {
    * type of condition are also constant size.
    *
    * @return {Number} Length of the fulfillment payload.
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     return Ed25519.FULFILLMENT_LENGTH

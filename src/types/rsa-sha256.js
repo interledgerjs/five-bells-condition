@@ -41,6 +41,8 @@ class RsaSha256 extends BaseSha256 {
    * fulfillment size.
    *
    * @param {Writer|Hasher|Predictor} Target for outputting the header.
+   *
+   * @private
    */
   writeCommonHeader (writer) {
     if (!this.modulus) {
@@ -109,6 +111,8 @@ class RsaSha256 extends BaseSha256 {
    * `getCondition`.
    *
    * @param {Hasher} hasher Destination where the hash payload will be written.
+   *
+   * @private
    */
   writeHashPayload (hasher) {
     this.writeCommonHeader(hasher)
@@ -121,6 +125,8 @@ class RsaSha256 extends BaseSha256 {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
     this.setPublicModulus(reader.readVarOctetString())
@@ -133,6 +139,8 @@ class RsaSha256 extends BaseSha256 {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     if (!this.signature) {
@@ -150,6 +158,8 @@ class RsaSha256 extends BaseSha256 {
    * where the dynamic message length equals its maximum length.
    *
    * @return {Number} Maximum length of the fulfillment payload
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     const predictor = new Predictor()

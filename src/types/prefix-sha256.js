@@ -136,6 +136,8 @@ class PrefixSha256 extends BaseSha256 {
    * This function is called internally by the `getCondition` method.
    *
    * @param {Hasher} hasher Hash generator
+   *
+   * @private
    */
   writeHashPayload (hasher) {
     if (!this.subcondition) {
@@ -163,6 +165,8 @@ class PrefixSha256 extends BaseSha256 {
    * in the largest total fulfillment size.
    *
    * @return {Number} Maximum length of the fulfillment payload
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     // Calculate length of subfulfillment
@@ -185,6 +189,8 @@ class PrefixSha256 extends BaseSha256 {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
     this.setPrefix(reader.readVarOctetString())
@@ -197,6 +203,8 @@ class PrefixSha256 extends BaseSha256 {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     if (!(this.subcondition instanceof Fulfillment)) {
