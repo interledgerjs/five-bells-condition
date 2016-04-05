@@ -14,12 +14,12 @@ This specification is only a draft at this stage and has not been submitted.
 const condition = require('five-bells-condition')
 
 // Check a condition for validity
-const exampleCondition = 'cc:1:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
+const exampleCondition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:1'
 const validationResult = condition.validate(exampleCondition)
 // validationResult === { valid: true, error: null }
 
 // Validate a fulfillment
-const exampleFulfillment = 'cf:1:0:AA'
+const exampleFulfillment = 'cf:0:AA'
 const compiled = condition.validateFulfillment(exampleFulfillment)
 // compiled === { valid: true, condition: exampleCondition, error: null }
 // Then simply verify that the fulfillment matches the condition
@@ -28,6 +28,7 @@ console.log(compiled.valid && compiled.condition === exampleCondition)
 
 // Create a SHA256 condition
 const myCondition = new condition.Condition()
+myCondition.setTypeId(condition.PreimageSha256Fulfillment.TYPE_ID)
 myCondition.setBitmask(condition.PreimageSha256Fulfillment.FEATURE_BITMASK)
 myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
 myCondition.setMaxFulfillmentLength(1)
@@ -65,7 +66,7 @@ console.log(parsedCondition.serializeUri())
 const rsaFulfillment = new condition.RsaSha256Fulfillment()
 rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
 console.log(rsaFulfillment.getCondition().serializeUri())
-// prints 'cc:1:11:d4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGE:260'
+// prints 'cc:3:11:Bw-r77AGqSCL0huuMQYj3KW0Jh67Fpayeq9h_4UJctg:260'
 
 // Fulfill an RSA-SHA256 condition
 const privateKey =
@@ -89,7 +90,7 @@ const privateKey =
 // -- or --
 rsaFulfillment.sign(new Buffer('Hello World! Conditions are here!'), privateKey)
 console.log(rsaFulfillment.serializeUri().length)
-// prints '354'
+// prints '352'
 
 // Create a threshold condition
 const thresholdFulfillment = new condition.ThresholdSha256Fulfillment()
@@ -97,14 +98,14 @@ thresholdFulfillment.addSubfulfillment(rsaFulfillment)
 thresholdFulfillment.addSubfulfillment(myFulfillment)
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getCondition().serializeUri())
-// prints 'cc:1:1b:nXCiu2GjMxzsCMaM6IhXPQavllDOXc1LplmfDkaN83g:308'
+// prints 'cc:2:1b:6HIAog_ZReGmhOOyHzAGeshy-1aKD2By2b9HLhEJPzw:312'
 
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
-// thresholdFulfillmentUri.length === 69
+// thresholdFulfillmentUri.length === 79
 console.log(thresholdFulfillmentUri)
-// prints 'cf:1:2:AQIBAgAAAAEAJBEgd4LPlqIsCKjjUlxJjUxkV9dyE5fDOIdr9mTa0hsRGGGEAg'
+// prints 'cf:2:AQEBAgEBAwAAAAABAQAoAAMBESAHD6vvsAapIIvSG64xBiPcpbQmHrsWlrJ6r2H_hQly2AIBBA'
 
 const reparsedFulfillment = condition.fromFulfillmentUri(thresholdFulfillmentUri)
 
@@ -116,7 +117,7 @@ console.log(reserializedFulfillment)
 const ed25519Fulfillment = new condition.Ed25519Fulfillment()
 ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
 console.log(ed25519Fulfillment.getCondition().serializeUri())
-// prints 'cc:1:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:98'
+// prints 'cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96'
 
 // Fulfill an ED25519-SHA-256 condition
 const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
@@ -125,6 +126,6 @@ const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755
 // -- or --
 ed25519Fulfillment.sign(new Buffer('Hello World! Conditions are here!'), edPrivateKey)
 console.log(ed25519Fulfillment.serializeUri())
-// prints 'cf:1:4:IOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_QLYikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
+// prints 'cf:4:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r-2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK'
 
 ```

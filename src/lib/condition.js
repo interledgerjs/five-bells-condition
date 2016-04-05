@@ -12,7 +12,7 @@ const Writer = require('../lib/writer')
 //
 // Note that this regex is very strict and specific to the set of conditions
 // supported by this implementation.
-const CONDITION_REGEX = /^cc:1:[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
+const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
 
 class Condition {
   /**
@@ -34,15 +34,12 @@ class Condition {
       throw new PrefixError('Serialized condition must start with "cc:"')
     }
 
-    if (pieces[1] !== '1') {
-      throw new PrefixError('Condition must be version 1')
-    }
-
     if (!CONDITION_REGEX.exec(serializedCondition)) {
       throw new ParseError('Invalid condition format')
     }
 
     const condition = new Condition()
+    condition.setTypeId(parseInt(pieces[1], 16))
     condition.setBitmask(parseInt(pieces[2], 16))
     condition.setHash(base64url.decode(pieces[3]))
     condition.setMaxFulfillmentLength(parseInt(pieces[4], 10))
@@ -70,14 +67,37 @@ class Condition {
   }
 
   /**
+   * Return the type of this condition.
+   *
+   * The type is a unique integer ID assigned to each type of condition.
+   *
+   * @return {Number} Type corresponding to this condition.
+   */
+  getTypeId () {
+    return this.type
+  }
+
+  /**
+   * Set the type.
+   *
+   * Sets the type ID for this condition.
+   *
+   * @param {Number} type Integer representation of type.
+   */
+  setTypeId (type) {
+    this.type = type
+  }
+
+  /**
    * Return the bitmask of this condition.
    *
-   * For simple condition types this is simply the bit representing this type.
+   * For simple condition types this is simply the set of bits representing the
+   * features required by the condition type.
    *
-   * For meta-conditions, these are the bits representing the types of the
-   * subconditions.
+   * For structural conditions, this is the bitwise OR of the bitmasks of the
+   * condition and all its subconditions, recursively.
    *
-   * @return {Number} Bitmask corresponding to this condition.
+   * @return {Number} Bitmask required to verify this condition.
    */
   getBitmask () {
     return this.bitmask
@@ -179,7 +199,9 @@ class Condition {
    * @return {String} Condition as a URI
    */
   serializeUri () {
-    return 'cc:1:' + this.getBitmask().toString(16) +
+    return 'cc' +
+      ':' + this.getTypeId().toString(16) +
+      ':' + this.getBitmask().toString(16) +
       ':' + base64url.encode(this.getHash()) +
       ':' + this.getMaxFulfillmentLength()
   }
@@ -195,9 +217,10 @@ class Condition {
    */
   serializeBinary () {
     const writer = new Writer()
-    writer.writeVarUInt(this.getBitmask())
-    writer.writeVarBytes(this.getHash())
-    writer.writeVarUInt(this.getMaxFulfillmentLength())
+    writer.writeUInt16(this.getTypeId())                // type
+    writer.writeVarUInt(this.getBitmask())              // requiredSuites
+    writer.writeVarOctetString(this.getHash())          // fingerprint
+    writer.writeVarUInt(this.getMaxFulfillmentLength()) // maxFulfillmentLength
     return writer.getBuffer()
   }
 
@@ -210,9 +233,10 @@ class Condition {
    * @param {Reader} reader Binary stream containing the condition.
    */
   parseBinary (reader) {
+    this.setTypeId(reader.readUInt16())
     this.setBitmask(reader.readVarUInt())
     // TODO Ensure bitmask is supported?
-    this.setHash(reader.readVarBytes())
+    this.setHash(reader.readVarOctetString())
     this.setMaxFulfillmentLength(reader.readVarUInt())
   }
 

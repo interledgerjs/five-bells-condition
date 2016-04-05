@@ -9,7 +9,7 @@ const base64url = require('../util/base64url')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
 
-const FULFILLMENT_REGEX = /^cf:1:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]+$/
+const FULFILLMENT_REGEX = /^cf:([1-9a-f][0-9a-f]{0,2}|0):[a-zA-Z0-9_-]+$/
 
 class Fulfillment {
   /**
@@ -31,16 +31,12 @@ class Fulfillment {
       throw new PrefixError('Serialized fulfillment must start with "cf:"')
     }
 
-    if (pieces[1] !== '1') {
-      throw new PrefixError('Fulfillment must be version 1')
-    }
-
     if (!FULFILLMENT_REGEX.exec(serializedFulfillment)) {
       throw new ParseError('Invalid fulfillment format')
     }
 
-    const typeId = parseInt(pieces[2], 16)
-    const payload = Reader.from(base64url.decode(pieces[3]))
+    const typeId = parseInt(pieces[1], 16)
+    const payload = Reader.from(base64url.decode(pieces[2]))
 
     const ConditionClass = TypeRegistry.getClassFromTypeId(typeId)
     const fulfillment = new ConditionClass()
@@ -61,7 +57,7 @@ class Fulfillment {
   static fromBinary (reader) {
     reader = Reader.from(reader)
 
-    const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readVarUInt())
+    const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readUInt16())
 
     const condition = new ConditionClass()
     condition.parsePayload(reader)
@@ -105,6 +101,7 @@ class Fulfillment {
    */
   getCondition () {
     const condition = new Condition()
+    condition.setTypeId(this.getTypeId())
     condition.setBitmask(this.getBitmask())
     condition.setHash(this.generateHash())
     condition.setMaxFulfillmentLength(this.calculateMaxFulfillmentLength())
@@ -145,8 +142,9 @@ class Fulfillment {
    * @return {String} Fulfillment as a URI
    */
   serializeUri () {
-    return 'cf:1:' + this.getTypeId().toString(16) + ':' +
-      base64url.encode(this.serializePayload())
+    return 'cf' +
+      ':' + this.getTypeId().toString(16) +
+      ':' + base64url.encode(this.serializePayload())
   }
 
   /**
@@ -160,7 +158,7 @@ class Fulfillment {
    */
   serializeBinary () {
     const writer = new Writer()
-    writer.writeVarUInt(this.getTypeId())
+    writer.writeUInt16(this.getTypeId())
     this.writePayload(writer)
     return writer.getBuffer()
   }

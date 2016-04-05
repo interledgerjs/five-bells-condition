@@ -90,8 +90,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
       throw new MissingDataError('Requires subcondition')
     }
 
-    hasher.writeVarUInt(PrefixSha256Fulfillment.TYPE_BIT)
-    hasher.writeVarBytes(this.prefix)
+    hasher.writeVarOctetString(this.prefix)
     hasher.write(
       this.subcondition instanceof Condition
       ? this.subcondition.serializeBinary()
@@ -121,7 +120,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
 
     // Calculate resulting total maximum fulfillment size
     const predictor = new Predictor()
-    predictor.writeVarBytes(this.prefix)
+    predictor.writeVarOctetString(this.prefix)
     predictor.skip(subfulfillmentLength)
 
     return predictor.getSize()
@@ -136,7 +135,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Reader} reader Source to read the fulfillment payload from.
    */
   parsePayload (reader) {
-    this.setPrefix(reader.readVarBytes())
+    this.setPrefix(reader.readVarOctetString())
     this.setSubfulfillment(Fulfillment.fromBinary(reader))
   }
 
@@ -152,7 +151,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
       throw new Error('Subcondition must be fulfilled')
     }
 
-    writer.writeVarBytes(this.prefix)
+    writer.writeVarOctetString(this.prefix)
     writer.write(this.subcondition.serializeBinary())
   }
 

@@ -31,7 +31,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
       throw new MissingDataError('Requires a public modulus')
     }
 
-    writer.writeVarBytes(this.modulus)
+    writer.writeVarOctetString(this.modulus)
   }
 
   /**
@@ -104,8 +104,8 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Reader} reader Source to read the fulfillment payload from.
    */
   parsePayload (reader) {
-    this.setPublicModulus(reader.readVarBytes())
-    this.setSignature(reader.readVarBytes())
+    this.setPublicModulus(reader.readVarOctetString())
+    this.setSignature(reader.readVarOctetString())
   }
 
   /**
@@ -121,7 +121,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
     }
 
     this.writeCommonHeader(writer)
-    writer.writeVarBytes(this.signature)
+    writer.writeVarOctetString(this.signature)
   }
 
   /**
@@ -143,7 +143,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
     this.writeCommonHeader(predictor)
 
     // Signature
-    predictor.writeVarBytes(this.modulus)
+    predictor.writeVarOctetString(this.modulus)
 
     return predictor.getSize()
   }

@@ -61,74 +61,66 @@ class Reader {
   }
 
   /**
-   * Read a single unsigned 8 byte integer.
+   * Read a fixed-length big-endian integer.
    *
+   * @param {Number} length Length of the integer in bytes.
    * @return {Number} Contents of next byte.
    */
-  readUInt8 () {
-    this.ensureAvailable(1)
-    const value = this.buffer.readUInt8(this.cursor)
-    this.cursor++
+  readUInt (length) {
+    if (length > Reader.MAX_INT_BYTES) {
+      throw new Error('Tried too read too large integer (requested: ' +
+        length + ', max: ' + Reader.MAX_INT_BYTES + ')')
+    }
+    this.ensureAvailable(length)
+    const value = this.buffer.readUIntBE(this.cursor, length)
+    this.cursor += length
     return value
   }
 
   /**
-   * Look at the next byte, but don't advance the cursor.
+   * Look at a fixed-length integer, but don't advance the cursor.
    *
+   * @param {Number} length Length of the integer in bytes.
    * @return {Number} Contents of the next byte.
    */
-  peekUInt8 () {
-    this.ensureAvailable(1)
-    return this.buffer.readUInt8(this.cursor)
+  peekUInt (length) {
+    if (length > Reader.MAX_INT_BYTES) {
+      throw new Error('Tried too read too large integer (requested: ' +
+        length + ', max: ' + Reader.MAX_INT_BYTES + ')')
+    }
+    this.ensureAvailable(length)
+    const value = this.buffer.readUIntBE(this.cursor, length)
+    return value
   }
 
   /**
-   * Advance cursor by one byte.
+   * Advance cursor by length bytes.
    */
-  skipUInt8 () {
-    this.cursor++
+  skipUInt (length) {
+    this.skip(length)
   }
 
   /**
-   * Read a VARUINT at the cursor position.
+   * Read a variable-length integer at the cursor position.
    *
-   * A VARUINT is a variable length integer encoded as base128 where the highest
-   * bit indicates that another byte is following. The first byte contains the
-   * seven least significant bits of the number represented.
+   * Return the integer as a number and advance the cursor accordingly.
    *
-   * Return the VARUINT and advances the cursor accordingly.
-   *
-   * @return {Number} Value of the VARUINT.
+   * @return {Number} Value of the integer.
    */
   readVarUInt () {
-    const MSB = 0x80
-    const REST = 0x7F
+    const buffer = this.readVarOctetString()
+    if (buffer.length > Reader.MAX_INT_BYTES) {
+      throw new ParseError('UInt of length ' + buffer.length +
+        'too large to parse as integer (max: ' + Reader.MAX_INT_BYTES + ')')
+    }
 
-    let byte = 0
-    let shift = 0
-    let result = 0
-    do {
-      byte = this.readUInt8()
-
-      result += shift < 28
-        ? (byte & REST) << shift
-        : (byte & REST) * Math.pow(2, shift)
-
-      shift += 7
-
-      // Don't allow numbers greater than Number.MAX_SAFE_INTEGER
-      if (shift > 45) {
-        throw new ParseError('Too large variable integer')
-      }
-    } while (byte & MSB)
-
-    return result
+    return buffer.readUIntBE(0, buffer.length)
   }
 
   /**
-   * Read the next VARUINT, but don't advance the cursor.
+   * Read the next variable-length integer, but don't advance the cursor.
    *
-   * @return {Number} VARUINT at the cursor position.
+   * @return {Number} Integer at the cursor position.
    */
   peekVarUInt () {
     this.bookmark()
@@ -139,44 +131,84 @@ class Reader {
   }
 
   /**
-   * Skip past the VARUINT at the cursor position.
+   * Skip past the variable-length integer at the cursor position.
+   *
+   * Since variable integers are encoded the same way as octet strings, this
+   * method is equivalent to skipVarOctetString.
    */
   skipVarUInt () {
-    // Read variable integer and ignore output
-    this.readVarUInt()
+    this.skipVarOctetString()
   }
 
   /**
-   * Read a VARBYTES.
+   * Read a fixed-length octet string.
    *
-   * A VARBYTES field consists of a VARUINT followed by that many bytes.
-   *
-   * @return {Buffer} Contents of the VARBYTES.
+   * @param {Number} length Length of the octet string.
    */
-  readVarBytes () {
-    const len = this.readVarUInt()
-    return this.read(len)
+  readOctetString (length) {
+    return this.read(length)
   }
 
   /**
-   * Read a VARBYTES, but do not advance cursor position.
+   * Peek at a fixed length octet string.
    *
-   * @return {Buffer} Contents of the VARBYTES.
+   * @param {Number} length Length of the octet string.
    */
-  peekVarBytes () {
+  peekOctetString (length) {
+    return this.peek(length)
+  }
+
+  /**
+   * Skip a fixed length octet string.
+   *
+   * @param {Number} length Length of the octet string.
+   */
+  skipOctetString (length) {
+    return this.skip(length)
+  }
+
+  /**
+   * Read a variable-length octet string.
+   *
+   * A variable-length octet string is a length-prefixed set of arbitrary bytes.
+   *
+   * @return {Buffer} Contents of the octet string.
+   */
+  readVarOctetString () {
+    const length = this.readUInt8()
+
+    if (length & Reader.HIGH_BIT) {
+      const bufferLength = this.readUInt(length & Reader.LOWER_SEVEN_BITS)
+      return this.read(bufferLength)
+    } else {
+      return this.read(length)
+    }
+  }
+
+  /**
+   * Read a variable-length buffer, but do not advance cursor position.
+   *
+   * @return {Buffer} Contents of the buffer.
+   */
+  peekVarOctetString () {
     this.bookmark()
-    const value = this.readVarBytes()
+    const value = this.readVarOctetString()
     this.restore()
 
     return value
   }
 
   /**
-   * Skip a VARBYTES.
+   * Skip a variable-length buffer.
    */
-  skipVarBytes () {
-    const len = this.readVarUInt()
-    this.skip(len)
+  skipVarOctetString () {
+    const length = this.readUInt8()
+    if (length & Reader.HIGH_BIT) {
+      const bufferLength = this.readUInt(length | Reader.LOWER_SEVEN_BITS)
+      return this.skip(bufferLength)
+    } else {
+      return this.skip(length)
+    }
   }
 
   /**
@@ -222,5 +254,24 @@ class Reader {
     this.cursor += bytes
   }
 }
+
+// Most significant bit in a byte
+Reader.HIGH_BIT = 0x80
+
+// Other bits in a byte
+Reader.LOWER_SEVEN_BITS = 0x7F
+
+// Largest integer (in bytes) that is safely representable in JavaScript
+// => Math.floor(Number.MAX_SAFE_INTEGER.toString(2).length / 8)
+Reader.MAX_INT_BYTES = 6
+
+// Create {read,peek,skip}UInt{8,16,32,64} shortcuts
+;['read', 'peek', 'skip'].forEach((verb) => {
+  ;[1, 2, 4, 8].forEach((bytes) => {
+    Reader.prototype[verb + 'UInt' + bytes * 8] = function () {
+      return this[verb + 'UInt'](bytes)
+    }
+  })
+})
 
 module.exports = Reader

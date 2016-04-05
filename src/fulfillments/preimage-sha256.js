@@ -46,7 +46,7 @@ class PreimageSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {Reader} reader Source to read the fulfillment payload from.
    */
   parsePayload (reader) {
-    this.setPreimage(reader.readVarBytes())
+    this.setPreimage(reader.readVarOctetString())
   }
 
   /**
@@ -61,7 +61,7 @@ class PreimageSha256Fulfillment extends BaseSha256Fulfillment {
       throw new MissingDataError('Preimage must be specified')
     }
 
-    writer.writeVarBytes(this.preimage)
+    writer.writeVarOctetString(this.preimage)
   }
 
   /**
