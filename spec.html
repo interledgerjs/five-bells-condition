@@ -385,11 +385,13 @@
 <link href="#rfc.section.2.2" rel="Chapter" title="2.2 String Types"/>
 <link href="#rfc.section.2.3" rel="Chapter" title="2.3 Bitmask"/>
 <link href="#rfc.section.2.4" rel="Chapter" title="2.4 Condition"/>
-<link href="#rfc.section.2.4.1" rel="Chapter" title="2.4.1 String"/>
+<link href="#rfc.section.2.4.1" rel="Chapter" title="2.4.1 String Format"/>
 <link href="#rfc.section.2.4.2" rel="Chapter" title="2.4.2 Binary Format"/>
+<link href="#rfc.section.2.4.3" rel="Chapter" title="2.4.3 Fields"/>
 <link href="#rfc.section.2.5" rel="Chapter" title="2.5 Fulfillment"/>
 <link href="#rfc.section.2.5.1" rel="Chapter" title="2.5.1 String Format"/>
 <link href="#rfc.section.2.5.2" rel="Chapter" title="2.5.2 Binary Format"/>
+<link href="#rfc.section.2.5.3" rel="Chapter" title="2.5.3 Fields"/>
 <link href="#rfc.section.3" rel="Chapter" title="3 Feature Suites"/>
 <link href="#rfc.section.3.1" rel="Chapter" title="3.1 SHA-256"/>
 <link href="#rfc.section.3.2" rel="Chapter" title="3.2 PREIMAGE"/>
@@ -414,7 +416,6 @@
 <link href="#rfc.section.4.5" rel="Chapter" title="4.5 ED25519"/>
 <link href="#rfc.section.4.5.1" rel="Chapter" title="4.5.1 Condition"/>
 <link href="#rfc.section.4.5.2" rel="Chapter" title="4.5.2 Fulfillment"/>
-<link href="#rfc.section.4.5.3" rel="Chapter" title="4.5.3 Implementation"/>
 <link href="#rfc.references" rel="Chapter" title="5 References"/>
 <link href="#rfc.references.1" rel="Chapter" title="5.1 Normative References"/>
 <link href="#rfc.references.2" rel="Chapter" title="5.2 Informative References"/>
@@ -504,11 +505,13 @@
 <li>2.2.   <a href="#rfc.section.2.2">String Types</a></li>
 <li>2.3.   <a href="#rfc.section.2.3">Bitmask</a></li>
 <li>2.4.   <a href="#rfc.section.2.4">Condition</a></li>
-<ul><li>2.4.1.   <a href="#rfc.section.2.4.1">String</a></li>
+<ul><li>2.4.1.   <a href="#rfc.section.2.4.1">String Format</a></li>
 <li>2.4.2.   <a href="#rfc.section.2.4.2">Binary Format</a></li>
+<li>2.4.3.   <a href="#rfc.section.2.4.3">Fields</a></li>
 </ul><li>2.5.   <a href="#rfc.section.2.5">Fulfillment</a></li>
 <ul><li>2.5.1.   <a href="#rfc.section.2.5.1">String Format</a></li>
 <li>2.5.2.   <a href="#rfc.section.2.5.2">Binary Format</a></li>
+<li>2.5.3.   <a href="#rfc.section.2.5.3">Fields</a></li>
 </ul></ul><li>3.   <a href="#rfc.section.3">Feature Suites</a></li>
 <ul><li>3.1.   <a href="#rfc.section.3.1">SHA-256</a></li>
 <li>3.2.   <a href="#rfc.section.3.2">PREIMAGE</a></li>
@@ -533,7 +536,6 @@
 </ul><li>4.5.   <a href="#rfc.section.4.5">ED25519</a></li>
 <ul><li>4.5.1.   <a href="#rfc.section.4.5.1">Condition</a></li>
 <li>4.5.2.   <a href="#rfc.section.4.5.2">Fulfillment</a></li>
-<li>4.5.3.   <a href="#rfc.section.4.5.3">Implementation</a></li>
 </ul></ul><li>5.   <a href="#rfc.references">References</a></li>
 <ul><li>5.1.   <a href="#rfc.references.1">Normative References</a></li>
 <li>5.2.   <a href="#rfc.references.2">Informative References</a></li>
@@ -593,13 +595,13 @@
 <p id="rfc.section.2.3.p.3">Each bit represents a different suite of features. Each type of condition depends on one or more feature suites. If an implementation supports all feature suites that a certain type depends on, the implementation MUST support that condition type. The list of known types and feature suites is the IANA maintained <a href="#crypto-conditions-type-registry">Crypto-Condition Type Registry</a> <cite title="NONE">[crypto-conditions-type-registry]</cite>.  </p>
 <p id="rfc.section.2.3.p.4">Conditions contain a bitmask of types which they require the implementation to support.  Implementations provide a bitmask of types they support.  </p>
 <h1 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4.</a> <a href="#condition-format" id="condition-format">Condition</a></h1>
-<p id="rfc.section.2.4.p.1">Below are the string and binary encoding formats for a condition. In both, the featureBitmask is the boolean OR of the featureBitmask of the top-level condition type and all subcondition types, recursively.  </p>
-<h1 id="rfc.section.2.4.1"><a href="#rfc.section.2.4.1">2.4.1.</a> <a href="#string-condition-format" id="string-condition-format">String</a></h1>
+<p id="rfc.section.2.4.p.1">Below are the string and binary encoding formats for a condition. In both, the featureBitmask is the boolean OR of the feature suite bitmasks of the top-level condition type and all subcondition types, recursively.  </p>
+<h1 id="rfc.section.2.4.1"><a href="#rfc.section.2.4.1">2.4.1.</a> <a href="#string-condition-format" id="string-condition-format">String Format</a></h1>
 <p>Conditions are ASCII encoded as: </p>
 <pre>
 "cc:" BASE10(type) ":" BASE16(featureBitmask) ":"
     BASE64URL(fingerprint) ":" BASE10(maxFulfillmentLength)
-                     </pre>
+                        </pre>
 <h1 id="rfc.section.2.4.2"><a href="#rfc.section.2.4.2">2.4.2.</a> <a href="#binary-condition-format" id="binary-condition-format">Binary Format</a></h1>
 <p>Conditions are binary encoded as: </p>
 <pre>
@@ -617,17 +619,28 @@ ConditionType ::= INTEGER {
   thresholdSha256(3),
   ed25519(4)
 } (0..65535)
-                     </pre>
-<p id="rfc.section.2.4.2.p.1">type is the condition type ID.  </p>
-<p id="rfc.section.2.4.2.p.2">featureBitmask is the set of required features in order to parse the fulfillment to this condition.  </p>
-<p id="rfc.section.2.4.2.p.3">fingerprint is the unique identifier of the condition. For most condition types, this is a hash.  </p>
-<p id="rfc.section.2.4.2.p.4">maxFulfillmentLength is the maximum length of the fulfillment payload that can fulfill this condition. When a crypto-condition is submitted to an implementation, this implementation MUST verify that it will be able to process a fulfillment with a payload of size maxFulfillmentLength.  </p>
+                        </pre>
+<h1 id="rfc.section.2.4.3"><a href="#rfc.section.2.4.3">2.4.3.</a> <a href="#condition-format-fields" id="condition-format-fields">Fields</a></h1>
+<p/>
+
+<dl>
+  <dt>type</dt>
+  <dd style="margin-left: 8">is the numeric type identifier representing the condition type.  </dd>
+  <dt>featureBitmask</dt>
+  <dd style="margin-left: 8">is an octet string encoding the set of feature suites an implementation must support in order to be able to successfully parse the fulfillment to this condition.  </dd>
+  <dt>fingerprint</dt>
+  <dd style="margin-left: 8">is an octet string uniquely representing the condition with respect to other conditions of the same type. Implementations which index conditions MUST use the entire string or binary encoded condition as the key, not just the fingerprint - as different conditions of different types may have the same fingerprint. The length and contents of the fingerprint are defined by the condition type. For most condition types, the fingerprint is a cryptographically secure hash of the data which defines the condition, such as a public key.  </dd>
+  <dt>maxFulfillmentLength</dt>
+  <dd style="margin-left: 8">is the maximum length of the fulfillment payload that can fulfill this condition. When a crypto-condition is submitted to an implementation, this implementation MUST verify that it will be able to process a fulfillment with a payload of size maxFulfillmentLength.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.2.5"><a href="#rfc.section.2.5">2.5.</a> <a href="#fulfillment-format" id="fulfillment-format">Fulfillment</a></h1>
-<p id="rfc.section.2.5.p.1">Below are the string and binary encoding formats for a fulfillment. In both the TYPE_ID is the numeric type identifier representing the top level condition type.  </p>
+<p id="rfc.section.2.5.p.1">Below are the string and binary encoding formats for a fulfillment.  </p>
 <h1 id="rfc.section.2.5.1"><a href="#rfc.section.2.5.1">2.5.1.</a> <a href="#string-fulfillment-format" id="string-fulfillment-format">String Format</a></h1>
 <p>Fulfillments are ASCII encoded as: </p>
 <pre>
-"cf:" BASE16(TYPE_ID) ":" BASE64URL(FULFILLMENT_PAYLOAD)
+"cf:" BASE16(type) ":" BASE64URL(payload)
                      </pre>
 <h1 id="rfc.section.2.5.2"><a href="#rfc.section.2.5.2">2.5.2.</a> <a href="#binary-fulfillment-format" id="binary-fulfillment-format">Binary Format</a></h1>
 <p>Fulfillments are binary encoded as: </p>
@@ -637,9 +650,20 @@ Fulfillment ::= SEQUENCE {
   payload OCTET STRING
 }
                      </pre>
+<h1 id="rfc.section.2.5.3"><a href="#rfc.section.2.5.3">2.5.3.</a> <a href="#fulfillment-format-fields" id="fulfillment-format-fields">Fields</a></h1>
+<p/>
+
+<dl>
+  <dt>type</dt>
+  <dd style="margin-left: 8">is the numeric type identifier representing the condition type. For some condition types the fulfillment will contain further subfulfillments, however the type field always represents the outermost, or top-level, type.  </dd>
+  <dt>payload</dt>
+  <dd style="margin-left: 8">The payload is an octet string whose internal format is defined by each of the types.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#feature-suites" id="feature-suites">Feature Suites</a></h1>
 <p id="rfc.section.3.p.1">The following feature suites are defined in this version of the specification. New feature suites may be defined in the future and will be registered in the IANA maintained <a href="#crypto-conditions-type-registry">Crypto-Condition Type Registry</a> <cite title="NONE">[crypto-conditions-type-registry]</cite> </p>
-<p id="rfc.section.3.p.2">Support for a condition MUST depend on one or more feature suites. Future versions of this spec MAY introduce new feature bits and condition types. However, all new condition types MUST always depend on at least one of the new feature suites. This ensures that all previously creates implementations correctly signal that they do not support the new type.  </p>
+<p id="rfc.section.3.p.2">Support for a condition type MUST depend on one or more feature suites. Future versions of this spec MAY introduce new feature bits and condition types. However, all new condition types MUST depend on at least one of the new feature suites. This ensures that all previously created implementations correctly recognize that they do not support the new type.  </p>
 <p id="rfc.section.3.p.3">Feature suites are chosen such that they represent reasonable clusters of functionality.  For instance, it is reasonable to require that an implementation which supports SHA-256 in one context MUST support it in all contexts, since it already needed to implement the algorithm.  </p>
 <p id="rfc.section.3.p.4">An implementation which supports a certain set of feature suites MUST accept all condition types which depend only on that set or any subset of feature suites.  </p>
 <h1 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a> <a href="#sha-256-feature-suite" id="sha-256-feature-suite">SHA-256</a></h1>
@@ -672,6 +696,8 @@ Fulfillment ::= SEQUENCE {
 <p id="rfc.section.4.1.2.p.1">The fulfillment payload of a PREIMAGE-SHA-256 condition is the preimage.  </p>
 <h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#prefix-sha-256-condition-type" id="prefix-sha-256-condition-type">PREFIX-SHA-256</a></h1>
 <p id="rfc.section.4.2.p.1">PREFIX-SHA-256 is assigned the type ID 1. It relies on the SHA-256 and PREFIX feature suites which corresponds to a feature bitmask of 0x05.  </p>
+<p id="rfc.section.4.2.p.2">Prefix conditions provide a way to effective narrow the scope of other conditions. A condition can be used as the fingerprint of a public key to sign an arbitrary message. By creating a prefix subcondition we can narrow the scope from signing an arbitrary message to signing a message with a specific prefix.  </p>
+<p id="rfc.section.4.2.p.3">When a prefix fulfillment is validated against a message, it will prepend the prefix to the provided message and will use the result as the message to validate against the subfulfillment.  </p>
 <h1 id="rfc.section.4.2.1"><a href="#rfc.section.4.2.1">4.2.1.</a> <a href="#prefix-sha-256-condition-type-condition" id="prefix-sha-256-condition-type-condition">Condition</a></h1>
 <p id="rfc.section.4.2.1.p.1">The fingerprint of a PREFIX-SHA-256 condition is the SHA-256 digest of the fingerprint contents given below: </p>
 <pre>
@@ -679,16 +705,34 @@ PrefixSha256FingerprintContents ::= SEQUENCE {
   prefix OCTET STRING,
   condition Condition
 }
-                     </pre>
-<p id="rfc.section.4.2.1.p.2">The TYPE_ID is 1. The reason we need this field is because prefix conditions are a structural condition. Structural conditions can have subconditions, meaning their featureBitmask can have multiple bits set, including other structural conditions.  The TYPE_ID makes it very unlikely that two different structural fulfillments could ever generate the exact same condition.  </p>
-<p id="rfc.section.4.2.1.p.3">PREFIX is an arbitrary octet string. When the prefix fulfillment is validated, it will prepend the prefix to the provided message and pass the result as the message to the subfulfillment.  </p>
+                        </pre>
+<p/>
+
+<dl>
+  <dt>prefix</dt>
+  <dd style="margin-left: 8">is an arbitrary octet string which will be prepended to the message during validation.  </dd>
+  <dt>condition</dt>
+  <dd style="margin-left: 8">is the sub-condition which the sub-fulfillment must match.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.4.2.2"><a href="#rfc.section.4.2.2">4.2.2.</a> <a href="#prefix-sha-256-condition-type-fulfillment" id="prefix-sha-256-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
 PrefixSha256FulfillmentPayload ::= SEQUENCE {
   prefix OCTET STRING,
   subfulfillment Fulfillment
 }
-                     </pre>
+                        </pre>
+<p/>
+
+<dl>
+  <dt>prefix</dt>
+  <dd style="margin-left: 8">is an arbitrary octet string which will be prepended to the message during validation.  </dd>
+  <dt>condition</dt>
+  <dd style="margin-left: 8">is the sub-condition which the sub-fulfillment must match.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.4.3"><a href="#rfc.section.4.3">4.3.</a> <a href="#threshold-sha-256-condition-type" id="threshold-sha-256-condition-type">THRESHOLD-SHA-256</a></h1>
 <p id="rfc.section.4.3.p.1">THRESHOLD-SHA-256 is assigned the type ID 2. It relies on the SHA-256 and THRESHOLD feature suites which corresponds to a feature bitmask of 0x09.  </p>
 <h1 id="rfc.section.4.3.1"><a href="#rfc.section.4.3.1">4.3.1.</a> <a href="#threshold-sha-256-condition-type-condition" id="threshold-sha-256-condition-type-condition">Condition</a></h1>
@@ -703,9 +747,22 @@ ThresholdSubcondition ::= SEQUENCE {
   weight INTEGER (0..4294967295),
   condition Condition
 }
-                     </pre>
-<p id="rfc.section.4.3.1.p.2">The type is 2. We need this field because threshold conditions are a structural condition. Structural conditions can have subconditions, meaning their featureBitmask can have multiple bits set, including other structural conditions.  The TYPE_ID makes it very unlikely that two different structural fulfillments could ever generate the exact same condition.  </p>
-<p id="rfc.section.4.3.1.p.3">The list of conditions is sorted first based on length, shortest first. Elements of the same length are sorted in lexicographic (big-endian) order, smallest first.  </p>
+                        </pre>
+<p id="rfc.section.4.3.1.p.2">The list of conditions is sorted first based on length, shortest first. Elements of the same length are sorted in lexicographic (big-endian) order, smallest first.  </p>
+<p/>
+
+<dl>
+  <dt>threshold</dt>
+  <dd style="margin-left: 8">threshold MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a threshold condition, the weights of the provided fulfillments MUST be greater than or equal to the threshold.  </dd>
+  <dt>subconditions</dt>
+  <dd style="margin-left: 8">is the set of sub-conditions, each provided as a tuple of weight and condition.  </dd>
+  <dt>weight</dt>
+  <dd style="margin-left: 8">is the numeric weight of this subcondition, i.e. how many times it counts against the threshold.  </dd>
+  <dt>condition</dt>
+  <dd style="margin-left: 8">is the sub-condition.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.4.3.2"><a href="#rfc.section.4.3.2">4.3.2.</a> <a href="#threshold-sha-256-condition-type-fulfillment" id="threshold-sha-256-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
 ThresholdSha256FulfillmentPayload ::= SEQUENCE {
@@ -718,48 +775,89 @@ ThresholdSubfulfillment ::= SEQUENCE {
   condition Condition OPTIONAL,
   fulfillment Fulfillment OPTIONAL
 }
-                     </pre>
-<p id="rfc.section.4.3.2.p.1">threshold MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a threshold condition, the weights of the provided fulfillments MUST be greater than or equal to the threshold.  </p>
-<p id="rfc.section.4.3.2.p.2">weight refers to the weight of the condition and must be an integer in the range 1 ... 2^32 - 1.  </p>
+                        </pre>
+<p/>
+
+<dl>
+  <dt>threshold</dt>
+  <dd style="margin-left: 8">is a number and MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a threshold condition, the weights of the provided fulfillments MUST be greater than or equal to the threshold.  </dd>
+  <dt>subconditions</dt>
+  <dd style="margin-left: 8">is the set of sub-conditions, each provided as a tuple of weight and condition.  </dd>
+  <dt>weight</dt>
+  <dd style="margin-left: 8">is the numeric weight of this subcondition, i.e. how many times it counts against the threshold. It MUST be an integer in the range 1 ... 2^32 - 1.  </dd>
+  <dt>condition</dt>
+  <dd style="margin-left: 8">is the sub-condition.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.4.4"><a href="#rfc.section.4.4">4.4.</a> <a href="#rsa-sha-256-condition-type" id="rsa-sha-256-condition-type">RSA-SHA-256</a></h1>
 <p id="rfc.section.4.4.p.1">RSA-SHA-256 is assigned the type ID 3. It relies on the SHA-256 and RSA-PSS feature suites which corresponds to a feature bitmask of 0x11.  </p>
+<p id="rfc.section.4.4.p.2">The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.  <a href="#RFC3447">[RFC3447]</a> </p>
 <h1 id="rfc.section.4.4.1"><a href="#rfc.section.4.4.1">4.4.1.</a> <a href="#rsa-sha-256-condition-type-condition" id="rsa-sha-256-condition-type-condition">Condition</a></h1>
-<p id="rfc.section.4.4.1.p.1">The fingerprint of a THRESHOLD-SHA-256 condition is the SHA-256 digest of the fingerprint contents given below: </p>
+<p id="rfc.section.4.4.1.p.1">The fingerprint of a RSA-SHA-256 condition is the SHA-256 digest of the fingerprint contents given below: </p>
+<p id="rfc.section.4.4.1.p.2">The salt length for PSS is 32 bytes.  </p>
 <pre>
-RsaSha256FingerprintContents ::= INTEGER (0..MAX) -- modulus
-                     </pre>
-<p id="rfc.section.4.4.1.p.2">The MODULUS is the RSA public modulus. The public exponent e is set to 65537 as recommended in <a href="#RFC4871">[RFC4871]</a>. Very large exponents can be a DoS vector <a href="#LARGE-RSA-EXPONENTS">[LARGE-RSA-EXPONENTS]</a> and 65537 is the largest Fermat prime, which has some nice properties <a href="#USING-RSA-EXPONENT-OF-65537">[USING-RSA-EXPONENT-OF-65537]</a>.  </p>
-<p id="rfc.section.4.4.1.p.3">Implementations MUST reject moduli smaller than 128 bytes (1017 bits) or greater than 512 bytes (4096 bits.) Large moduli slow down signature verification which can be a DoS vector. DNSSEC also limits the modulus to 4096 bits <a href="#RFC3110">[RFC3110]</a>.  OpenSSL supports up to 16384 bits <a href="#OPENSSL-X509-CERT-EXAMPLES">[OPENSSL-X509-CERT-EXAMPLES]</a>.  </p>
+RsaSha256FingerprintContents ::= SEQUENCE {
+  modulus OCTET STRING (SIZE(128..512))
+}
+                        </pre>
+<p/>
+
+<dl>
+  <dt>modulus</dt>
+  <dd style="margin-left: 8">is an octet string representing the RSA public modulus in big-endian byte order. The first byte of the modulus MUST NOT be zero.  </dd>
+  <dt></dt>
+  <dd style="margin-left: 8">The corresponding public exponent e is assumed to be 65537 as recommended in <a href="#RFC4871">[RFC4871]</a>. Very large exponents can be a DoS vector <a href="#LARGE-RSA-EXPONENTS">[LARGE-RSA-EXPONENTS]</a> and 65537 is the largest Fermat prime, which has some nice properties <a href="#USING-RSA-EXPONENT-OF-65537">[USING-RSA-EXPONENT-OF-65537]</a>.  </dd>
+  <dt></dt>
+  <dd style="margin-left: 8">Implementations MUST reject moduli smaller than 128 bytes (1017 bits) or greater than 512 bytes (4096 bits.) Large moduli slow down signature verification which can be a denial-of-service vector. DNSSEC also limits the modulus to 4096 bits <a href="#RFC3110">[RFC3110]</a>. OpenSSL supports up to 16384 bits <a href="#OPENSSL-X509-CERT-EXAMPLES">[OPENSSL-X509-CERT-EXAMPLES]</a>.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.section.4.4.2"><a href="#rfc.section.4.4.2">4.4.2.</a> <a href="#rsa-sha-256-condition-type-fulfillment" id="rsa-sha-256-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
 RsaSha256FulfillmentPayload ::= SEQUENCE {
   modulus OCTET STRING (SIZE(128..512)),
   signature OCTET STRING (SIZE(128..512))
 }
-                     </pre>
-<p id="rfc.section.4.4.2.p.1">The signature MUST have the exact same number of octets as the MODULUS, even if that means adding leading zeros. This ensures that the fulfillment size is constant and known ahead of time. Note that the field is still length-prefixed for consistency. Implementations MUST verify that the SIGNATURE and MODULUS consist of the same number of octets. SIGNATURE must be numerically less than MODULUS.  </p>
-<p id="rfc.section.4.4.2.p.2">The message to be signed is provided separately by the user. If no message is provided, the message is assumed to be the empty string.  </p>
+                        </pre>
+<p/>
+
+<dl>
+  <dt>modulus</dt>
+  <dd style="margin-left: 8">is an octet string representing the RSA public modulus in big-endian byte order. See <a href="#rsa-sha-256-condition-type-condition">Section 4.4.1</a> </dd>
+  <dt>signature</dt>
+  <dd style="margin-left: 8">is an octet string representing the RSA signature. It MUST be encoded in big-endian byte order with the exact same number of octets as the modulus, even if this means adding leading zeros. This ensures that the fulfillment size is constant and known ahead of time. Note that the field is still binary encoded with a length prefix for consistency.  </dd>
+  <dt></dt>
+  <dd style="margin-left: 8">Implementations MUST verify that the signature and modulus consist of the same number of octets and that the signature is numerically less than the modulus.  </dd>
+</dl>
+
+<p> </p>
+<p id="rfc.section.4.4.2.p.2">The message to be signed is provided separately. If no message is provided, the message is assumed to be an octet string of length zero.  </p>
 <h1 id="rfc.section.4.4.3"><a href="#rfc.section.4.4.3">4.4.3.</a> <a href="#rsa-sha-256-condition-type-implementation" id="rsa-sha-256-condition-type-implementation">Implementation</a></h1>
-<p id="rfc.section.4.4.3.p.1">The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.  <a href="#RFC3447">[RFC3447]</a> </p>
-<p id="rfc.section.4.4.3.p.2">The recommended modulus size as of 2016 is 2048 bits <a href="#KEYLENGTH-RECOMMENDATION">[KEYLENGTH-RECOMMENDATION]</a>.  In the future we anticipate an upgrade to 3072 bits which provides approximately 128 bits of security <a href="#NIST-KEYMANAGEMENT">[NIST-KEYMANAGEMENT]</a>(p. 64), about the same level as SHA-256.  </p>
-<p id="rfc.section.4.4.3.p.3">The salt length for PSS is 32 bytes.  </p>
+<p id="rfc.section.4.4.3.p.1">The recommended modulus size as of 2016 is 2048 bits <a href="#KEYLENGTH-RECOMMENDATION">[KEYLENGTH-RECOMMENDATION]</a>. In the future we anticipate an upgrade to 3072 bits which provides approximately 128 bits of security <a href="#NIST-KEYMANAGEMENT">[NIST-KEYMANAGEMENT]</a>(p. 64), about the same level as SHA-256.  </p>
 <h1 id="rfc.section.4.5"><a href="#rfc.section.4.5">4.5.</a> <a href="#ed25519-condition-type" id="ed25519-condition-type">ED25519</a></h1>
 <p id="rfc.section.4.5.p.1">ED25519 is assigned the type ID 4. It relies only on the ED25519 feature suite which corresponds to a bitmask of 0x20.  </p>
-<p id="rfc.section.4.5.p.2">Ed25519 uses SHA-512 internally, but this specification is not defining the SHA-512 versions of other condition types and we are already adding a feature set which includes this condition type. Therefore we intentionally did not introduce a SHA-512 feature suite in this specification.  </p>
+<p id="rfc.section.4.5.p.2">The exact algorithm and encodings used for public key and signature are defined in <a href="#I-D.irtf-cfrg-eddsa">[I-D.irtf-cfrg-eddsa]</a> as Ed25519. SHA-512 is used as the hashing function.  </p>
+<p id="rfc.section.4.5.p.3">Note: This document is not defining the SHA-512 versions of other condition types.  In addition, the Ed25519 condition type is already uniquely identified by a corresponding Ed25519 feature suite. Therefore we intentionally do not introduce a SHA-512 feature suite in this document.  </p>
 <h1 id="rfc.section.4.5.1"><a href="#rfc.section.4.5.1">4.5.1.</a> <a href="#ed25519-condition-type-condition" id="ed25519-condition-type-condition">Condition</a></h1>
-<p id="rfc.section.4.5.1.p.1">The fingerprint of a ED25519 condition is the 32 byte public key.  </p>
-<p id="rfc.section.4.5.1.p.2">Since the PUBLIC_KEY is already only 256 bits long and this condition type is not structural, we do not hash it.  </p>
+<p id="rfc.section.4.5.1.p.1">The fingerprint of a ED25519 condition is the 32 byte Ed25519 public key. Since the public key is already very small, we do not hash it.  </p>
 <h1 id="rfc.section.4.5.2"><a href="#rfc.section.4.5.2">4.5.2.</a> <a href="#ed25519-condition-type-fulfillment" id="ed25519-condition-type-fulfillment">Fulfillment</a></h1>
 <pre>
 Ed25519FulfillmentPayload ::= SEQUENCE {
   publicKey OCTET STRING (SIZE(32)),
   signature OCTET STRING (SIZE(64))
 }
-                     </pre>
-<h1 id="rfc.section.4.5.3"><a href="#rfc.section.4.5.3">4.5.3.</a> <a href="#ed25519-condition-type-implementation" id="ed25519-condition-type-implementation">Implementation</a></h1>
-<p id="rfc.section.4.5.3.p.1">The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE are Ed25519 as defined in <a href="#I-D.irtf-cfrg-eddsa">[I-D.irtf-cfrg-eddsa]</a>. SHA-512 is used as the hashing function.  </p>
-<p id="rfc.section.4.5.3.p.2">The PUBLIC_KEY field represents the Ed25519 public key and MUST be 32 bytes in length.  </p>
-<p id="rfc.section.4.5.3.p.3">The SIGNATURE field represents the Ed25519 signature and MUST be 64 bytes in length.  </p>
+                        </pre>
+<p/>
+
+<dl>
+  <dt>publicKey</dt>
+  <dd style="margin-left: 8">is an octet string containing the Ed25519 public key.  </dd>
+  <dt>signature</dt>
+  <dd style="margin-left: 8">is an octet string containing the Ed25519 signature.  </dd>
+</dl>
+
+<p> </p>
 <h1 id="rfc.references"><a href="#rfc.references">5.</a> References</h1>
 <h1 id="rfc.references.1"><a href="#rfc.references.1">5.1.</a> Normative References</h1>
 <table>

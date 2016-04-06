@@ -78,34 +78,34 @@ Table of Contents
      2.2.  String Types  . . . . . . . . . . . . . . . . . . . . . .   5
      2.3.  Bitmask . . . . . . . . . . . . . . . . . . . . . . . . .   5
      2.4.  Condition . . . . . . . . . . . . . . . . . . . . . . . .   6
-       2.4.1.  String  . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.4.1.  String Format . . . . . . . . . . . . . . . . . . . .   6
        2.4.2.  Binary Format . . . . . . . . . . . . . . . . . . . .   6
+       2.4.3.  Fields  . . . . . . . . . . . . . . . . . . . . . . .   6
      2.5.  Fulfillment . . . . . . . . . . . . . . . . . . . . . . .   7
        2.5.1.  String Format . . . . . . . . . . . . . . . . . . . .   7
        2.5.2.  Binary Format . . . . . . . . . . . . . . . . . . . .   7
+       2.5.3.  Fields  . . . . . . . . . . . . . . . . . . . . . . .   7
    3.  Feature Suites  . . . . . . . . . . . . . . . . . . . . . . .   7
      3.1.  SHA-256 . . . . . . . . . . . . . . . . . . . . . . . . .   8
      3.2.  PREIMAGE  . . . . . . . . . . . . . . . . . . . . . . . .   8
      3.3.  PREFIX  . . . . . . . . . . . . . . . . . . . . . . . . .   8
      3.4.  THRESHOLD . . . . . . . . . . . . . . . . . . . . . . . .   8
-     3.5.  RSA-PSS . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     3.5.  RSA-PSS . . . . . . . . . . . . . . . . . . . . . . . . .   9
      3.6.  ED25519 . . . . . . . . . . . . . . . . . . . . . . . . .   9
    4.  Condition Types . . . . . . . . . . . . . . . . . . . . . . .   9
      4.1.  PREIMAGE-SHA-256  . . . . . . . . . . . . . . . . . . . .   9
        4.1.1.  Condition . . . . . . . . . . . . . . . . . . . . . .   9
-       4.1.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .   9
-     4.2.  PREFIX-SHA-256  . . . . . . . . . . . . . . . . . . . . .   9
+       4.1.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  10
+     4.2.  PREFIX-SHA-256  . . . . . . . . . . . . . . . . . . . . .  10
        4.2.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  10
        4.2.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  10
-     4.3.  THRESHOLD-SHA-256 . . . . . . . . . . . . . . . . . . . .  10
-       4.3.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  10
+     4.3.  THRESHOLD-SHA-256 . . . . . . . . . . . . . . . . . . . .  11
+       4.3.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  11
        4.3.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  11
-     4.4.  RSA-SHA-256 . . . . . . . . . . . . . . . . . . . . . . .  11
-       4.4.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  11
-       4.4.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  12
-       4.4.3.  Implementation  . . . . . . . . . . . . . . . . . . .  12
-     4.5.  ED25519 . . . . . . . . . . . . . . . . . . . . . . . . .  12
-       4.5.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  13
+     4.4.  RSA-SHA-256 . . . . . . . . . . . . . . . . . . . . . . .  12
+       4.4.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  12
+       4.4.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  13
+       4.4.3.  Implementation  . . . . . . . . . . . . . . . . . . .  13
 
 
 
@@ -114,18 +114,19 @@ Thomas                  Expires September 2, 2016               [Page 2]
 Internet-Draft              Crypto-Conditions                 March 2016
 
 
-       4.5.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  13
-       4.5.3.  Implementation  . . . . . . . . . . . . . . . . . . .  13
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .  14
-   Appendix A.  Security Considerations  . . . . . . . . . . . . . .  15
-   Appendix B.  Test Values  . . . . . . . . . . . . . . . . . . . .  15
-   Appendix C.  ASN.1 Module . . . . . . . . . . . . . . . . . . . .  15
-   Appendix D.  Acknowledgements . . . . . . . . . . . . . . . . . .  18
-   Appendix E.  IANA Considerations  . . . . . . . . . . . . . . . .  18
-     E.1.  Crypto-Condition Type Registry  . . . . . . . . . . . . .  18
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
+     4.5.  ED25519 . . . . . . . . . . . . . . . . . . . . . . . . .  14
+       4.5.1.  Condition . . . . . . . . . . . . . . . . . . . . . .  14
+       4.5.2.  Fulfillment . . . . . . . . . . . . . . . . . . . . .  14
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .  15
+   Appendix A.  Security Considerations  . . . . . . . . . . . . . .  16
+   Appendix B.  Test Values  . . . . . . . . . . . . . . . . . . . .  16
+   Appendix C.  ASN.1 Module . . . . . . . . . . . . . . . . . . . .  16
+   Appendix D.  Acknowledgements . . . . . . . . . . . . . . . . . .  19
+   Appendix E.  IANA Considerations  . . . . . . . . . . . . . . . .  19
+     E.1.  Crypto-Condition Type Registry  . . . . . . . . . . . . .  19
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  20
 
 1.  Introduction
 
@@ -157,7 +158,6 @@ Internet-Draft              Crypto-Conditions                 March 2016
    A "hashlock" is a tuple consisting of a bytestring and its hash where
    the hash is published first and the publication of the corresponding
    bytestring acts as a one-bit, one-time signature.
-
 
 
 
@@ -285,10 +285,11 @@ Internet-Draft              Crypto-Conditions                 March 2016
 2.4.  Condition
 
    Below are the string and binary encoding formats for a condition.  In
-   both, the featureBitmask is the boolean OR of the featureBitmask of
-   the top-level condition type and all subcondition types, recursively.
+   both, the featureBitmask is the boolean OR of the feature suite
+   bitmasks of the top-level condition type and all subcondition types,
+   recursively.
 
-2.4.1.  String
+2.4.1.  String Format
 
    Conditions are ASCII encoded as:
 
@@ -314,22 +315,21 @@ Internet-Draft              Crypto-Conditions                 March 2016
      ed25519(4)
    } (0..65535)
 
-   type is the condition type ID.
+2.4.3.  Fields
 
-   featureBitmask is the set of required features in order to parse the
-   fulfillment to this condition.
+   type  is the numeric type identifier representing the condition type.
 
-   fingerprint is the unique identifier of the condition.  For most
-   condition types, this is a hash.
+   featureBitmask  is an octet string encoding the set of feature suites
+      an implementation must support in order to be able to successfully
+      parse the fulfillment to this condition.
 
-   maxFulfillmentLength is the maximum length of the fulfillment payload
-   that can fulfill this condition.  When a crypto-condition is
-   submitted to an implementation, this implementation MUST verify that
-   it will be able to process a fulfillment with a payload of size
-   maxFulfillmentLength.
-
-
-
+   fingerprint  is an octet string uniquely representing the condition
+      with respect to other conditions of the same type.
+      Implementations which index conditions MUST use the entire string
+      or binary encoded condition as the key, not just the fingerprint -
+      as different conditions of different types may have the same
+      fingerprint.  The length and contents of the fingerprint are
+      defined by the condition type.  For most condition types, the
 
 
 
@@ -338,17 +338,24 @@ Thomas                  Expires September 2, 2016               [Page 6]
 Internet-Draft              Crypto-Conditions                 March 2016
 
 
+      fingerprint is a cryptographically secure hash of the data which
+      defines the condition, such as a public key.
+
+   maxFulfillmentLength  is the maximum length of the fulfillment
+      payload that can fulfill this condition.  When a crypto-condition
+      is submitted to an implementation, this implementation MUST verify
+      that it will be able to process a fulfillment with a payload of
+      size maxFulfillmentLength.
+
 2.5.  Fulfillment
 
    Below are the string and binary encoding formats for a fulfillment.
-   In both the TYPE_ID is the numeric type identifier representing the
-   top level condition type.
 
 2.5.1.  String Format
 
    Fulfillments are ASCII encoded as:
 
-   "cf:" BASE16(TYPE_ID) ":" BASE64URL(FULFILLMENT_PAYLOAD)
+   "cf:" BASE16(type) ":" BASE64URL(payload)
 
 2.5.2.  Binary Format
 
@@ -359,6 +366,16 @@ Internet-Draft              Crypto-Conditions                 March 2016
      payload OCTET STRING
    }
 
+2.5.3.  Fields
+
+   type  is the numeric type identifier representing the condition type.
+      For some condition types the fulfillment will contain further
+      subfulfillments, however the type field always represents the
+      outermost, or top-level, type.
+
+   payload  The payload is an octet string whose internal format is
+      defined by each of the types.
+
 3.  Feature Suites
 
    The following feature suites are defined in this version of the
@@ -366,12 +383,20 @@ Internet-Draft              Crypto-Conditions                 March 2016
    will be registered in the IANA maintained Crypto-Condition Type
    Registry (Appendix E.1)
 
-   Support for a condition MUST depend on one or more feature suites.
-   Future versions of this spec MAY introduce new feature bits and
-   condition types.  However, all new condition types MUST always depend
-   on at least one of the new feature suites.  This ensures that all
-   previously creates implementations correctly signal that they do not
-   support the new type.
+   Support for a condition type MUST depend on one or more feature
+   suites.  Future versions of this spec MAY introduce new feature bits
+   and condition types.  However, all new condition types MUST depend on
+
+
+
+Thomas                  Expires September 2, 2016               [Page 7]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+   at least one of the new feature suites.  This ensures that all
+   previously created implementations correctly recognize that they do
+   not support the new type.
 
    Feature suites are chosen such that they represent reasonable
    clusters of functionality.  For instance, it is reasonable to require
@@ -382,17 +407,6 @@ Internet-Draft              Crypto-Conditions                 March 2016
    An implementation which supports a certain set of feature suites MUST
    accept all condition types which depend only on that set or any
    subset of feature suites.
-
-
-
-
-
-
-
-Thomas                  Expires September 2, 2016               [Page 7]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
 3.1.  SHA-256
 
@@ -427,6 +441,15 @@ Internet-Draft              Crypto-Conditions                 March 2016
    THRESHOLD is a structural condition and is assigned the feature bit
    2^3 = 0x08.
 
+
+
+
+
+Thomas                  Expires September 2, 2016               [Page 8]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
    Threshold conditions provide a way to create m-of-n threshold
    combinations of other conditions such that m of the n subconditions
    have to be fulfilled in order for the threshold condition to be
@@ -439,16 +462,6 @@ Internet-Draft              Crypto-Conditions                 March 2016
 
    RSA-PSS is a signature algorithm and is assigned the feature bit 2^4
    = 0x10.
-
-
-
-
-
-
-Thomas                  Expires September 2, 2016               [Page 8]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
 3.6.  ED25519
 
@@ -484,6 +497,15 @@ Internet-Draft              Crypto-Conditions                 March 2016
    The fingerprint of a PREIMAGE-SHA-256 condition is the SHA-256 hash
    of the preimage.
 
+
+
+
+
+Thomas                  Expires September 2, 2016               [Page 9]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
 4.1.2.  Fulfillment
 
    The fulfillment payload of a PREIMAGE-SHA-256 condition is the
@@ -495,16 +517,15 @@ Internet-Draft              Crypto-Conditions                 March 2016
    and PREFIX feature suites which corresponds to a feature bitmask of
    0x05.
 
+   Prefix conditions provide a way to effective narrow the scope of
+   other conditions.  A condition can be used as the fingerprint of a
+   public key to sign an arbitrary message.  By creating a prefix
+   subcondition we can narrow the scope from signing an arbitrary
+   message to signing a message with a specific prefix.
 
-
-
-
-
-
-Thomas                  Expires September 2, 2016               [Page 9]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
+   When a prefix fulfillment is validated against a message, it will
+   prepend the prefix to the provided message and will use the result as
+   the message to validate against the subfulfillment.
 
 4.2.1.  Condition
 
@@ -516,16 +537,10 @@ Internet-Draft              Crypto-Conditions                 March 2016
      condition Condition
    }
 
-   The TYPE_ID is 1.  The reason we need this field is because prefix
-   conditions are a structural condition.  Structural conditions can
-   have subconditions, meaning their featureBitmask can have multiple
-   bits set, including other structural conditions.  The TYPE_ID makes
-   it very unlikely that two different structural fulfillments could
-   ever generate the exact same condition.
+   prefix  is an arbitrary octet string which will be prepended to the
+      message during validation.
 
-   PREFIX is an arbitrary octet string.  When the prefix fulfillment is
-   validated, it will prepend the prefix to the provided message and
-   pass the result as the message to the subfulfillment.
+   condition  is the sub-condition which the sub-fulfillment must match.
 
 4.2.2.  Fulfillment
 
@@ -533,6 +548,19 @@ Internet-Draft              Crypto-Conditions                 March 2016
      prefix OCTET STRING,
      subfulfillment Fulfillment
    }
+
+   prefix  is an arbitrary octet string which will be prepended to the
+      message during validation.
+
+   condition  is the sub-condition which the sub-fulfillment must match.
+
+
+
+
+Thomas                  Expires September 2, 2016              [Page 10]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
 
 4.3.  THRESHOLD-SHA-256
 
@@ -555,25 +583,40 @@ Internet-Draft              Crypto-Conditions                 March 2016
      condition Condition
    }
 
-
-
-Thomas                  Expires September 2, 2016              [Page 10]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
-
-   The type is 2.  We need this field because threshold conditions are a
-   structural condition.  Structural conditions can have subconditions,
-   meaning their featureBitmask can have multiple bits set, including
-   other structural conditions.  The TYPE_ID makes it very unlikely that
-   two different structural fulfillments could ever generate the exact
-   same condition.
-
    The list of conditions is sorted first based on length, shortest
    first.  Elements of the same length are sorted in lexicographic (big-
    endian) order, smallest first.
 
+   threshold  threshold MUST be an integer in the range 1 ... 2^32 - 1.
+      In order to fulfill a threshold condition, the weights of the
+      provided fulfillments MUST be greater than or equal to the
+      threshold.
+
+   subconditions  is the set of sub-conditions, each provided as a tuple
+      of weight and condition.
+
+   weight  is the numeric weight of this subcondition, i.e. how many
+      times it counts against the threshold.
+
+   condition  is the sub-condition.
+
 4.3.2.  Fulfillment
+
+
+
+
+
+
+
+
+
+
+
+
+Thomas                  Expires September 2, 2016              [Page 11]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
 
    ThresholdSha256FulfillmentPayload ::= SEQUENCE {
      threshold INTEGER (0..4294967295),
@@ -586,12 +629,19 @@ Internet-Draft              Crypto-Conditions                 March 2016
      fulfillment Fulfillment OPTIONAL
    }
 
-   threshold MUST be an integer in the range 1 ... 2^32 - 1.  In order
-   to fulfill a threshold condition, the weights of the provided
-   fulfillments MUST be greater than or equal to the threshold.
+   threshold  is a number and MUST be an integer in the range 1 ... 2^32
+      - 1.  In order to fulfill a threshold condition, the weights of
+      the provided fulfillments MUST be greater than or equal to the
+      threshold.
 
-   weight refers to the weight of the condition and must be an integer
-   in the range 1 ... 2^32 - 1.
+   subconditions  is the set of sub-conditions, each provided as a tuple
+      of weight and condition.
+
+   weight  is the numeric weight of this subcondition, i.e. how many
+      times it counts against the threshold.  It MUST be an integer in
+      the range 1 ... 2^32 - 1.
+
+   condition  is the sub-condition.
 
 4.4.  RSA-SHA-256
 
@@ -599,73 +649,23 @@ Internet-Draft              Crypto-Conditions                 March 2016
    RSA-PSS feature suites which corresponds to a feature bitmask of
    0x11.
 
-4.4.1.  Condition
-
-   The fingerprint of a THRESHOLD-SHA-256 condition is the SHA-256
-   digest of the fingerprint contents given below:
-
-   RsaSha256FingerprintContents ::= INTEGER (0..MAX) -- modulus
-
-   The MODULUS is the RSA public modulus.  The public exponent e is set
-   to 65537 as recommended in [RFC4871].  Very large exponents can be a
-   DoS vector [LARGE-RSA-EXPONENTS] and 65537 is the largest Fermat
-   prime, which has some nice properties [USING-RSA-EXPONENT-OF-65537].
-
-
-
-Thomas                  Expires September 2, 2016              [Page 11]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
-
-   Implementations MUST reject moduli smaller than 128 bytes (1017 bits)
-   or greater than 512 bytes (4096 bits.)  Large moduli slow down
-   signature verification which can be a DoS vector.  DNSSEC also limits
-   the modulus to 4096 bits [RFC3110].  OpenSSL supports up to 16384
-   bits [OPENSSL-X509-CERT-EXAMPLES].
-
-4.4.2.  Fulfillment
-
-   RsaSha256FulfillmentPayload ::= SEQUENCE {
-     modulus OCTET STRING (SIZE(128..512)),
-     signature OCTET STRING (SIZE(128..512))
-   }
-
-   The signature MUST have the exact same number of octets as the
-   MODULUS, even if that means adding leading zeros.  This ensures that
-   the fulfillment size is constant and known ahead of time.  Note that
-   the field is still length-prefixed for consistency.  Implementations
-   MUST verify that the SIGNATURE and MODULUS consist of the same number
-   of octets.  SIGNATURE must be numerically less than MODULUS.
-
-   The message to be signed is provided separately by the user.  If no
-   message is provided, the message is assumed to be the empty string.
-
-4.4.3.  Implementation
-
    The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.
    [RFC3447]
 
-   The recommended modulus size as of 2016 is 2048 bits
-   [KEYLENGTH-RECOMMENDATION].  In the future we anticipate an upgrade
-   to 3072 bits which provides approximately 128 bits of security
-   [NIST-KEYMANAGEMENT](p. 64), about the same level as SHA-256.
+4.4.1.  Condition
+
+   The fingerprint of a RSA-SHA-256 condition is the SHA-256 digest of
+   the fingerprint contents given below:
 
    The salt length for PSS is 32 bytes.
 
-4.5.  ED25519
+   RsaSha256FingerprintContents ::= SEQUENCE {
+     modulus OCTET STRING (SIZE(128..512))
+   }
 
-   ED25519 is assigned the type ID 4.  It relies only on the ED25519
-   feature suite which corresponds to a bitmask of 0x20.
-
-   Ed25519 uses SHA-512 internally, but this specification is not
-   defining the SHA-512 versions of other condition types and we are
-   already adding a feature set which includes this condition type.
-   Therefore we intentionally did not introduce a SHA-512 feature suite
-   in this specification.
-
-
-
+   modulus  is an octet string representing the RSA public modulus in
+      big-endian byte order.  The first byte of the modulus MUST NOT be
+      zero.
 
 
 
@@ -674,12 +674,81 @@ Thomas                  Expires September 2, 2016              [Page 12]
 Internet-Draft              Crypto-Conditions                 March 2016
 
 
+      The corresponding public exponent e is assumed to be 65537 as
+      recommended in [RFC4871].  Very large exponents can be a DoS
+      vector [LARGE-RSA-EXPONENTS] and 65537 is the largest Fermat
+      prime, which has some nice properties
+      [USING-RSA-EXPONENT-OF-65537].
+
+      Implementations MUST reject moduli smaller than 128 bytes (1017
+      bits) or greater than 512 bytes (4096 bits.)  Large moduli slow
+      down signature verification which can be a denial-of-service
+      vector.  DNSSEC also limits the modulus to 4096 bits [RFC3110].
+      OpenSSL supports up to 16384 bits [OPENSSL-X509-CERT-EXAMPLES].
+
+4.4.2.  Fulfillment
+
+   RsaSha256FulfillmentPayload ::= SEQUENCE {
+     modulus OCTET STRING (SIZE(128..512)),
+     signature OCTET STRING (SIZE(128..512))
+   }
+
+   modulus  is an octet string representing the RSA public modulus in
+      big-endian byte order.  See Section 4.4.1
+
+   signature  is an octet string representing the RSA signature.  It
+      MUST be encoded in big-endian byte order with the exact same
+      number of octets as the modulus, even if this means adding leading
+      zeros.  This ensures that the fulfillment size is constant and
+      known ahead of time.  Note that the field is still binary encoded
+      with a length prefix for consistency.
+
+      Implementations MUST verify that the signature and modulus consist
+      of the same number of octets and that the signature is numerically
+      less than the modulus.
+
+   The message to be signed is provided separately.  If no message is
+   provided, the message is assumed to be an octet string of length
+   zero.
+
+4.4.3.  Implementation
+
+   The recommended modulus size as of 2016 is 2048 bits
+   [KEYLENGTH-RECOMMENDATION].  In the future we anticipate an upgrade
+   to 3072 bits which provides approximately 128 bits of security
+   [NIST-KEYMANAGEMENT](p. 64), about the same level as SHA-256.
+
+
+
+
+
+
+
+
+Thomas                  Expires September 2, 2016              [Page 13]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
+4.5.  ED25519
+
+   ED25519 is assigned the type ID 4.  It relies only on the ED25519
+   feature suite which corresponds to a bitmask of 0x20.
+
+   The exact algorithm and encodings used for public key and signature
+   are defined in [I-D.irtf-cfrg-eddsa] as Ed25519.  SHA-512 is used as
+   the hashing function.
+
+   Note: This document is not defining the SHA-512 versions of other
+   condition types.  In addition, the Ed25519 condition type is already
+   uniquely identified by a corresponding Ed25519 feature suite.
+   Therefore we intentionally do not introduce a SHA-512 feature suite
+   in this document.
+
 4.5.1.  Condition
 
-   The fingerprint of a ED25519 condition is the 32 byte public key.
-
-   Since the PUBLIC_KEY is already only 256 bits long and this condition
-   type is not structural, we do not hash it.
+   The fingerprint of a ED25519 condition is the 32 byte Ed25519 public
+   key.  Since the public key is already very small, we do not hash it.
 
 4.5.2.  Fulfillment
 
@@ -688,17 +757,9 @@ Internet-Draft              Crypto-Conditions                 March 2016
      signature OCTET STRING (SIZE(64))
    }
 
-4.5.3.  Implementation
+   publicKey  is an octet string containing the Ed25519 public key.
 
-   The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE
-   are Ed25519 as defined in [I-D.irtf-cfrg-eddsa].  SHA-512 is used as
-   the hashing function.
-
-   The PUBLIC_KEY field represents the Ed25519 public key and MUST be 32
-   bytes in length.
-
-   The SIGNATURE field represents the Ed25519 signature and MUST be 64
-   bytes in length.
+   signature  is an octet string containing the Ed25519 signature.
 
 5.  References
 
@@ -715,20 +776,21 @@ Internet-Draft              Crypto-Conditions                 March 2016
               Specification of basic notation", ITU-T Recommendation
               X.680, 08 2015.
 
+
+
+
+
+
+Thomas                  Expires September 2, 2016              [Page 14]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
    [ITU.X696.2015]
               International Telecommunications Union, "Information
               technology - ASN.1 encoding rules: Specification of Octet
               Encoding Rules (OER)", ITU-T Recommendation X.696, 08
               2015.
-
-
-
-
-
-Thomas                  Expires September 2, 2016              [Page 13]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
    [RFC3447]  Jonsson, J. and B. Kaliski, "Public-Key Cryptography
               Standards (PKCS) #1: RSA Cryptography Specifications
@@ -770,21 +832,21 @@ Internet-Draft              Crypto-Conditions                 March 2016
               Signatures", RFC 4871, DOI 10.17487/RFC4871, May 2007,
               <http://www.rfc-editor.org/info/rfc4871>.
 
+
+
+
+
+
+Thomas                  Expires September 2, 2016              [Page 15]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
    [USING-RSA-EXPONENT-OF-65537]
               "Cryptography - StackExchange - Impacts of not using RSA
               exponent of 65537", 11 2014,
               <http://crypto.stackexchange.com/questions/3110/
               impacts-of-not-using-rsa-exponent-of-65537>.
-
-
-
-
-
-
-Thomas                  Expires September 2, 2016              [Page 14]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
 Appendix A.  Security Considerations
 
@@ -828,19 +890,19 @@ BEGIN
     ed25519(4)
   } (0..65535)
 
+
+
+
+Thomas                  Expires September 2, 2016              [Page 16]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
   /**
    * FULFILLMENT PAYLOADS
    */
 
   -- For preimage conditions, the payload equals the preimage
-
-
-
-
-Thomas                  Expires September 2, 2016              [Page 15]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
   PrefixSha256FulfillmentPayload ::= SEQUENCE {
     prefix OCTET STRING,
@@ -884,19 +946,20 @@ Internet-Draft              Crypto-Conditions                 March 2016
    * The content that will be hashed to arrive at the fingerprint.
    */
 
+
+
+
+Thomas                  Expires September 2, 2016              [Page 17]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
   -- The preimage type hashes the raw contents of the preimage
 
   PrefixSha256FingerprintContents ::= SEQUENCE {
     prefix OCTET STRING,
     condition Condition
   }
-
-
-
-Thomas                  Expires September 2, 2016              [Page 16]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
   ThresholdSha256FingerprintContents ::= SEQUENCE {
     threshold INTEGER (0..4294967295),
@@ -939,6 +1002,14 @@ Internet-Draft              Crypto-Conditions                 March 2016
       F0173B9B 822FD85D 65FA4BEF A92D8F52 4F69CBCA 0136BD80 D095C169 AEC0E095
     'H,
     signature '
+
+
+
+Thomas                  Expires September 2, 2016              [Page 18]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
       48E8945E FE007556 D5BF4D5F 249E4808 F7307E29 511D3262 DAEF61D8 8098F9AA
       4A8BC062 3A8C9757 38F65D6B F459D543 F289D73C BC7AF4EA 3A33FBF3 EC444044
       7911D722 94091E56 1833628E 49A772ED 608DE6C4 4595A91E 3E17D6CF 5EC3B252
@@ -946,14 +1017,6 @@ Internet-Draft              Crypto-Conditions                 March 2016
       BDB594FB 0ADA086C DECBBDE5 80D424BF 9746D2F0 C312826D BBB00AD6 8B52C4CB
       7D47156B A35E3A98 1C973863 792CC80D 04A18021 0A524158 65B64B3A 61774B1D
       3975D78A 98B0821E E55CA0F8 6305D425 29E10EB0 15CEFD40 2FB59B2A BB8DEEE5
-
-
-
-Thomas                  Expires September 2, 2016              [Page 17]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
-
       2A6F2447 D2284603 D219CD4E 8CF9CFFD D5498889 C3780B59 DD6A57EF 7D732620
     'H
   }
@@ -986,6 +1049,23 @@ E.1.  Crypto-Condition Type Registry
    Type registry to be created and maintained at (the suggested URI)
    http://www.iana.org/assignments/crypto-condition-types :
 
+
+
+
+
+
+
+
+
+
+
+
+
+Thomas                  Expires September 2, 2016              [Page 19]
+
+Internet-Draft              Crypto-Conditions                 March 2016
+
+
              The following feature suite bits are registered:
 
                +----------+------+------+-----------------+
@@ -1000,15 +1080,6 @@ E.1.  Crypto-Condition Type Registry
                +----------+------+------+-----------------+
 
                  Table 1: Crypto-Condition Feature Suites
-
-
-
-
-
-Thomas                  Expires September 2, 2016              [Page 18]
-
-Internet-Draft              Crypto-Conditions                 March 2016
-
 
                     The following types are registered:
 
@@ -1046,19 +1117,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thomas                  Expires September 2, 2016              [Page 19]
+Thomas                  Expires September 2, 2016              [Page 20]
