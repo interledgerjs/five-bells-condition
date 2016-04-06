@@ -220,7 +220,7 @@
                             Conditions are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cc:" BASE10(type) ":" BASE16(featureBitmask) ":"
+"cc:" BASE16(type) ":" BASE16(featureBitmask) ":"
     BASE64URL(fingerprint) ":" BASE10(maxFulfillmentLength)
                         ]]></artwork>
                     </figure>
