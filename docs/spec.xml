@@ -214,7 +214,7 @@
                     is the boolean OR of the feature suite bitmasks of the top-level condition type and all
                     subcondition types, recursively.
                 </t>
-                <section title="String" anchor="string-condition-format">
+                <section title="String Format" anchor="string-condition-format">
                     <figure>
                         <preamble>
                             Conditions are ASCII encoded as:
@@ -222,7 +222,7 @@
                         <artwork><![CDATA[
 "cc:" BASE10(type) ":" BASE16(featureBitmask) ":"
     BASE64URL(fingerprint) ":" BASE10(maxFulfillmentLength)
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
                 </section>
                 <section title="Binary Format" anchor="binary-condition-format">
@@ -245,37 +245,43 @@ ConditionType ::= INTEGER {
   thresholdSha256(3),
   ed25519(4)
 } (0..65535)
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
+                </section>
+                <section title="Fields" anchor="condition-format-fields">
                     <t>
-                        type is the condition type ID.
-                    </t>
-                    <t>
-                        featureBitmask is the set of required features in order to parse the
-                        fulfillment to this condition.
-                    </t>
-                    <t>
-                        fingerprint is the unique identifier of the condition. For most condition
-                        types, this is a hash.
-                    </t>
-                    <t>
-                        maxFulfillmentLength is the maximum length of the fulfillment payload
-                        that can fulfill this condition. When a crypto-condition is submitted to
-                        an implementation, this implementation MUST verify that it will be able to
-                        process a fulfillment with a payload of size maxFulfillmentLength.
+                        <list style="hanging">
+                            <t hangText="type">
+                                is the numeric type identifier representing the condition type.
+                            </t>
+                            <t hangText="featureBitmask">
+                                is an octet string encoding the set of feature suites an implementation must
+                                support in order to be able to successfully parse the fulfillment to this
+                                condition.
+                            </t>
+                            <t hangText="fingerprint">
+                                is an octet string uniquely representing the condition with respect to other
+                                conditions of the same type. Implementations which index conditions MUST use
+                                the entire string or binary encoded condition as the key, not just the
+                                fingerprint - as different conditions of different types may have the same
+                                fingerprint. The length and contents of the fingerprint are defined by the
+                                condition type. For most condition types, the fingerprint is a
+                                cryptographically secure hash of the data which defines the condition, such
+                                as a public key.
+                            </t>
+                            <t hangText="maxFulfillmentLength">
+                                is the maximum length of the fulfillment payload that can fulfill this
+                                condition. When a crypto-condition is submitted to an implementation, this
+                                implementation MUST verify that it will be able to process a fulfillment
+                                with a payload of size maxFulfillmentLength.
+                            </t>
+                        </list>
                     </t>
                 </section>
             </section>
             <section title="Fulfillment" anchor="fulfillment-format">
                 <t>
-                    Below are the string and binary encoding formats for a fulfillment. In both the
-                    type is the numeric type identifier representing the condition type. For some
-                    condition types the fulfillment will contain further subfulfillments, however
-                    the type field always represents the outermost, or top-level type.
-                </t>
-                <t>
-                    The payload is an octet string whose internal format is defined by each of the
-                    types.
+                    Below are the string and binary encoding formats for a fulfillment.
                 </t>
                 <section title="String Format" anchor="string-fulfillment-format">
                     <figure>
@@ -300,6 +306,21 @@ Fulfillment ::= SEQUENCE {
                      ]]></artwork>
                     </figure>
                 </section>
+                <section title="Fields" anchor="fulfillment-format-fields">
+                    <t>
+                        <list style="hanging">
+                            <t hangText="type">
+                                is the numeric type identifier representing the condition type. For some
+                                condition types the fulfillment will contain further subfulfillments,
+                                however the type field always represents the outermost, or top-level, type.
+                            </t>
+                            <t hangText="payload">
+                                The payload is an octet string whose internal format is defined by each of the
+                                types.
+                            </t>
+                        </list>
+                    </t>
+                </section>
             </section>
         </section>
 
@@ -310,11 +331,11 @@ Fulfillment ::= SEQUENCE {
                 <xref target="crypto-conditions-type-registry">Crypto-Condition Type Registry</xref>
             </t>
             <t>
-                Support for a condition MUST depend on one or more feature suites. Future versions of
-                this spec MAY introduce new feature bits and condition types. However, all new
-                condition types MUST always depend on at least one of the new feature suites. This
-                ensures that all previously creates implementations correctly signal that they do
-                not support the new type.
+                Support for a condition type MUST depend on one or more feature suites. Future versions
+                of this spec MAY introduce new feature bits and condition types. However, all new
+                condition types MUST depend on at least one of the new feature suites. This ensures
+                that all previously created implementations correctly recognize that they do not support
+                the new type.
             </t>
             <t>
                 Feature suites are chosen such that they represent reasonable clusters of functionality.
@@ -424,6 +445,18 @@ Fulfillment ::= SEQUENCE {
                     PREFIX-SHA-256 is assigned the type ID 1. It relies on the SHA-256 and PREFIX
                     feature suites which corresponds to a feature bitmask of 0x05.
                 </t>
+                <t>
+                    Prefix conditions provide a way to effective narrow the scope of other
+                    conditions. A condition can be used as the fingerprint of a public key to
+                    sign an arbitrary message. By creating a prefix subcondition we can narrow
+                    the scope from signing an arbitrary message to signing a message with a
+                    specific prefix.
+                </t>
+                <t>
+                    When a prefix fulfillment is validated against a message, it will prepend
+                    the prefix to the provided message and will use the result as the message to
+                    validate against the subfulfillment.
+                </t>
                 <section title="Condition" anchor="prefix-sha-256-condition-type-condition">
                     <t>
                         The fingerprint of a PREFIX-SHA-256 condition is the SHA-256 digest of the
@@ -435,12 +468,18 @@ PrefixSha256FingerprintContents ::= SEQUENCE {
   prefix OCTET STRING,
   condition Condition
 }
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
                     <t>
-                        PREFIX is an arbitrary octet string. When the prefix fulfillment is validated, it
-                        will prepend the prefix to the provided message and pass the result as the message
-                        to the subfulfillment.
+                        <list style="hanging">
+                            <t hangText="prefix">
+                                is an arbitrary octet string which will be prepended to the
+                                message during validation.
+                            </t>
+                            <t hangText="condition">
+                                is the sub-condition which the sub-fulfillment must match.
+                            </t>
+                        </list>
                     </t>
                 </section>
                 <section title="Fulfillment" anchor="prefix-sha-256-condition-type-fulfillment">
@@ -450,8 +489,19 @@ PrefixSha256FulfillmentPayload ::= SEQUENCE {
   prefix OCTET STRING,
   subfulfillment Fulfillment
 }
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
+                    <t>
+                        <list style="hanging">
+                            <t hangText="prefix">
+                                is an arbitrary octet string which will be prepended to the
+                                message during validation.
+                            </t>
+                            <t hangText="condition">
+                                is the sub-condition which the sub-fulfillment must match.
+                            </t>
+                        </list>
+                    </t>
                 </section>
             </section>
             <section title="THRESHOLD-SHA-256" anchor="threshold-sha-256-condition-type">
@@ -475,11 +525,31 @@ ThresholdSubcondition ::= SEQUENCE {
   weight INTEGER (0..4294967295),
   condition Condition
 }
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
                     <t>
                         The list of conditions is sorted first based on length, shortest first. Elements of the
                         same length are sorted in lexicographic (big-endian) order, smallest first.
+                    </t>
+                    <t>
+                        <list style="hanging">
+                            <t hangText="threshold">
+                                threshold MUST be an integer in the range 1 ... 2^32 - 1. In order to
+                                fulfill a threshold condition, the weights of the provided fulfillments
+                                MUST be greater than or equal to the threshold.
+                            </t>
+                            <t hangText="subconditions">
+                                is the set of sub-conditions, each provided as a tuple of weight and
+                                condition.
+                            </t>
+                            <t hangText="weight">
+                                is the numeric weight of this subcondition, i.e. how many times it counts
+                                against the threshold.
+                            </t>
+                            <t hangText="condition">
+                                is the sub-condition.
+                            </t>
+                        </list>
                     </t>
                 </section>
                 <section title="Fulfillment" anchor="threshold-sha-256-condition-type-fulfillment">
@@ -495,16 +565,27 @@ ThresholdSubfulfillment ::= SEQUENCE {
   condition Condition OPTIONAL,
   fulfillment Fulfillment OPTIONAL
 }
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
                     <t>
-                        threshold MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a
-                        threshold condition, the weights of the provided fulfillments MUST be greater than or
-                        equal to the threshold.
-                    </t>
-                    <t>
-                        weight refers to the weight of the condition and must be an integer in the range
-                        1 ... 2^32 - 1.
+                        <list style="hanging">
+                            <t hangText="threshold">
+                                is a number and MUST be an integer in the range 1 ... 2^32 - 1. In order
+                                to fulfill a threshold condition, the weights of the provided fulfillments
+                                MUST be greater than or equal to the threshold.
+                            </t>
+                            <t hangText="subconditions">
+                                is the set of sub-conditions, each provided as a tuple of weight and
+                                condition.
+                            </t>
+                            <t hangText="weight">
+                                is the numeric weight of this subcondition, i.e. how many times it counts
+                                against the threshold. It MUST be an integer in the range 1 ... 2^32 - 1.
+                            </t>
+                            <t hangText="condition">
+                                is the sub-condition.
+                            </t>
+                        </list>
                     </t>
                 </section>
             </section>
@@ -513,27 +594,46 @@ ThresholdSubfulfillment ::= SEQUENCE {
                     RSA-SHA-256 is assigned the type ID 3. It relies on the SHA-256 and RSA-PSS feature suites
                     which corresponds to a feature bitmask of 0x11.
                 </t>
+                <t>
+                    The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.
+                    <xref target="RFC3447" />
+                </t>
                 <section title="Condition" anchor="rsa-sha-256-condition-type-condition">
                     <t>
                         The fingerprint of a RSA-SHA-256 condition is the SHA-256 digest of the
                         fingerprint contents given below:
                     </t>
+                    <t>
+                        The salt length for PSS is 32 bytes.
+                    </t>
                     <figure>
                         <artwork><![CDATA[
-RsaSha256FingerprintContents ::= INTEGER (0..MAX) -- modulus
-                     ]]></artwork>
+RsaSha256FingerprintContents ::= SEQUENCE {
+  modulus OCTET STRING (SIZE(128..512))
+}
+                        ]]></artwork>
                     </figure>
                     <t>
-                        The MODULUS is the RSA public modulus. The public exponent e is set to 65537 as
-                        recommended in <xref target="RFC4871" />. Very large exponents can be a DoS
-                        vector <xref target="LARGE-RSA-EXPONENTS"/> and 65537 is the largest Fermat prime,
-                        which has some nice properties <xref target="USING-RSA-EXPONENT-OF-65537"/>.
-                    </t>
-                    <t>
-                        Implementations MUST reject moduli smaller than 128 bytes (1017 bits) or greater
-                        than 512 bytes (4096 bits.) Large moduli slow down signature verification which can be
-                        a DoS vector. DNSSEC also limits the modulus to 4096 bits <xref target="RFC3110"/>.
-                        OpenSSL supports up to 16384 bits <xref target="OPENSSL-X509-CERT-EXAMPLES" />.
+                        <list style="hanging">
+                            <t hangText="modulus">
+                                is an octet string representing the RSA public modulus in big-endian
+                                byte order. The first byte of the modulus MUST NOT be zero.
+                            </t>
+                            <t>
+                                The corresponding public exponent e is assumed to be 65537 as
+                                recommended in <xref target="RFC4871" />. Very large exponents can be a
+                                DoS vector <xref target="LARGE-RSA-EXPONENTS"/> and 65537 is the largest
+                                Fermat prime, which has some nice properties
+                                <xref target="USING-RSA-EXPONENT-OF-65537"/>.
+                            </t>
+                            <t>
+                                Implementations MUST reject moduli smaller than 128 bytes (1017 bits) or
+                                greater than 512 bytes (4096 bits.) Large moduli slow down signature
+                                verification which can be a denial-of-service vector. DNSSEC also limits
+                                the modulus to 4096 bits <xref target="RFC3110"/>. OpenSSL supports up
+                                to 16384 bits <xref target="OPENSSL-X509-CERT-EXAMPLES" />.
+                            </t>
+                        </list>
                     </t>
                 </section>
                 <section title="Fulfillment" anchor="rsa-sha-256-condition-type-fulfillment">
@@ -543,32 +643,39 @@ RsaSha256FulfillmentPayload ::= SEQUENCE {
   modulus OCTET STRING (SIZE(128..512)),
   signature OCTET STRING (SIZE(128..512))
 }
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
                     <t>
-                        The signature MUST have the exact same number of octets as the MODULUS, even if
-                        that means adding leading zeros. This ensures that the fulfillment size is
-                        constant and known ahead of time. Note that the field is still length-prefixed for
-                        consistency. Implementations MUST verify that the SIGNATURE and MODULUS consist
-                        of the same number of octets. SIGNATURE must be numerically less than MODULUS.
+                        <list style="hanging">
+                            <t hangText="modulus">
+                                is an octet string representing the RSA public modulus in big-endian byte
+                                order. See <xref target="rsa-sha-256-condition-type-condition" />
+                            </t>
+                            <t hangText="signature">
+                                is an octet string representing the RSA signature. It MUST be encoded in
+                                big-endian byte order with the exact same number of octets as the modulus,
+                                even if this means adding leading zeros. This ensures that the fulfillment
+                                size is constant and known ahead of time. Note that the field is still
+                                binary encoded with a length prefix for consistency.
+                            </t>
+                            <t>
+                                Implementations MUST verify that the signature and modulus consist of
+                                the same number of octets and that the signature is numerically less than
+                                the modulus.
+                            </t>
+                        </list>
                     </t>
                     <t>
-                        The message to be signed is provided separately by the user. If no message is
-                        provided, the message is assumed to be the empty string.
+                        The message to be signed is provided separately. If no message is provided, the
+                        message is assumed to be an octet string of length zero.
                     </t>
                 </section>
                 <section title="Implementation" anchor="rsa-sha-256-condition-type-implementation">
                     <t>
-                        The signature algorithm used is RSASSA-PSS as defined in PKCS#1 v2.2.
-                        <xref target="RFC3447" />
-                    </t>
-                    <t>
-                        The recommended modulus size as of 2016 is 2048 bits <xref target="KEYLENGTH-RECOMMENDATION"/>.
-                        In the future we anticipate an upgrade to 3072 bits which provides approximately 128 bits of
-                        security <xref target="NIST-KEYMANAGEMENT"/>(p. 64), about the same level as SHA-256.
-                    </t>
-                    <t>
-                        The salt length for PSS is 32 bytes.
+                        The recommended modulus size as of 2016 is 2048 bits
+                        <xref target="KEYLENGTH-RECOMMENDATION"/>. In the future we anticipate an
+                        upgrade to 3072 bits which provides approximately 128 bits of security
+                        <xref target="NIST-KEYMANAGEMENT"/>(p. 64), about the same level as SHA-256.
                     </t>
                 </section>
             </section>
@@ -578,17 +685,20 @@ RsaSha256FulfillmentPayload ::= SEQUENCE {
                     corresponds to a bitmask of 0x20.
                 </t>
                 <t>
-                    Ed25519 uses SHA-512 internally, but this specification is not defining the SHA-512
-                    versions of other condition types and we are already adding a feature set which
-                    includes this condition type. Therefore we intentionally did not introduce a SHA-512
-                    feature suite in this specification.
+                    The exact algorithm and encodings used for public key and signature are defined in
+                    <xref target="I-D.irtf-cfrg-eddsa" /> as Ed25519. SHA-512 is used as the hashing
+                    function.
+                </t>
+                <t>
+                    Note: This document is not defining the SHA-512 versions of other condition types.
+                    In addition, the Ed25519 condition type is already uniquely identified by a
+                    corresponding Ed25519 feature suite. Therefore we intentionally do not introduce
+                    a SHA-512 feature suite in this document.
                 </t>
                 <section title="Condition" anchor="ed25519-condition-type-condition">
                     <t>
-                        The fingerprint of a ED25519 condition is the 32 byte public key.
-                    </t>
-                    <t>
-                        Since the PUBLIC_KEY is already only 256 bits long and this condition type is not structural, we do not hash it.
+                        The fingerprint of a ED25519 condition is the 32 byte Ed25519 public key. Since
+                        the public key is already very small, we do not hash it.
                     </t>
                 </section>
                 <section title="Fulfillment" anchor="ed25519-condition-type-fulfillment">
@@ -598,19 +708,17 @@ Ed25519FulfillmentPayload ::= SEQUENCE {
   publicKey OCTET STRING (SIZE(32)),
   signature OCTET STRING (SIZE(64))
 }
-                     ]]></artwork>
+                        ]]></artwork>
                     </figure>
-                </section>
-                <section title="Implementation" anchor="ed25519-condition-type-implementation">
                     <t>
-                        The exact algorithm and encodings used for PUBLIC_KEY and SIGNATURE are Ed25519 as defined in
-                        <xref target="I-D.irtf-cfrg-eddsa" />. SHA-512 is used as the hashing function.
-                    </t>
-                    <t>
-                        The PUBLIC_KEY field represents the Ed25519 public key and MUST be 32 bytes in length.
-                    </t>
-                    <t>
-                        The SIGNATURE field represents the Ed25519 signature and MUST be 64 bytes in length.
+                        <list style="hanging">
+                            <t hangText="publicKey">
+                                is an octet string containing the Ed25519 public key.
+                            </t>
+                            <t hangText="signature">
+                                is an octet string containing the Ed25519 signature.
+                            </t>
+                        </list>
                     </t>
                 </section>
             </section>
