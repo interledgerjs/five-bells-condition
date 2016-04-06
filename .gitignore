@@ -5,3 +5,4 @@ coverage/
 docs/build/
 /web/
 /docs/README.intermediate.md
+.tags*

@@ -15,9 +15,13 @@ const Writer = require('../lib/writer')
 
 // Regex for validating conditions
 //
-// Note that this regex is very strict and specific to the set of conditions
-// supported by this implementation.
-const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:([1-9][0-9]{0,50}|0)$/
+// This is a generic, future-proof version of the crypto-condition regular
+// expression.
+const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,15}:[a-zA-Z0-9_-]{0,86}:([1-9][0-9]{0,17}|0)$/
+
+// This is a stricter version based on limitations of the current
+// implementation. Specifically, we can't handle bitmasks greater than 32 bits.
+const CONDITION_REGEX_STRICT = /^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,7}:[a-zA-Z0-9_-]{0,86}:([1-9][0-9]{0,17}|0)$/
 
 /**
  * Crypto-condition.
@@ -56,7 +60,7 @@ class Condition {
       throw new PrefixError('Serialized condition must start with "cc:"')
     }
 
-    if (!CONDITION_REGEX.exec(serializedCondition)) {
+    if (!Condition.REGEX_STRICT.exec(serializedCondition)) {
       throw new ParseError('Invalid condition format')
     }
 
@@ -276,6 +280,11 @@ class Condition {
     // Get class for type ID, throws on error
     TypeRegistry.getClassFromTypeId(this.getTypeId())
 
+    // Bitmask can have at most 32 bits with current implementation
+    if (this.getBitmask() > Condition.MAX_SAFE_BITMASK) {
+      throw new Error('Bitmask too large to be safely represented')
+    }
+
     // Assert all requested features are supported by this implementation
     if (this.getBitmask() & ~Condition.SUPPORTED_BITMASK) {
       throw new Error('Condition requested unsupported feature suites')
@@ -290,10 +299,17 @@ class Condition {
   }
 }
 
+// Our current implementation can only represent up to 32 bits for our bitmask
+Condition.MAX_SAFE_BITMASK = 0xffffffff
+
 // Feature suites supported by this implementation
 Condition.SUPPORTED_BITMASK = 0x3f
 
 // Max fulfillment size supported by this implementation
 Condition.MAX_FULFILLMENT_LENGTH = 65535
+
+// Expose regular expressions
+Condition.REGEX = CONDITION_REGEX
+Condition.REGEX_STRICT = CONDITION_REGEX_STRICT
 
 module.exports = Condition
