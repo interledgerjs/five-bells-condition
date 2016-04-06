@@ -168,6 +168,24 @@ class Reader {
   }
 
   /**
+   * Read a length prefix.
+   *
+   * You shouldn't need this. Length prefixes are used internally by
+   * variable-length octet strings and integers.
+   *
+   * @return {Number} Length value.
+   */
+  readLengthPrefix () {
+    const length = this.readUInt8()
+
+    if (length & Reader.HIGH_BIT) {
+      return this.readUInt(length & Reader.LOWER_SEVEN_BITS)
+    }
+
+    return length
+  }
+
+  /**
    * Read a variable-length octet string.
    *
    * A variable-length octet string is a length-prefixed set of arbitrary bytes.
@@ -175,14 +193,9 @@ class Reader {
    * @return {Buffer} Contents of the octet string.
    */
   readVarOctetString () {
-    const length = this.readUInt8()
+    const length = this.readLengthPrefix()
 
-    if (length & Reader.HIGH_BIT) {
-      const bufferLength = this.readUInt(length & Reader.LOWER_SEVEN_BITS)
-      return this.read(bufferLength)
-    } else {
-      return this.read(length)
-    }
+    return this.read(length)
   }
 
   /**
@@ -202,13 +215,9 @@ class Reader {
    * Skip a variable-length buffer.
    */
   skipVarOctetString () {
-    const length = this.readUInt8()
-    if (length & Reader.HIGH_BIT) {
-      const bufferLength = this.readUInt(length | Reader.LOWER_SEVEN_BITS)
-      return this.skip(bufferLength)
-    } else {
-      return this.skip(length)
-    }
+    const length = this.readLengthPrefix()
+
+    return this.skip(length)
   }
 
   /**

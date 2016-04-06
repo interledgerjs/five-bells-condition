@@ -4,64 +4,69 @@ require('babel-polyfill')
 const Condition = require('./src/lib/condition')
 const Fulfillment = require('./src/lib/fulfillment')
 const TypeRegistry = require('./src/lib/type-registry')
-const PreimageSha256Fulfillment = require('./src/fulfillments/preimage-sha256')
-const PrefixSha256Fulfillment = require('./src/fulfillments/prefix-sha256')
-const ThresholdSha256Fulfillment = require('./src/fulfillments/threshold-sha256')
-const RsaSha256Fulfillment = require('./src/fulfillments/rsa-sha256')
-const Ed25519Fulfillment = require('./src/fulfillments/ed25519')
+const PreimageSha256 = require('./src/types/preimage-sha256')
+const PrefixSha256 = require('./src/types/prefix-sha256')
+const ThresholdSha256 = require('./src/types/threshold-sha256')
+const RsaSha256 = require('./src/types/rsa-sha256')
+const Ed25519 = require('./src/types/ed25519')
 
-const validate = (serializedCondition) => {
-  try {
-    // Parse condition, throw on error
-    const condition = Condition.fromUri(serializedCondition)
+const EMPTY_BUFFER = new Buffer(0)
 
-    // Validate condition, throw on error
-    return {
-      valid: condition.validate(),
-      error: null
-    }
-  } catch (error) {
-    return { valid: false, error }
-  }
+const validateCondition = (serializedCondition) => {
+  // Parse condition, throw on error
+  const condition = Condition.fromUri(serializedCondition)
+
+  // Validate condition, throw on error
+  return condition.validate()
 }
 
-const validateFulfillment = (serializedFulfillment, message) => {
-  try {
-    // Parse fulfillment, throw on error
-    const fulfillment = Fulfillment.fromUri(serializedFulfillment)
-
-    // Validate fulfillment, throw on error
-    return {
-      valid: fulfillment.validate(message),
-      condition: fulfillment.getCondition().serializeUri(),
-      error: null
-    }
-  } catch (error) {
-    return {
-      valid: false,
-      condition: null,
-      error
-    }
+const validateFulfillment = (serializedFulfillment, serializedCondition, message) => {
+  if (typeof message === 'undefined') {
+    message = EMPTY_BUFFER
   }
+
+  if (!Buffer.isBuffer(message)) {
+    throw new Error('Message must be provided as a Buffer')
+  }
+
+  // Parse fulfillment, throw on error
+  const fulfillment = Fulfillment.fromUri(serializedFulfillment)
+
+  // Compare condition URI, throw on error
+  const conditionUri = fulfillment.getConditionUri()
+  if (conditionUri !== serializedCondition) {
+    throw new Error('Fulfillment does not match condition')
+  }
+
+  // Validate fulfillment, throw on error
+  return fulfillment.validate(message)
 }
 
-TypeRegistry.registerType(PreimageSha256Fulfillment)
-TypeRegistry.registerType(PrefixSha256Fulfillment)
-TypeRegistry.registerType(ThresholdSha256Fulfillment)
-TypeRegistry.registerType(RsaSha256Fulfillment)
-TypeRegistry.registerType(Ed25519Fulfillment)
+const fulfillmentToCondition = (serializedFulfillment) => {
+  // Parse fulfillment, throw on error
+  const fulfillment = Fulfillment.fromUri(serializedFulfillment)
+
+  return fulfillment.getConditionUri()
+}
+
+TypeRegistry.registerType(PreimageSha256)
+TypeRegistry.registerType(PrefixSha256)
+TypeRegistry.registerType(ThresholdSha256)
+TypeRegistry.registerType(RsaSha256)
+TypeRegistry.registerType(Ed25519)
 
 module.exports = {
   Condition,
   Fulfillment,
   TypeRegistry,
-  PreimageSha256Fulfillment,
-  RsaSha256Fulfillment,
-  PrefixSha256Fulfillment,
-  ThresholdSha256Fulfillment,
-  Ed25519Fulfillment,
-  validate,
+  PreimageSha256,
+  RsaSha256,
+  PrefixSha256,
+  ThresholdSha256,
+  Ed25519,
+  validateCondition,
   validateFulfillment,
+  fulfillmentToCondition,
   fromConditionUri: Condition.fromUri.bind(Condition),
   fromConditionBinary: Condition.fromBinary.bind(Condition),
   fromFulfillmentUri: Fulfillment.fromUri.bind(Fulfillment),

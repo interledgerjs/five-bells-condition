@@ -1,14 +1,30 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const crypto = require('crypto')
 const constants = require('constants')
 const Pss = require('../crypto/pss')
 const pem = require('../util/pem')
-const BaseSha256Fulfillment = require('./base-sha256')
+const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
-class RsaSha256Fulfillment extends BaseSha256Fulfillment {
+/**
+ * RSA-SHA-256: RSA signature condition using SHA-256.
+ *
+ * This RSA condition uses RSA-PSS padding with SHA-256. The salt length is set
+ * equal the digest length of 32 bytes.
+ *
+ * The public exponent is fixed at 65537 and the public modulus must be between
+ * 128 (1017 bits) and 512 bytes (4096 bits) long.
+ *
+ * RSA-SHA-256 is assigned the type ID 3. It relies on the SHA-256 and RSA-PSS
+ * feature suites which corresponds to a feature bitmask of 0x11.
+ */
+class RsaSha256 extends BaseSha256 {
   constructor () {
     super()
     this.modulus = null
@@ -25,6 +41,8 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * fulfillment size.
    *
    * @param {Writer|Hasher|Predictor} Target for outputting the header.
+   *
+   * @private
    */
   writeCommonHeader (writer) {
     if (!this.modulus) {
@@ -73,6 +91,9 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @param {String} privateKey RSA private key
    */
   sign (message, privateKey) {
+    if (!this.modulus) {
+      throw new MissingDataError('Requires a public modulus')
+    }
     const pss = new Pss()
     const modulusHighByteBitLength = this.modulus[0].toString(2).length
     const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
@@ -90,6 +111,8 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * `getCondition`.
    *
    * @param {Hasher} hasher Destination where the hash payload will be written.
+   *
+   * @private
    */
   writeHashPayload (hasher) {
     this.writeCommonHeader(hasher)
@@ -102,6 +125,8 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
     this.setPublicModulus(reader.readVarOctetString())
@@ -114,6 +139,8 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     if (!this.signature) {
@@ -131,6 +158,8 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * where the dynamic message length equals its maximum length.
    *
    * @return {Number} Maximum length of the fulfillment payload
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     const predictor = new Predictor()
@@ -158,6 +187,10 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
    * @return {Boolean} Whether this fulfillment is valid.
    */
   validate (message) {
+    if (!Buffer.isBuffer(message)) {
+      throw new Error('Message must be provided as a Buffer')
+    }
+
     // Verify modulus (correct length)
     if (this.modulus.length < 128 || this.modulus.length > 512) {
       throw new Error('Modulus length is out of range: ' + this.modulus.length)
@@ -181,7 +214,7 @@ class RsaSha256Fulfillment extends BaseSha256Fulfillment {
   }
 }
 
-RsaSha256Fulfillment.TYPE_ID = 3
-RsaSha256Fulfillment.FEATURE_BITMASK = 0x11
+RsaSha256.TYPE_ID = 3
+RsaSha256.FEATURE_BITMASK = 0x11
 
-module.exports = RsaSha256Fulfillment
+module.exports = RsaSha256

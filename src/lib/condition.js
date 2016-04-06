@@ -1,5 +1,10 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
+const TypeRegistry = require('./type-registry')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
 const MissingDataError = require('../errors/missing-data-error')
@@ -12,8 +17,25 @@ const Writer = require('../lib/writer')
 //
 // Note that this regex is very strict and specific to the set of conditions
 // supported by this implementation.
-const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:[1-9][0-9]{0,50}$/
+const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,2}|0):[1-9a-f][0-9a-f]{0,2}:[a-zA-Z0-9_-]{43}:([1-9][0-9]{0,50}|0)$/
 
+/**
+ * Crypto-condition.
+ *
+ * A primary design goal of crypto-conditions was to keep the size of conditions
+ * constant. Even a complex multi-signature can be represented by the same size
+ * condition as a simple hashlock.
+ *
+ * However, this means that a condition only carries the absolute minimum
+ * information required. It does not tell you anything about its structure.
+ *
+ * All that is included with a condition is the fingerprint (usually a hash of
+ * the parts of the fulfillment that are known up-front, e.g. public keys), the
+ * maximum fulfillment size, the set of features used and the condition type.
+ *
+ * This information is just enough that an implementation can tell with
+ * certainty whether it would be able to process the corresponding fulfillment.
+ */
 class Condition {
   /**
    * Create a Condition object from a URI.
@@ -170,7 +192,7 @@ class Condition {
    *   fulfills this condition..
    */
   getMaxFulfillmentLength () {
-    if (!this.maxFulfillmentLength) {
+    if (typeof this.maxFulfillmentLength !== 'number') {
       throw new MissingDataError('Maximum fulfillment length not set')
     }
 
@@ -231,6 +253,8 @@ class Condition {
    * stream.
    *
    * @param {Reader} reader Binary stream containing the condition.
+   *
+   * @private
    */
   parseBinary (reader) {
     this.setTypeId(reader.readUInt16())
@@ -249,8 +273,27 @@ class Condition {
    * @return {Boolean} Whether the condition is valid according to local rules.
    */
   validate () {
+    // Get class for type ID, throws on error
+    TypeRegistry.getClassFromTypeId(this.getTypeId())
+
+    // Assert all requested features are supported by this implementation
+    if (this.getBitmask() & ~Condition.SUPPORTED_BITMASK) {
+      throw new Error('Condition requested unsupported feature suites')
+    }
+
+    // Assert the requested fulfillment size is supported by this implementation
+    if (this.getMaxFulfillmentLength() > Condition.MAX_FULFILLMENT_LENGTH) {
+      throw new Error('Condition requested too large of a max fulfillment size')
+    }
+
     return true
   }
 }
+
+// Feature suites supported by this implementation
+Condition.SUPPORTED_BITMASK = 0x3f
+
+// Max fulfillment size supported by this implementation
+Condition.MAX_FULFILLMENT_LENGTH = 65535
 
 module.exports = Condition

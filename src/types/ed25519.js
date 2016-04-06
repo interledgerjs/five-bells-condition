@@ -1,10 +1,22 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const nacl = require('tweetnacl')
 const Fulfillment = require('../lib/fulfillment')
 const MissingDataError = require('../errors/missing-data-error')
 
-class Ed25519Fulfillment extends Fulfillment {
+/**
+ * ED25519: Ed25519 signature condition.
+ *
+ * This condition implements Ed25519 signatures.
+ *
+ * ED25519 is assigned the type ID 4. It relies only on the ED25519 feature
+ * suite which corresponds to a bitmask of 0x20.
+ */
+class Ed25519 extends Fulfillment {
   constructor () {
     super()
     this.publicKey = null
@@ -21,6 +33,8 @@ class Ed25519Fulfillment extends Fulfillment {
    * fulfillment size.
    *
    * @param {Writer|Hasher|Predictor} Target for outputting the header.
+   *
+   * @private
    */
   writeCommonHeader (writer) {
     writer.writeVarOctetString(this.publicKey)
@@ -111,10 +125,12 @@ class Ed25519Fulfillment extends Fulfillment {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
-    this.setPublicKey(reader.readOctetString(Ed25519Fulfillment.PUBKEY_LENGTH))
-    this.setSignature(reader.readOctetString(Ed25519Fulfillment.SIGNATURE_LENGTH))
+    this.setPublicKey(reader.readOctetString(Ed25519.PUBKEY_LENGTH))
+    this.setSignature(reader.readOctetString(Ed25519.SIGNATURE_LENGTH))
   }
 
   /**
@@ -123,10 +139,12 @@ class Ed25519Fulfillment extends Fulfillment {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
-    writer.writeOctetString(this.publicKey, Ed25519Fulfillment.PUBKEY_LENGTH)
-    writer.writeOctetString(this.signature, Ed25519Fulfillment.SIGNATURE_LENGTH)
+    writer.writeOctetString(this.publicKey, Ed25519.PUBKEY_LENGTH)
+    writer.writeOctetString(this.signature, Ed25519.SIGNATURE_LENGTH)
   }
 
   /**
@@ -136,9 +154,11 @@ class Ed25519Fulfillment extends Fulfillment {
    * type of condition are also constant size.
    *
    * @return {Number} Length of the fulfillment payload.
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
-    return Ed25519Fulfillment.FULFILLMENT_LENGTH
+    return Ed25519.FULFILLMENT_LENGTH
   }
 
   /**
@@ -155,12 +175,12 @@ class Ed25519Fulfillment extends Fulfillment {
   }
 }
 
-Ed25519Fulfillment.TYPE_ID = 4
-Ed25519Fulfillment.FEATURE_BITMASK = 0x20
-Ed25519Fulfillment.PUBKEY_LENGTH = 32
-Ed25519Fulfillment.SIGNATURE_LENGTH = 64
-Ed25519Fulfillment.FULFILLMENT_LENGTH =
-  Ed25519Fulfillment.PUBKEY_LENGTH +
-  Ed25519Fulfillment.SIGNATURE_LENGTH
+Ed25519.TYPE_ID = 4
+Ed25519.FEATURE_BITMASK = 0x20
+Ed25519.PUBKEY_LENGTH = 32
+Ed25519.SIGNATURE_LENGTH = 64
+Ed25519.FULFILLMENT_LENGTH =
+  Ed25519.PUBKEY_LENGTH +
+  Ed25519.SIGNATURE_LENGTH
 
-module.exports = Ed25519Fulfillment
+module.exports = Ed25519

@@ -3,7 +3,7 @@
 const Fulfillment = require('../lib/fulfillment')
 const Hasher = require('../lib/hasher')
 
-class BaseSha256Fulfillment extends Fulfillment {
+class BaseSha256 extends Fulfillment {
   /**
    * Calculate condition hash.
    *
@@ -19,4 +19,4 @@ class BaseSha256Fulfillment extends Fulfillment {
   }
 }
 
-module.exports = BaseSha256Fulfillment
+module.exports = BaseSha256

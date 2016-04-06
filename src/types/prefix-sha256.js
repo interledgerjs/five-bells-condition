@@ -1,12 +1,34 @@
 'use strict'
 
+/**
+ * @module types
+ */
+
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
-const BaseSha256Fulfillment = require('./base-sha256')
+const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
-class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
+/**
+ * PREFIX-SHA-256: Prefix condition using SHA-256.
+ *
+ * A prefix condition will prepend a static prefix to the message before passing
+ * the prefixed message on to a single subcondition.
+ *
+ * You can use prefix conditions to effectively narrow the scope of a public key
+ * or set of public keys. Simply take the condition representing the public key
+ * and place it as a subcondition in a prefix condition. Now any message passed
+ * to the subcondition will be prepended with a prefix.
+ *
+ * Prefix conditions are especially useful in conjunction with threshold
+ * conditions. You could have a group of signers, each using a different prefix
+ * to sign a common message.
+ *
+ * PREFIX-SHA-256 is assigned the type ID 1. It relies on the SHA-256 and PREFIX
+ * feature suites which corresponds to a feature bitmask of 0x05.
+ */
+class PrefixSha256 extends BaseSha256 {
   constructor () {
     super()
 
@@ -24,10 +46,25 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    */
   setSubcondition (subcondition) {
     if (!(subcondition instanceof Condition)) {
-      throw new Error('Subconditions must be objects of type Condition')
+      throw new Error('Subconditions must be URIs or objects of type Condition')
     }
 
     this.subcondition = subcondition
+  }
+
+  /**
+   * Set the (unfulfilled) subcondition.
+   *
+   * This will automatically parse the URI and call setSubcondition.
+   *
+   * @param {String} Subcondition URI.
+   */
+  setSubconditionUri (subconditionUri) {
+    if (typeof subconditionUri !== 'string') {
+      throw new Error('Subcondition must be provided as a URI string')
+    }
+
+    this.setSubcondition(Condition.fromUri(subconditionUri))
   }
 
   /**
@@ -41,12 +78,27 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    *
    * @param {Fulfillment} fulfillment Fulfillment to use for the subcondition.
    */
-  setSubfulfillment (subfulfillment, opts) {
+  setSubfulfillment (subfulfillment) {
     if (!(subfulfillment instanceof Fulfillment)) {
       throw new Error('Subfulfillments must be objects of type Fulfillment')
     }
 
     this.subcondition = subfulfillment
+  }
+
+  /**
+   * Set the (fulfilled) subcondition.
+   *
+   * This will automatically parse the URI and call setSubfulfillment.
+   *
+   * @param {String} Subfulfillment URI.
+   */
+  setSubfulfillmentUri (subfulfillmentUri) {
+    if (typeof subfulfillmentUri !== 'string') {
+      throw new Error('Subfulfillment must be provided as a URI string')
+    }
+
+    this.setSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
   }
 
   /**
@@ -84,6 +136,8 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    * This function is called internally by the `getCondition` method.
    *
    * @param {Hasher} hasher Hash generator
+   *
+   * @private
    */
   writeHashPayload (hasher) {
     if (!this.subcondition) {
@@ -94,7 +148,7 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
     hasher.write(
       this.subcondition instanceof Condition
       ? this.subcondition.serializeBinary()
-      : this.subcondition.getCondition().serializeBinary()
+      : this.subcondition.getConditionBinary()
     )
   }
 
@@ -111,6 +165,8 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    * in the largest total fulfillment size.
    *
    * @return {Number} Maximum length of the fulfillment payload
+   *
+   * @private
    */
   calculateMaxFulfillmentLength () {
     // Calculate length of subfulfillment
@@ -133,6 +189,8 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    * fulfillment.
    *
    * @param {Reader} reader Source to read the fulfillment payload from.
+   *
+   * @private
    */
   parsePayload (reader) {
     this.setPrefix(reader.readVarOctetString())
@@ -145,6 +203,8 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
    * This writes the fulfillment payload to a Writer.
    *
    * @param {Writer} writer Subject for writing the fulfillment payload.
+   *
+   * @private
    */
   writePayload (writer) {
     if (!(this.subcondition instanceof Fulfillment)) {
@@ -168,13 +228,16 @@ class PrefixSha256Fulfillment extends BaseSha256Fulfillment {
     if (!(this.subcondition instanceof Fulfillment)) {
       throw new Error('Subcondition is not a fulfillment')
     }
+    if (!Buffer.isBuffer(message)) {
+      throw new Error('Message must be provided as a Buffer')
+    }
 
     // Ensure the subfulfillment is valid
-    return this.subcondition.validate(Buffer.concat(this.prefix, message))
+    return this.subcondition.validate(Buffer.concat([this.prefix, message]))
   }
 }
 
-PrefixSha256Fulfillment.TYPE_ID = 1
-PrefixSha256Fulfillment.FEATURE_BITMASK = 0x05
+PrefixSha256.TYPE_ID = 1
+PrefixSha256.FEATURE_BITMASK = 0x05
 
-module.exports = PrefixSha256Fulfillment
+module.exports = PrefixSha256
