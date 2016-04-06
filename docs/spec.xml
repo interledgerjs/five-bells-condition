@@ -211,8 +211,8 @@
             <section title="Condition" anchor="condition-format">
                 <t>
                     Below are the string and binary encoding formats for a condition. In both, the featureBitmask
-                    is the boolean OR of the featureBitmask of the top-level condition type and all subcondition
-                    types, recursively.
+                    is the boolean OR of the feature suite bitmasks of the top-level condition type and all
+                    subcondition types, recursively.
                 </t>
                 <section title="String" anchor="string-condition-format">
                     <figure>
@@ -269,7 +269,13 @@ ConditionType ::= INTEGER {
             <section title="Fulfillment" anchor="fulfillment-format">
                 <t>
                     Below are the string and binary encoding formats for a fulfillment. In both the
-                    TYPE_ID is the numeric type identifier representing the top level condition type.
+                    type is the numeric type identifier representing the condition type. For some
+                    condition types the fulfillment will contain further subfulfillments, however
+                    the type field always represents the outermost, or top-level type.
+                </t>
+                <t>
+                    The payload is an octet string whose internal format is defined by each of the
+                    types.
                 </t>
                 <section title="String Format" anchor="string-fulfillment-format">
                     <figure>
@@ -277,7 +283,7 @@ ConditionType ::= INTEGER {
                             Fulfillments are ASCII encoded as:
                         </preamble>
                         <artwork><![CDATA[
-"cf:" BASE16(TYPE_ID) ":" BASE64URL(FULFILLMENT_PAYLOAD)
+"cf:" BASE16(type) ":" BASE64URL(payload)
                      ]]></artwork>
                     </figure>
                 </section>
@@ -432,13 +438,6 @@ PrefixSha256FingerprintContents ::= SEQUENCE {
                      ]]></artwork>
                     </figure>
                     <t>
-                        The TYPE_ID is 1. The reason we need this field is because prefix conditions are a
-                        structural condition. Structural conditions can have subconditions, meaning their
-                        featureBitmask can have multiple bits set, including other structural conditions.
-                        The TYPE_ID makes it very unlikely that two different structural fulfillments
-                        could ever generate the exact same condition.
-                    </t>
-                    <t>
                         PREFIX is an arbitrary octet string. When the prefix fulfillment is validated, it
                         will prepend the prefix to the provided message and pass the result as the message
                         to the subfulfillment.
@@ -478,13 +477,6 @@ ThresholdSubcondition ::= SEQUENCE {
 }
                      ]]></artwork>
                     </figure>
-                    <t>
-                        The type is 2. We need this field because threshold conditions are a
-                        structural condition. Structural conditions can have subconditions, meaning their
-                        featureBitmask can have multiple bits set, including other structural conditions.
-                        The TYPE_ID makes it very unlikely that two different structural fulfillments
-                        could ever generate the exact same condition.
-                    </t>
                     <t>
                         The list of conditions is sorted first based on length, shortest first. Elements of the
                         same length are sorted in lexicographic (big-endian) order, smallest first.
