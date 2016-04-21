@@ -1,6 +1,6 @@
 {
   "name": "five-bells-condition",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Implementation of Interledger condition validation and fulfillment",
   "main": "index.js",
   "directories": {
