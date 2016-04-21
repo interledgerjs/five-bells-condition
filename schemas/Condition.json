@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "Condition",
+  "description": "A fingerprint of a future cryptographically proven event",
+  "type": "string",
+  "pattern": "^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,15}:[a-zA-Z0-9_-]{0,86}:([1-9][0-9]{0,17}|0)$"
+}
