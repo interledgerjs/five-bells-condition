@@ -9,7 +9,10 @@ module.exports = function (karma) {
 
     browserify: {
       debug: true,
-      transform: [ 'brfs', [ 'babelify', { presets: 'es2015' } ] ]
+      transform: [
+        'brfs',
+        [ 'babelify', { presets: 'es2015', plugins: 'transform-runtime' } ]
+      ]
     },
 
     browsers: [ 'PhantomJS' ]
