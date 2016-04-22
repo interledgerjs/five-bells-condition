@@ -1,6 +1,5 @@
 'use strict'
 
-require('babel-polyfill')
 const Condition = require('./src/lib/condition')
 const Fulfillment = require('./src/lib/fulfillment')
 const TypeRegistry = require('./src/lib/type-registry')
