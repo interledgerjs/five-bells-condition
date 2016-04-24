@@ -7,6 +7,12 @@
 const nacl = require('tweetnacl')
 const Fulfillment = require('../lib/fulfillment')
 const MissingDataError = require('../errors/missing-data-error')
+const ValidationError = require('../errors/validation-error')
+
+let ed25519
+try {
+  ed25519 = require('ed25519')
+} catch (err) { }
 
 /**
  * ED25519: Ed25519 signature condition.
@@ -92,14 +98,21 @@ class Ed25519 extends Fulfillment {
       throw new Error('Private key must be a Buffer')
     }
 
-    const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
-    this.setPublicKey(new Buffer(keyPair.publicKey))
-
     // This would be the Ed25519ph version:
     // message = crypto.createHash('sha512')
     //   .update(message)
     //   .digest()
-    this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
+
+    // Use native library if available (~65x faster)
+    if (ed25519) {
+      const keyPair = ed25519.MakeKeypair(privateKey)
+      this.setPublicKey(keyPair.publicKey)
+      this.signature = ed25519.Sign(message, keyPair)
+    } else {
+      const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
+      this.setPublicKey(new Buffer(keyPair.publicKey))
+      this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
+    }
   }
 
   /**
@@ -171,7 +184,19 @@ class Ed25519 extends Fulfillment {
    * @return {Boolean} Whether this fulfillment is valid.
    */
   validate (message) {
-    return nacl.sign.detached.verify(message, this.signature, this.publicKey)
+    // Use native library if available (~60x faster)
+    let result
+    if (ed25519) {
+      result = ed25519.Verify(message, this.signature, this.publicKey)
+    } else {
+      result = nacl.sign.detached.verify(message, this.signature, this.publicKey)
+    }
+
+    if (result !== true) {
+      throw new ValidationError('Invalid ed25519 signature')
+    }
+
+    return true
   }
 }
 
