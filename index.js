@@ -8,6 +8,7 @@ const PrefixSha256 = require('./src/types/prefix-sha256')
 const ThresholdSha256 = require('./src/types/threshold-sha256')
 const RsaSha256 = require('./src/types/rsa-sha256')
 const Ed25519 = require('./src/types/ed25519')
+const base64url = require('./src/util/base64url')
 
 const EMPTY_BUFFER = new Buffer(0)
 
@@ -34,7 +35,8 @@ const validateFulfillment = (serializedFulfillment, serializedCondition, message
   // Compare condition URI, throw on error
   const conditionUri = fulfillment.getConditionUri()
   if (conditionUri !== serializedCondition) {
-    throw new Error('Fulfillment does not match condition')
+    throw new Error('Fulfillment does not match condition (expected: ' +
+      serializedCondition + ', actual: ' + conditionUri + ')')
   }
 
   // Validate fulfillment, throw on error
@@ -66,6 +68,7 @@ module.exports = {
   validateCondition,
   validateFulfillment,
   fulfillmentToCondition,
+  base64url,
   fromConditionUri: Condition.fromUri.bind(Condition),
   fromConditionBinary: Condition.fromBinary.bind(Condition),
   fromFulfillmentUri: Fulfillment.fromUri.bind(Fulfillment),
