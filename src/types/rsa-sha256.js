@@ -211,7 +211,7 @@ class RsaSha256 extends BaseSha256 {
     const pss = new Pss()
     const modulusHighByteBitLength = this.modulus[0].toString(2).length
     const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
-    const pssResult = pss.verify(message, encodedMessage, modulusBitLength)
+    const pssResult = pss.verify(message, encodedMessage, modulusBitLength - 1)
 
     if (!pssResult) {
       throw new ValidationError('Invalid RSA signature')
