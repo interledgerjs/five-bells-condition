@@ -230,8 +230,6 @@ const rsaFulfillment = new cc.RsaSha256()
 // rsaFulfillment.setPublicModulus(new Buffer('...'))
 // rsaFulfillment.setSignature(new Buffer('...'))
 // -- or --
-// TODO: In the future the modulus should be extracted from the private key.
-rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
 rsaFulfillment.sign(exampleMessage, privateKey)
 console.log(rsaFulfillment.serializeUri().length)
 // prints '352'

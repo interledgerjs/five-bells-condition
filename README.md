@@ -90,11 +90,11 @@ This specification is only a draft at this stage and has not been submitted.
             - [thresholdSha256.validate(message) ⇒ <code>Boolean</code>](#thresholdsha256validatemessage--codebooleancode)
         - [util~BaseError](#utilbaseerror)
         - [util~Base64Url](#utilbase64url)
-            - [base64Url.decode(base64urlString) ⇒ <code>Buffer</code>](#base64urldecodebase64urlstring--codebuffercode)
-            - [base64Url.encode(buffer) ⇒ <code>String</code>](#base64urlencodebuffer--codestringcode)
+            - [Base64Url.decode(base64urlString) ⇒ <code>Buffer</code>](#base64urldecodebase64urlstring--codebuffercode)
+            - [Base64Url.encode(buffer) ⇒ <code>String</code>](#base64urlencodebuffer--codestringcode)
         - [util~Pem](#utilpem)
-            - [pem.encodeHeader(tag, contentLength) ⇒ <code>Buffer</code>](#pemencodeheadertag-contentlength--codebuffercode)
-            - [pem.modulusToPem(modulus) ⇒ <code>String</code>](#pemmodulustopemmodulus--codestringcode)
+            - [Pem.modulusToPem(modulus) ⇒ <code>String</code>](#pemmodulustopemmodulus--codestringcode)
+            - [Pem.modulusFromPrivateKey(privateKey) ⇒ <code>Buffer</code>](#pemmodulusfromprivatekeyprivatekey--codebuffercode)
 
 ## Usage
 
@@ -314,8 +314,6 @@ const rsaFulfillment = new cc.RsaSha256()
 // rsaFulfillment.setPublicModulus(new Buffer('...'))
 // rsaFulfillment.setSignature(new Buffer('...'))
 // -- or --
-// TODO: In the future the modulus should be extracted from the private key.
-rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
 rsaFulfillment.sign(exampleMessage, privateKey)
 console.log(rsaFulfillment.serializeUri().length)
 // prints '352'
@@ -435,11 +433,11 @@ console.log(myCondition.serializeUri())
 * [util](#module_util)
     * [~BaseError](#module_util..BaseError)
     * [~Base64Url](#module_util..Base64Url)
-        * [.decode(base64urlString)](#module_util..Base64Url+decode) ⇒ <code>Buffer</code>
-        * [.encode(buffer)](#module_util..Base64Url+encode) ⇒ <code>String</code>
+        * [.decode(base64urlString)](#module_util..Base64Url.decode) ⇒ <code>Buffer</code>
+        * [.encode(buffer)](#module_util..Base64Url.encode) ⇒ <code>String</code>
     * [~Pem](#module_util..Pem)
-        * [.encodeHeader(tag, contentLength)](#module_util..Pem+encodeHeader) ⇒ <code>Buffer</code>
-        * [.modulusToPem(modulus)](#module_util..Pem+modulusToPem) ⇒ <code>String</code>
+        * [.modulusToPem(modulus)](#module_util..Pem.modulusToPem) ⇒ <code>String</code>
+        * [.modulusFromPrivateKey(privateKey)](#module_util..Pem.modulusFromPrivateKey) ⇒ <code>Buffer</code>
 
 
 <a name="module_types..Condition"></a>
@@ -1307,27 +1305,27 @@ Utility class for encoding and decoding Base64Url.
 **Kind**: inner class of <code>[util](#module_util)</code>  
 
 * [~Base64Url](#module_util..Base64Url)
-    * [.decode(base64urlString)](#module_util..Base64Url+decode) ⇒ <code>Buffer</code>
-    * [.encode(buffer)](#module_util..Base64Url+encode) ⇒ <code>String</code>
+    * [.decode(base64urlString)](#module_util..Base64Url.decode) ⇒ <code>Buffer</code>
+    * [.encode(buffer)](#module_util..Base64Url.encode) ⇒ <code>String</code>
 
-<a name="module_util..Base64Url+decode"></a>
+<a name="module_util..Base64Url.decode"></a>
 
-#### base64Url.decode(base64urlString) ⇒ <code>Buffer</code>
+#### Base64Url.decode(base64urlString) ⇒ <code>Buffer</code>
 Convert a base64url encoded string to a Buffer.
 
-**Kind**: instance method of <code>[Base64Url](#module_util..Base64Url)</code>  
+**Kind**: static method of <code>[Base64Url](#module_util..Base64Url)</code>  
 **Returns**: <code>Buffer</code> - Decoded data.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | base64urlString | <code>String</code> | base64url-encoded string |
 
-<a name="module_util..Base64Url+encode"></a>
+<a name="module_util..Base64Url.encode"></a>
 
-#### base64Url.encode(buffer) ⇒ <code>String</code>
+#### Base64Url.encode(buffer) ⇒ <code>String</code>
 Encode a buffer as base64url.
 
-**Kind**: instance method of <code>[Base64Url](#module_util..Base64Url)</code>  
+**Kind**: static method of <code>[Base64Url](#module_util..Base64Url)</code>  
 **Returns**: <code>String</code> - base64url-encoded data.  
 
 | Param | Type | Description |
@@ -1342,25 +1340,12 @@ Utilities for RSA-related DER/PEM encoding.
 **Kind**: inner class of <code>[util](#module_util)</code>  
 
 * [~Pem](#module_util..Pem)
-    * [.encodeHeader(tag, contentLength)](#module_util..Pem+encodeHeader) ⇒ <code>Buffer</code>
-    * [.modulusToPem(modulus)](#module_util..Pem+modulusToPem) ⇒ <code>String</code>
+    * [.modulusToPem(modulus)](#module_util..Pem.modulusToPem) ⇒ <code>String</code>
+    * [.modulusFromPrivateKey(privateKey)](#module_util..Pem.modulusFromPrivateKey) ⇒ <code>Buffer</code>
 
-<a name="module_util..Pem+encodeHeader"></a>
+<a name="module_util..Pem.modulusToPem"></a>
 
-#### pem.encodeHeader(tag, contentLength) ⇒ <code>Buffer</code>
-Create a DER field header.
-
-**Kind**: instance method of <code>[Pem](#module_util..Pem)</code>  
-**Returns**: <code>Buffer</code> - Encoded header bytes.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| tag | <code>Number</code> | DER field tag. |
-| contentLength | <code>Number</code> | Length of the following content. |
-
-<a name="module_util..Pem+modulusToPem"></a>
-
-#### pem.modulusToPem(modulus) ⇒ <code>String</code>
+#### Pem.modulusToPem(modulus) ⇒ <code>String</code>
 Convert an RSA modulus to a PEM-encoded RSAPublicKey.
 
 Encodes the public using the RSAPublicKey format given in
@@ -1368,9 +1353,21 @@ RFC 3447, appendix C.
 
 This function assumes that the exponent is 65537.
 
-**Kind**: instance method of <code>[Pem](#module_util..Pem)</code>  
+**Kind**: static method of <code>[Pem](#module_util..Pem)</code>  
 **Returns**: <code>String</code> - PEM-encoded RSA public key.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | modulus | <code>Buffer</code> | RSA public modulus. |
+
+<a name="module_util..Pem.modulusFromPrivateKey"></a>
+
+#### Pem.modulusFromPrivateKey(privateKey) ⇒ <code>Buffer</code>
+Retrieve a modulus from a PEM-encoded private key.
+
+**Kind**: static method of <code>[Pem](#module_util..Pem)</code>  
+**Returns**: <code>Buffer</code> - modulus RSA public modulus.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| privateKey | <code>String</code> | PEM-encoded RSA private key. |

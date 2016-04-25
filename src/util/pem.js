@@ -4,42 +4,15 @@
  * @module util
  */
 
-// 02          ; tag (0x02 = INTEGER)
-// 03          ; length (0x03 = 3 bytes)
-// 01 00 01    ; value (0x010001 = 65537)
-const RSA_EXPONENT_65537 = new Buffer('0203010001', 'hex')
+const ber = require('asn1').Ber
+
+// Crypto-conditions always use the same RSA exponent, namely 65537
+const RSA_EXPONENT = 65537
 
 /**
  * Utilities for RSA-related DER/PEM encoding.
  */
 class Pem {
-  /**
-   * Create a DER field header.
-   *
-   * @param {Number} tag DER field tag.
-   * @param {Number} contentLength Length of the following content.
-   * @return {Buffer} Encoded header bytes.
-   */
-  static encodeHeader (tag, contentLength) {
-    if (contentLength < 0x80) {
-      const header = new Buffer(2)
-      header[0] = tag
-      header[1] = contentLength
-      return header
-    }
-
-    const lengthBytes = Math.ceil(contentLength.toString(2).length / 8)
-
-    const header = new Buffer(2 + lengthBytes)
-    header[0] = tag
-    header[1] = 0x80 | lengthBytes
-    for (let i = 1 + lengthBytes, j = contentLength; j > 0; i--, j >>= 8) {
-      header[i] = j & 0xff
-    }
-
-    return header
-  }
-
   /**
    * Convert an RSA modulus to a PEM-encoded RSAPublicKey.
    *
@@ -62,24 +35,37 @@ class Pem {
       modulus = Buffer.concat([new Buffer([0]), modulus])
     }
 
-    const modulusHeader = this.encodeHeader(0x02, modulus.length)
-
-    const sequenceLength =
-      modulusHeader.length +
-      modulus.length +
-      RSA_EXPONENT_65537.length
-    const sequenceHeader = this.encodeHeader(0x30, sequenceLength)
+    const berWriter = new ber.Writer()
+    berWriter.startSequence()
+    berWriter.writeBuffer(modulus, 2)
+    berWriter.writeInt(RSA_EXPONENT)
+    berWriter.endSequence()
 
     return (
       '-----BEGIN RSA PUBLIC KEY-----\n' +
-      Buffer.concat([
-        sequenceHeader,
-        modulusHeader,
-        modulus,
-        RSA_EXPONENT_65537
-      ]).toString('base64').match(/.{1,64}/g).join('\n') + '\n' +
+      berWriter.buffer.toString('base64').match(/.{1,64}/g).join('\n') + '\n' +
       '-----END RSA PUBLIC KEY-----\n'
     )
+  }
+
+  /**
+   * Retrieve a modulus from a PEM-encoded private key.
+   *
+   * @param {String} privateKey PEM-encoded RSA private key.
+   * @return {Buffer} modulus RSA public modulus.
+   */
+  static modulusFromPrivateKey (privateKey) {
+    const pem = privateKey
+      .replace('-----BEGIN RSA PRIVATE KEY-----', '')
+      .replace('-----END RSA PRIVATE KEY-----', '')
+      .replace(/\s+|\n\r|\n|\r$/gm, '')
+    const buffer = new Buffer(pem, 'base64')
+
+    const reader = new ber.Reader(buffer)
+    reader.readSequence()
+    reader.readString(2, true) // version
+    const modulus = reader.readString(2, true) // modulus
+    return modulus[0] === 0 ? modulus.slice(1) : modulus
   }
 }
 

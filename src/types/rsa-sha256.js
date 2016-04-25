@@ -92,7 +92,7 @@ class RsaSha256 extends BaseSha256 {
    */
   sign (message, privateKey) {
     if (!this.modulus) {
-      throw new MissingDataError('Requires a public modulus')
+      this.setPublicModulus(pem.modulusFromPrivateKey(privateKey))
     }
     const pss = new Pss()
     const modulusHighByteBitLength = this.modulus[0].toString(2).length

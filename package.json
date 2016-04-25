@@ -7,6 +7,7 @@
     "test": "test"
   },
   "dependencies": {
+    "asn1": "^0.2.3",
     "tweetnacl": "^0.14.1"
   },
   "devDependencies": {
