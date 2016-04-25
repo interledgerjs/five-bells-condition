@@ -11,6 +11,7 @@ const pem = require('../util/pem')
 const BaseSha256 = require('./base-sha256')
 const Predictor = require('../lib/predictor')
 const MissingDataError = require('../errors/missing-data-error')
+const ValidationError = require('../errors/validation-error')
 
 /**
  * RSA-SHA-256: RSA signature condition using SHA-256.
@@ -210,7 +211,13 @@ class RsaSha256 extends BaseSha256 {
     const pss = new Pss()
     const modulusHighByteBitLength = this.modulus[0].toString(2).length
     const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
-    return pss.verify(message, encodedMessage, modulusBitLength)
+    const pssResult = pss.verify(message, encodedMessage, modulusBitLength)
+
+    if (!pssResult) {
+      throw new ValidationError('Invalid RSA signature')
+    }
+
+    return true
   }
 }
 
