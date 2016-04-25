@@ -51,7 +51,9 @@ class Condition {
    * @return {Condition} Resulting object
    */
   static fromUri (serializedCondition) {
-    if (typeof serializedCondition !== 'string') {
+    if (serializedCondition instanceof Condition) {
+      return serializedCondition
+    } else if (typeof serializedCondition !== 'string') {
       throw new Error('Serialized condition must be a string')
     }
 

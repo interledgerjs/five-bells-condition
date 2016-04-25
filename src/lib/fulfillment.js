@@ -33,7 +33,9 @@ class Fulfillment {
    * @return {Fulfillment} Resulting object
    */
   static fromUri (serializedFulfillment) {
-    if (typeof serializedFulfillment !== 'string') {
+    if (serializedFulfillment instanceof Fulfillment) {
+      return serializedFulfillment
+    } else if (typeof serializedFulfillment !== 'string') {
       throw new Error('Serialized fulfillment must be a string')
     }
 
