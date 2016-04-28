@@ -53,7 +53,10 @@ class PreimageSha256 extends BaseSha256 {
    * @param {Buffer} preimage Secret data that will be hashed to form the condition.
    */
   setPreimage (preimage) {
-    // TODO: Verify preimage
+    if (!Buffer.isBuffer(preimage)) {
+      throw new TypeError('Preimage must be a buffer')
+    }
+
     this.preimage = preimage
   }
 
