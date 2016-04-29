@@ -61,7 +61,7 @@ class PrefixSha256 extends BaseSha256 {
    */
   setSubconditionUri (subconditionUri) {
     if (typeof subconditionUri !== 'string') {
-      throw new Error('Subcondition must be provided as a URI string')
+      throw new TypeError('Subcondition must be provided as a URI string')
     }
 
     this.setSubcondition(Condition.fromUri(subconditionUri))
@@ -95,7 +95,7 @@ class PrefixSha256 extends BaseSha256 {
    */
   setSubfulfillmentUri (subfulfillmentUri) {
     if (typeof subfulfillmentUri !== 'string') {
-      throw new Error('Subfulfillment must be provided as a URI string')
+      throw new TypeError('Subfulfillment must be provided as a URI string')
     }
 
     this.setSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
@@ -111,8 +111,9 @@ class PrefixSha256 extends BaseSha256 {
    */
   setPrefix (prefix) {
     if (!Buffer.isBuffer(prefix)) {
-      throw new Error('Prefix must be a Buffer')
+      throw new TypeError('Prefix must be a Buffer, was: ' + prefix)
     }
+
     this.prefix = prefix
   }
 
@@ -229,7 +230,7 @@ class PrefixSha256 extends BaseSha256 {
       throw new Error('Subcondition is not a fulfillment')
     }
     if (!Buffer.isBuffer(message)) {
-      throw new Error('Message must be provided as a Buffer')
+      throw new Error('Message must be provided as a Buffer, was: ' + message)
     }
 
     // Ensure the subfulfillment is valid

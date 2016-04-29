@@ -55,9 +55,11 @@ class Ed25519 extends Fulfillment {
    */
   setPublicKey (publicKey) {
     if (!Buffer.isBuffer(publicKey)) {
-      throw new Error('Public key must be a Buffer')
-    } else if (publicKey.length !== 32) {
-      throw new Error('Public key is incorrect length')
+      throw new TypeError('Public key must be a Buffer, was: ' + publicKey)
+    }
+
+    if (publicKey.length !== 32) {
+      throw new Error('Public key must be 32 bytes, was: ' + publicKey.length)
     }
 
     // TODO Validate public key
@@ -75,7 +77,11 @@ class Ed25519 extends Fulfillment {
    */
   setSignature (signature) {
     if (!Buffer.isBuffer(signature)) {
-      throw new Error('Signature must be a Buffer')
+      throw new TypeError('Signature must be a Buffer, was: ' + signature)
+    }
+
+    if (signature.length !== 64) {
+      throw new Error('Signature must be 64 bytes, was: ' + signature.length)
     }
 
     this.signature = signature
@@ -95,7 +101,10 @@ class Ed25519 extends Fulfillment {
       throw new MissingDataError('Message must be a Buffer')
     }
     if (!Buffer.isBuffer(privateKey)) {
-      throw new Error('Private key must be a Buffer')
+      throw new TypeError('Private key must be a Buffer, was: ' + privateKey)
+    }
+    if (privateKey.length !== 32) {
+      throw new Error('Private key must be 32 bytes, was: ' + privateKey.length)
     }
 
     // This would be the Ed25519ph version:

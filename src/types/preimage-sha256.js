@@ -54,7 +54,7 @@ class PreimageSha256 extends BaseSha256 {
    */
   setPreimage (preimage) {
     if (!Buffer.isBuffer(preimage)) {
-      throw new TypeError('Preimage must be a buffer')
+      throw new TypeError('Preimage must be a buffer, was: ' + preimage)
     }
 
     this.preimage = preimage

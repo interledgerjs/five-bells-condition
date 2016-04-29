@@ -70,8 +70,8 @@ class ThresholdSha256 extends BaseSha256 {
 
     if (typeof weight === 'undefined') {
       weight = 1
-    } else if (!Number.isInteger(weight)) {
-      throw new Error('Invalid weight, not an integer: ' + weight)
+    } else if (!Number.isInteger(weight) || weight < 1) {
+      throw new TypeError('Invalid weight, not an integer: ' + weight)
     }
 
     this.subconditions.push({
@@ -90,7 +90,8 @@ class ThresholdSha256 extends BaseSha256 {
    */
   addSubconditionUri (subconditionUri) {
     if (typeof subconditionUri !== 'string') {
-      throw new Error('Subcondition must be provided as a URI string')
+      throw new TypeError('Subcondition must be provided as a URI string, was: ' +
+        subconditionUri)
     }
 
     this.addSubcondition(Condition.fromUri(subconditionUri))
@@ -138,7 +139,8 @@ class ThresholdSha256 extends BaseSha256 {
    */
   addSubfulfillmentUri (subfulfillmentUri) {
     if (typeof subfulfillmentUri !== 'string') {
-      throw new Error('Subfulfillment must be provided as a URI string')
+      throw new TypeError('Subfulfillment must be provided as a URI string, was: ' +
+        subfulfillmentUri)
     }
 
     this.addSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
@@ -155,6 +157,11 @@ class ThresholdSha256 extends BaseSha256 {
    * @param {Number} threshold Integer threshold
    */
   setThreshold (threshold) {
+    if (!Number.isInteger(threshold) || threshold < 1) {
+      throw new TypeError('Threshold must be a integer greater than zero, was: ' +
+        threshold)
+    }
+
     this.threshold = threshold
   }
 

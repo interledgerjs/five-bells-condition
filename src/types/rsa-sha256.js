@@ -62,7 +62,19 @@ class RsaSha256 extends BaseSha256 {
    * @param {Buffer} modulus Public RSA modulus
    */
   setPublicModulus (modulus) {
-    // TODO: Validate modulus
+    if (!Buffer.isBuffer(modulus)) {
+      throw new TypeError('Modulus must be a buffer, was: ' + modulus)
+    }
+
+    if (modulus[0] === 0) {
+      throw new Error('Modulus may not contain leading zeros')
+    }
+
+    if (modulus.length > 512 || modulus.length < 128) {
+      throw new Error('Modulus must be between 128 bytes (1017 bits) and ' +
+        '512 bytes (4096 bits), was: ' + modulus.length + ' bytes')
+    }
+
     this.modulus = modulus
   }
 
@@ -74,6 +86,10 @@ class RsaSha256 extends BaseSha256 {
    * @param {Buffer} signature RSA signature.
    */
   setSignature (signature) {
+    if (!Buffer.isBuffer(signature)) {
+      throw new TypeError('Signature must be a buffer, was: ' + signature)
+    }
+
     this.signature = signature
   }
 
@@ -189,17 +205,7 @@ class RsaSha256 extends BaseSha256 {
    */
   validate (message) {
     if (!Buffer.isBuffer(message)) {
-      throw new Error('Message must be provided as a Buffer')
-    }
-
-    // Verify modulus (correct length)
-    if (this.modulus.length < 128 || this.modulus.length > 512) {
-      throw new Error('Modulus length is out of range: ' + this.modulus.length)
-    }
-
-    // Verify modulus (no leading zeros)
-    if (this.modulus[0] === 0) {
-      throw new Error('Modulus may not contain leading zeros')
+      throw new Error('Message must be provided as a Buffer, was: ' + message)
     }
 
     // Verify signature
