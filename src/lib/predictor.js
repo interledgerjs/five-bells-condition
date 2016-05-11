@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * Writable stream which tracks the amount of data written.
+ *
+ * This class acts as a writable stream, but only does the minimum amount of
+ * work necessary to count/predict the output size.
+ */
 class Predictor {
   constructor () {
     this.size = 0
