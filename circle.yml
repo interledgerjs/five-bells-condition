@@ -12,6 +12,8 @@ test:
     - npm run lint
     # Run tests with coverage
     - npm test --coverage
+  post:
+    - bash <(curl -s https://codecov.io/bash)
 deployment:
   production:
     branch: master
