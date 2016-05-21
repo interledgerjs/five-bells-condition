@@ -13,9 +13,6 @@ class Pss {
     this.hashAlgorithm = opts.hashAlgorithm || 'sha256'
     this.hashLength = Hasher.getLength(this.hashAlgorithm)
     this.saltLength = this.hashLength
-
-    // Used for testing
-    this.forceSalt = null
   }
 
   /**
@@ -38,7 +35,7 @@ class Pss {
       throw new Error('Encoding error: RSA modulus is too small for ' + this.hashAlgorithm)
     }
     // Step 4. Generate a random salt
-    const salt = this.forceSalt || crypto.randomBytes(this.saltLength)
+    const salt = crypto.randomBytes(this.saltLength)
 
     // Step 5. M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 6. H = Hash(M')

@@ -36,7 +36,7 @@
     "mocha": "^3.0.0",
     "phantomjs-prebuilt": "^2.1.5",
     "readme-to-test": "justmoon/readme-to-test#feature/st-improvements",
-    "sinon": "^1.16.1",
+    "sinon": "^1.17.4",
     "validate-commit-msg": "^2.1.0",
     "watchify": "^3.7.0"
   },
