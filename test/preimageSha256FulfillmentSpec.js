@@ -1,7 +1,8 @@
 'use strict'
 
 const assert = require('chai').assert
-const condition = require('..')
+const cc = require('..')
+require('./helpers/hooks')
 
 describe('PreimageSha256', function () {
   testFromPreimage(
@@ -94,7 +95,7 @@ describe('PreimageSha256', function () {
       })
 
       it('generates correct fulfillment', function () {
-        const f = new condition.PreimageSha256()
+        const f = new cc.PreimageSha256()
         f.setPreimage(this.preimage)
         const uri = f.serializeUri()
 
@@ -102,7 +103,7 @@ describe('PreimageSha256', function () {
       })
 
       it('generates condition ' + conditionUri, function () {
-        const f = new condition.PreimageSha256()
+        const f = new cc.PreimageSha256()
         f.setPreimage(this.preimage)
         const uri = f.getConditionUri()
 
@@ -110,19 +111,25 @@ describe('PreimageSha256', function () {
       })
 
       it('parsing fulfillment generates condition', function () {
-        const f = condition.fromFulfillmentUri(fulfillmentUri)
+        const f = cc.fromFulfillmentUri(fulfillmentUri)
         const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
 
       it('parsed condition matches generated condition', function () {
-        const f = new condition.PreimageSha256()
+        const f = new cc.PreimageSha256()
         f.setPreimage(this.preimage)
         const generatedCondition = f.getCondition()
-        const parsedCondition = condition.fromConditionUri(conditionUri)
+        const parsedCondition = cc.fromConditionUri(conditionUri)
 
         assert.deepEqual(generatedCondition, parsedCondition)
+      })
+
+      it('validates the fulfillment', function () {
+        const result = cc.validateFulfillment(fulfillmentUri, conditionUri)
+
+        assert.equal(result, true)
       })
     })
   }

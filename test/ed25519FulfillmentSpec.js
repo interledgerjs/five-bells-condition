@@ -1,6 +1,9 @@
+'use strict'
+
 const assert = require('chai').assert
 const crypto = require('crypto')
-const condition = require('..')
+const cc = require('..')
+require('./helpers/hooks')
 
 describe('Ed25519', function () {
   testFromParams(
@@ -33,7 +36,7 @@ describe('Ed25519', function () {
   function testFromParams (params, fulfillmentUri, conditionUri) {
     describe('key ' + params.key.toString('hex'), function () {
       it('generates correct fulfillment uri', function () {
-        const f = new condition.Ed25519()
+        const f = new cc.Ed25519()
         f.sign(params.message, params.key)
         const uri = f.serializeUri()
 
@@ -41,7 +44,7 @@ describe('Ed25519', function () {
       })
 
       it('generates correct condition uri', function () {
-        const f = new condition.Ed25519()
+        const f = new cc.Ed25519()
         f.sign(params.message, params.key)
         const uri = f.getConditionUri()
 
@@ -49,19 +52,25 @@ describe('Ed25519', function () {
       })
 
       it('parsing fulfillment generates condition', function () {
-        const f = condition.fromFulfillmentUri(fulfillmentUri)
+        const f = cc.fromFulfillmentUri(fulfillmentUri)
         const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
 
       it('parsed condition matches generated condition', function () {
-        const f = new condition.Ed25519()
+        const f = new cc.Ed25519()
         f.sign(params.message, params.key)
         const generatedCondition = f.getCondition()
-        const parsedCondition = condition.fromConditionUri(conditionUri)
+        const parsedCondition = cc.fromConditionUri(conditionUri)
 
         assert.deepEqual(generatedCondition, parsedCondition)
+      })
+
+      it('validates the fulfillment', function () {
+        const result = cc.validateFulfillment(fulfillmentUri, conditionUri, params.message)
+
+        assert.equal(result, true)
       })
     })
   }

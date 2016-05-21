@@ -1,7 +1,8 @@
 'use strict'
 
 const assert = require('chai').assert
-const condition = require('..')
+const cc = require('..')
+require('./helpers/hooks')
 
 require('crypto').randomBytes = function (len) {
   return new Buffer(len).fill(0)
@@ -33,27 +34,27 @@ describe('RsaSha256', function () {
   function testFromParams (params, fulfillmentUri, conditionUri) {
     describe('valid: ' + conditionUri, function () {
       it('generates the correct signature', function () {
-        const f = new condition.RsaSha256()
+        const f = new cc.RsaSha256()
         f.sign(params.message, params.key)
 
         assert.equal(f.signature.toString('hex'), params.signature.toString('hex'))
       })
       it('generates the correct fulfillment', function () {
-        const f = new condition.RsaSha256()
+        const f = new cc.RsaSha256()
         f.sign(params.message, params.key)
         const uri = f.serializeUri()
 
         assert.equal(uri, fulfillmentUri)
       })
       it('generates the correct condition', function () {
-        const f = new condition.RsaSha256()
+        const f = new cc.RsaSha256()
         f.sign(params.message, params.key)
         const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
       it('validates the fulfillment', function () {
-        const result = condition.validateFulfillment(fulfillmentUri, conditionUri, params.message)
+        const result = cc.validateFulfillment(fulfillmentUri, conditionUri, params.message)
 
         assert.equal(result, true)
       })

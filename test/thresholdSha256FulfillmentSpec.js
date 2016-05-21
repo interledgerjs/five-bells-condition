@@ -1,20 +1,23 @@
 'use strict'
 
 const assert = require('chai').assert
-const condition = require('..')
+const cc = require('..')
+require('./helpers/hooks')
 
 describe('ThresholdSha256', function () {
   const ex = {
     emptySha256: 'cf:0:',
     tinySha256: 'cf:0:AA',
-    ed: 'cf:4:IHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE'
+    ed: 'cf:4:dqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fWuxqtqkSKv8PfcuWZ_9hMTaJRzK254wm9bZzEB4mf-Litl-k1T2tR4oa2mTVD9Hf232Ukg3D4aVkpkexy6NWAB'
   }
 
   testFromFulfillments(
-    [
-      ex.emptySha256
-    ],
-    1,
+    {
+      fulfillments: [
+        ex.emptySha256
+      ],
+      threshold: 1
+    },
     'cf:2:AQEBAQEBAwAAAAA',
     'cc:2:b:x07W1xU1_oBcV9zUheOzspx6Beq8vgy0vYgBVifNV1Q:10'
   )
@@ -23,52 +26,62 @@ describe('ThresholdSha256', function () {
   // how it results in a different condition URI, that is why this
   // behavior is safe.
   testFromFulfillments(
-    [
-      ex.emptySha256,
-      ex.emptySha256
-    ],
-    2,
+    {
+      fulfillments: [
+        ex.emptySha256,
+        ex.emptySha256
+      ],
+      threshold: 2
+    },
     'cf:2:AQIBAgEBAwAAAAABAQMAAAAA',
     'cc:2:b:y93kXzLJ49Qdn3CeCe6Qtuzmdg9LhPHQIESn8H4ghE0:14'
   )
 
   testFromFulfillments(
-    [
-      ex.ed,
-      ex.tinySha256
-    ],
-    1,
-    'cf:2:AQEBAgEBBAAAAQAAAQEAJwAEASAgIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNEBYA',
-    'cc:2:2b:d3O4epRCo_3rj17Bf3v8hp5ig7vq84ivPok07T9Rdl0:146'
+    {
+      fulfillments: [
+        ex.ed,
+        ex.tinySha256
+      ],
+      threshold: 1
+    },
+    'cf:2:AQEBAgEBBAAAAQAAAQEAJwAEASAgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fUBYA',
+    'cc:2:2b:qD3rZtABzeF5vPqkXN_AJYRStKoowpnivH1-9fQFjSo:146'
+  )
+
+  // The order of subconditions is irrelevant for both conditions and fulfillments
+  testFromFulfillments(
+    {
+      fulfillments: [
+        ex.tinySha256,
+        ex.ed
+      ],
+      threshold: 1
+    },
+    'cf:2:AQEBAgEBBAAAAQAAAQEAJwAEASAgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fUBYA',
+    'cc:2:2b:qD3rZtABzeF5vPqkXN_AJYRStKoowpnivH1-9fQFjSo:146'
   )
 
   testFromFulfillments(
-    [
-      ex.tinySha256,
-      ex.ed
-    ],
-    1,
-    'cf:2:AQEBAgEBBAAAAQAAAQEAJwAEASAgIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNEBYA',
-    'cc:2:2b:d3O4epRCo_3rj17Bf3v8hp5ig7vq84ivPok07T9Rdl0:146'
+    {
+      fulfillments: [
+        ex.ed,
+        ex.tinySha256
+      ],
+      threshold: 2,
+      message: new Buffer('abc', 'utf8')
+    },
+    'cf:2:AQIBAgEBBAAAAQAAAQFjAARgdqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fWuxqtqkSKv8PfcuWZ_9hMTaJRzK254wm9bZzEB4mf-Litl-k1T2tR4oa2mTVD9Hf232Ukg3D4aVkpkexy6NWABAA',
+    'cc:2:2b:qmhBlTdYm8mukRoIJla3EH9vNorXqXSWaKnlMHzz5D4:111'
   )
 
-  testFromFulfillments(
-    [
-      ex.tinySha256,
-      ex.ed
-    ],
-    2,
-    'cf:2:AQIBAgEBBAAAAQAAAQFjAARgIHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1AA',
-    'cc:2:2b:AbeLZtZPtdSb6Hw488R_fpYjEjlV7RW2jFrp5Dr-WS0:111'
-  )
-
-  function testFromFulfillments (fulfillments, threshold, fulfillmentUri, conditionUri) {
-    describe('with ' + fulfillments.length + ' subfulfillments', function () {
+  function testFromFulfillments (params, fulfillmentUri, conditionUri) {
+    describe('with ' + params.fulfillments.length + ' subfulfillments', function () {
       it('generates the correct fulfillment uri', function () {
-        const f = new condition.ThresholdSha256()
-        f.setThreshold(threshold)
-        for (let sub of fulfillments) {
-          f.addSubfulfillment(condition.fromFulfillmentUri(sub))
+        const f = new cc.ThresholdSha256()
+        f.setThreshold(params.threshold)
+        for (let sub of params.fulfillments) {
+          f.addSubfulfillment(cc.fromFulfillmentUri(sub))
         }
         const uri = f.serializeUri()
 
@@ -76,21 +89,27 @@ describe('ThresholdSha256', function () {
       })
 
       it('generates the correct condition uri', function () {
-        const f = new condition.ThresholdSha256()
-        f.setThreshold(threshold)
-        for (let sub of fulfillments) {
-          f.addSubfulfillment(condition.fromFulfillmentUri(sub))
+        const f = new cc.ThresholdSha256()
+        f.setThreshold(params.threshold)
+        for (let sub of params.fulfillments) {
+          f.addSubfulfillment(cc.fromFulfillmentUri(sub))
         }
         const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
+
+      it('validates the fulfillment', function () {
+        const result = cc.validateFulfillment(fulfillmentUri, conditionUri, params.message)
+
+        assert.equal(result, true)
+      })
     })
   }
 
   describe('calculateWorstCaseLength', function () {
-    const calc = condition.ThresholdSha256.calculateWorstCaseLength
-      .bind(condition.ThresholdSha256)
+    const calc = cc.ThresholdSha256.calculateWorstCaseLength
+      .bind(cc.ThresholdSha256)
 
     testWith(3, [1, 4], [2, 3], 3)
     testWith(200, [115, 300], [52, 9001], 9001)

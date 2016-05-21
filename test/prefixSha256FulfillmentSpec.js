@@ -1,13 +1,14 @@
 'use strict'
 
 const assert = require('chai').assert
-const condition = require('..')
+const cc = require('..')
+require('./helpers/hooks')
 
 describe('PrefixSha256', function () {
   const ex = {
     emptySha256: 'cf:0:',
     tinySha256: 'cf:0:AA',
-    ed: 'cf:4:IHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1QK7Gq2qRIq_w99y5Zn_2ExNolHMrbnjCb1tnMQHiZ_4uK2X6TVPa1HihraZNUP0d_bfZSSDcPhpWSmR7HLo1YAE',
+    ed: 'cf:4:dqFZIESm5PURJlvKc6YE2QsFKdHfYCvjChmpJXZg0fWuxqtqkSKv8PfcuWZ_9hMTaJRzK254wm9bZzEB4mf-Litl-k1T2tR4oa2mTVD9Hf232Ukg3D4aVkpkexy6NWAB',
     prefixSha256: 'cf:1:AAAAAA'
   }
 
@@ -27,29 +28,36 @@ describe('PrefixSha256', function () {
 
   testFromFulfillment(
     ex.ed,
-    new Buffer('ff00ff00abab', 'hex'),
-    'cf:1:Bv8A_wCrqwAEYCB2oVkgRKbk9REmW8pzpgTZCwUp0d9gK-MKGakldmDR9UCuxqtqkSKv8PfcuWZ_9hMTaJRzK254wm9bZzEB4mf-Litl-k1T2tR4oa2mTVD9Hf232Ukg3D4aVkpkexy6NQ',
-    'cc:1:25:XkflBmyISKuevH8-850LuMrzN-HT1Ds9zKUEzaZ2Wk0:103'
+    new Buffer('abc', 'utf8'),
+    'cf:1:A2FiYwAEYHahWSBEpuT1ESZbynOmBNkLBSnR32Ar4woZqSV2YNH1rsarapEir_D33Llmf_YTE2iUcytueMJvW2cxAeJn_i4rZfpNU9rUeKGtpk1Q_R39t9lJINw-GlZKZHscujVgAQ',
+    'cc:1:25:KHqL2K2uisoMhxznwl-6pai-ENDk2x9Wru6Ls63O5Vs:100'
   )
 
   function testFromFulfillment (subfulfillment, prefix, fulfillmentUri, conditionUri) {
     describe(conditionUri, function () {
       it('generates the correct fulfillment uri', function () {
-        const f = new condition.PrefixSha256()
-        f.setSubfulfillment(condition.fromFulfillmentUri(subfulfillment))
+        const f = new cc.PrefixSha256()
+        f.setSubfulfillment(cc.fromFulfillmentUri(subfulfillment))
         f.setPrefix(prefix)
         const uri = f.serializeUri()
 
         assert.equal(uri, fulfillmentUri)
+        assert.equal(f.getConditionUri(), conditionUri)
       })
 
       it('generates the correct condition uri', function () {
-        const f = new condition.PrefixSha256()
-        f.setSubfulfillment(condition.fromFulfillmentUri(subfulfillment))
+        const f = new cc.PrefixSha256()
+        f.setSubcondition(cc.fromFulfillmentUri(subfulfillment).getCondition())
         f.setPrefix(prefix)
         const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
+      })
+
+      it('validates the fulfillment', function () {
+        const result = cc.validateFulfillment(fulfillmentUri, conditionUri)
+
+        assert.equal(result, true)
       })
     })
   }
