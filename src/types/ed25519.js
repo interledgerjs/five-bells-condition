@@ -30,23 +30,6 @@ class Ed25519 extends Fulfillment {
   }
 
   /**
-   * Write static header fields.
-   *
-   * Some fields are common between the hash and the fulfillment payload. This
-   * method writes those field to anything implementing the Writer interface.
-   * It is used internally when generating the hash of the condition, when
-   * generating the fulfillment payload and when calculating the maximum
-   * fulfillment size.
-   *
-   * @param {Writer|Hasher|Predictor} Target for outputting the header.
-   *
-   * @private
-   */
-  writeCommonHeader (writer) {
-    writer.writeVarOctetString(this.publicKey)
-  }
-
-  /**
    * Set the public publicKey.
    *
    * This is the Ed25519 public key. It has to be provided as a buffer.
