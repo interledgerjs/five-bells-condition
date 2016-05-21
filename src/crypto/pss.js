@@ -135,6 +135,7 @@ class Pss {
     }
     // Step 11. Let salt be the last sLen octets of DB.
     const salt = dataBlock.slice(dataBlock.length - this.saltLength)
+
     // Step 12. Let M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 13. Let H' = Hash(M'), an octet string of length hLen.
     const reconstructedHash = crypto.createHash(this.hashAlgorithm)
@@ -146,5 +147,7 @@ class Pss {
     return Buffer.compare(hash, reconstructedHash) === 0
   }
 }
+
+Pss.EMPTY_BUFFER = new Buffer(0)
 
 module.exports = Pss
