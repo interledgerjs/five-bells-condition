@@ -58,7 +58,8 @@ class ThresholdSha256 extends BaseSha256 {
    * subconditions or to provide a non-fulfilled subcondition when creating a
    * threshold fulfillment.
    *
-   * @param {Condition} subcondition Condition to add
+   * @param {Condition|String} subcondition Condition object or URI string
+   *   representing a new subcondition to be added.
    * @param {Number} [weight=1] Integer weight of the subcondition.
    */
   addSubcondition (subcondition, weight) {
@@ -82,22 +83,6 @@ class ThresholdSha256 extends BaseSha256 {
   }
 
   /**
-   * Add a subcondition (unfulfilled).
-   *
-   * This will automatically parse the URI and call addSubcondition.
-   *
-   * @param {String} Subcondition URI.
-   */
-  addSubconditionUri (subconditionUri) {
-    if (typeof subconditionUri !== 'string') {
-      throw new TypeError('Subcondition must be provided as a URI string, was: ' +
-        subconditionUri)
-    }
-
-    this.addSubcondition(Condition.fromUri(subconditionUri))
-  }
-
-  /**
    * Add a fulfilled subcondition.
    *
    * When constructing a threshold fulfillment, this method allows you to
@@ -107,7 +92,8 @@ class ThresholdSha256 extends BaseSha256 {
    * fulfillment. The condition can be calculated from the fulfillment and will
    * be added automatically.
    *
-   * @param {Fulfillment} Fulfillment to add
+   * @param {Fulfillment|String} subfulfillment Fulfillment object or URI string
+   *   representing a new subfulfillment to be added.
    * @param {Number} [weight=1] Integer weight of the subcondition.
    */
   addSubfulfillment (subfulfillment, weight) {
@@ -128,22 +114,6 @@ class ThresholdSha256 extends BaseSha256 {
       body: subfulfillment,
       weight: weight
     })
-  }
-
-  /**
-   * Add a fulfilled subcondition.
-   *
-   * This will automatically parse the URI and call addSubfulfillment.
-   *
-   * @param {String} Subfulfillment URI.
-   */
-  addSubfulfillmentUri (subfulfillmentUri) {
-    if (typeof subfulfillmentUri !== 'string') {
-      throw new TypeError('Subfulfillment must be provided as a URI string, was: ' +
-        subfulfillmentUri)
-    }
-
-    this.addSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
   }
 
   /**
@@ -560,5 +530,11 @@ class ThresholdSha256 extends BaseSha256 {
 
 ThresholdSha256.TYPE_ID = 2
 ThresholdSha256.FEATURE_BITMASK = 0x09
+
+// DEPRECATED
+ThresholdSha256.prototype.addSubconditionUri =
+  ThresholdSha256.prototype.addSubcondition
+ThresholdSha256.prototype.addSubfulfillmentUri =
+  ThresholdSha256.prototype.addSubfulfillment
 
 module.exports = ThresholdSha256
