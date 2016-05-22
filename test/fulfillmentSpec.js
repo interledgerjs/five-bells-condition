@@ -91,7 +91,7 @@ describe('Fulfillment', function () {
     })
 
     it('rejects a buffer', function () {
-      assert.throws(() => Fulfillment.fromUri(new Buffer(3)))
+      assert.throws(() => Fulfillment.fromUri(new Buffer(3)), 'Serialized fulfillment must be a string')
     })
   })
 
