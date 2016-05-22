@@ -117,7 +117,7 @@ class Ed25519 extends Fulfillment {
    */
   generateHash () {
     if (!this.publicKey) {
-      throw new MissingDataError('Requires a public publicKey')
+      throw new MissingDataError('Requires a public key')
     }
 
     return this.publicKey
@@ -176,6 +176,10 @@ class Ed25519 extends Fulfillment {
    * @return {Boolean} Whether this fulfillment is valid.
    */
   validate (message) {
+    if (!Buffer.isBuffer(message)) {
+      throw new TypeError('Message must be a Buffer')
+    }
+
     // Use native library if available (~60x faster)
     let result
     if (ed25519) {
