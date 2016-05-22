@@ -256,5 +256,13 @@ describe('Condition', function () {
 
       assert.throws(() => condition.validate(), 'Condition requested too large of a max fulfillment size')
     })
+
+    it('should throw if the type exceeds the safe maximum', function () {
+      const condition = Condition.fromUri('cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0')
+
+      condition.type = Number.MAX_SAFE_INTEGER + 1
+
+      assert.throws(() => condition.validate(), 'Type 9007199254740992 is not supported')
+    })
   })
 })
