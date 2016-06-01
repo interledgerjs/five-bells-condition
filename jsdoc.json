@@ -6,6 +6,6 @@
     "template": "node_modules/interledger-jsdoc-template",
     "destination": "./jsdoc-out/",
     "readme": "./README.md",
-    "reponame": "Five Bells Shared"
+    "reponame": "Five Bells Condition"
   }
 }
