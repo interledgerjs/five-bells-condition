@@ -12,6 +12,10 @@ This specification is only a draft at this stage and has not been submitted.
 
 @@TOC@@
 
+## API Documentation
+
+**[API Docs](https://interledger.org/five-bells-condition/jsdoc/)**
+
 ## Usage
 
 ### Validate a Condition
@@ -280,22 +284,3 @@ myCondition.setMaxFulfillmentLength(0)
 console.log(myCondition.serializeUri())
 // prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 ```
-
-## API Reference
-
-{{#module name="types"~}}
-{{>member-index~}}
-{{/module}}
-{{#module name="util"~}}
-{{>member-index~}}
-{{/module}}
-
-{{#module name="types"~}}
-{{>body~}}
-{{>members~}}
-{{/module}}
-
-{{#module name="util"~}}
-{{>body~}}
-{{>members~}}
-{{/module}}
