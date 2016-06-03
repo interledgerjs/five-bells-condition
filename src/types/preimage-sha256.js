@@ -98,9 +98,10 @@ class PreimageSha256 extends BaseSha256 {
    * For a SHA256 hashlock fulfillment, successful parsing implies that the
    * fulfillment is valid, so this method is a no-op.
    *
+   * @param {Buffer} Message (ignored in this condition type)
    * @return {Boolean} Validation result
    */
-  validate () {
+  validate (message) {
     return true
   }
 }
