@@ -712,7 +712,7 @@ PrefixSha256FingerprintContents ::= SEQUENCE {
   <dt>prefix</dt>
   <dd style="margin-left: 8">is an arbitrary octet string which will be prepended to the message during validation.  </dd>
   <dt>condition</dt>
-  <dd style="margin-left: 8">is the sub-condition which the sub-fulfillment must match.  </dd>
+  <dd style="margin-left: 8">is the subcondition which the subfulfillment must match.  </dd>
 </dl>
 
 <p> </p>
@@ -728,8 +728,8 @@ PrefixSha256FulfillmentPayload ::= SEQUENCE {
 <dl>
   <dt>prefix</dt>
   <dd style="margin-left: 8">is an arbitrary octet string which will be prepended to the message during validation.  </dd>
-  <dt>condition</dt>
-  <dd style="margin-left: 8">is the sub-condition which the sub-fulfillment must match.  </dd>
+  <dt>subfulfillment</dt>
+  <dd style="margin-left: 8">is the fulfilled subcondition.  </dd>
 </dl>
 
 <p> </p>
@@ -755,11 +755,11 @@ ThresholdSubcondition ::= SEQUENCE {
   <dt>threshold</dt>
   <dd style="margin-left: 8">threshold MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a threshold condition, the weights of the provided fulfillments MUST be greater than or equal to the threshold.  </dd>
   <dt>subconditions</dt>
-  <dd style="margin-left: 8">is the set of sub-conditions, each provided as a tuple of weight and condition.  </dd>
+  <dd style="margin-left: 8">is the set of subconditions, each provided as a tuple of weight and condition.  </dd>
   <dt>weight</dt>
   <dd style="margin-left: 8">is the numeric weight of this subcondition, i.e. how many times it counts against the threshold.  </dd>
   <dt>condition</dt>
-  <dd style="margin-left: 8">is the sub-condition.  </dd>
+  <dd style="margin-left: 8">is the subcondition.  </dd>
 </dl>
 
 <p> </p>
@@ -781,12 +781,14 @@ ThresholdSubfulfillment ::= SEQUENCE {
 <dl>
   <dt>threshold</dt>
   <dd style="margin-left: 8">is a number and MUST be an integer in the range 1 ... 2^32 - 1. In order to fulfill a threshold condition, the weights of the provided fulfillments MUST be greater than or equal to the threshold.  </dd>
-  <dt>subconditions</dt>
-  <dd style="margin-left: 8">is the set of sub-conditions, each provided as a tuple of weight and condition.  </dd>
+  <dt>subfulfillments</dt>
+  <dd style="margin-left: 8">is the set of subconditions and subfulfillments, each provided as a tuple of weight and condition or fulfillment.  </dd>
   <dt>weight</dt>
   <dd style="margin-left: 8">is the numeric weight of this subcondition, i.e. how many times it counts against the threshold. It MUST be an integer in the range 1 ... 2^32 - 1.  </dd>
   <dt>condition</dt>
-  <dd style="margin-left: 8">is the sub-condition.  </dd>
+  <dd style="margin-left: 8">is the subcondition if this subcondition is not fulfilled.  </dd>
+  <dt>fulfillment</dt>
+  <dd style="margin-left: 8">is the subfulfillment if this subcondition is fulfilled.  </dd>
 </dl>
 
 <p> </p>

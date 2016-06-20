@@ -540,7 +540,7 @@ Internet-Draft              Crypto-Conditions                 March 2016
    prefix  is an arbitrary octet string which will be prepended to the
       message during validation.
 
-   condition  is the sub-condition which the sub-fulfillment must match.
+   condition  is the subcondition which the subfulfillment must match.
 
 4.2.2.  Fulfillment
 
@@ -552,7 +552,7 @@ Internet-Draft              Crypto-Conditions                 March 2016
    prefix  is an arbitrary octet string which will be prepended to the
       message during validation.
 
-   condition  is the sub-condition which the sub-fulfillment must match.
+   subfulfillment  is the fulfilled subcondition.
 
 
 
@@ -592,13 +592,13 @@ Internet-Draft              Crypto-Conditions                 March 2016
       provided fulfillments MUST be greater than or equal to the
       threshold.
 
-   subconditions  is the set of sub-conditions, each provided as a tuple
+   subconditions  is the set of subconditions, each provided as a tuple
       of weight and condition.
 
    weight  is the numeric weight of this subcondition, i.e. how many
       times it counts against the threshold.
 
-   condition  is the sub-condition.
+   condition  is the subcondition.
 
 4.3.2.  Fulfillment
 
@@ -634,14 +634,16 @@ Internet-Draft              Crypto-Conditions                 March 2016
       the provided fulfillments MUST be greater than or equal to the
       threshold.
 
-   subconditions  is the set of sub-conditions, each provided as a tuple
-      of weight and condition.
+   subfulfillments  is the set of subconditions and subfulfillments,
+      each provided as a tuple of weight and condition or fulfillment.
 
    weight  is the numeric weight of this subcondition, i.e. how many
       times it counts against the threshold.  It MUST be an integer in
       the range 1 ... 2^32 - 1.
 
-   condition  is the sub-condition.
+   condition  is the subcondition if this subcondition is not fulfilled.
+
+   fulfillment  is the subfulfillment if this subcondition is fulfilled.
 
 4.4.  RSA-SHA-256
 
@@ -663,9 +665,7 @@ Internet-Draft              Crypto-Conditions                 March 2016
      modulus OCTET STRING (SIZE(128..512))
    }
 
-   modulus  is an octet string representing the RSA public modulus in
-      big-endian byte order.  The first byte of the modulus MUST NOT be
-      zero.
+
 
 
 
@@ -673,6 +673,10 @@ Thomas                  Expires September 2, 2016              [Page 12]
 
 Internet-Draft              Crypto-Conditions                 March 2016
 
+
+   modulus  is an octet string representing the RSA public modulus in
+      big-endian byte order.  The first byte of the modulus MUST NOT be
+      zero.
 
       The corresponding public exponent e is assumed to be 65537 as
       recommended in [RFC4871].  Very large exponents can be a DoS
@@ -717,10 +721,6 @@ Internet-Draft              Crypto-Conditions                 March 2016
    [KEYLENGTH-RECOMMENDATION].  In the future we anticipate an upgrade
    to 3072 bits which provides approximately 128 bits of security
    [NIST-KEYMANAGEMENT](p. 64), about the same level as SHA-256.
-
-
-
-
 
 
 
