@@ -477,7 +477,7 @@ PrefixSha256FingerprintContents ::= SEQUENCE {
                                 message during validation.
                             </t>
                             <t hangText="condition">
-                                is the sub-condition which the sub-fulfillment must match.
+                                is the subcondition which the subfulfillment must match.
                             </t>
                         </list>
                     </t>
@@ -497,8 +497,8 @@ PrefixSha256FulfillmentPayload ::= SEQUENCE {
                                 is an arbitrary octet string which will be prepended to the
                                 message during validation.
                             </t>
-                            <t hangText="condition">
-                                is the sub-condition which the sub-fulfillment must match.
+                            <t hangText="subfulfillment">
+                                is the fulfilled subcondition.
                             </t>
                         </list>
                     </t>
@@ -539,7 +539,7 @@ ThresholdSubcondition ::= SEQUENCE {
                                 MUST be greater than or equal to the threshold.
                             </t>
                             <t hangText="subconditions">
-                                is the set of sub-conditions, each provided as a tuple of weight and
+                                is the set of subconditions, each provided as a tuple of weight and
                                 condition.
                             </t>
                             <t hangText="weight">
@@ -547,7 +547,7 @@ ThresholdSubcondition ::= SEQUENCE {
                                 against the threshold.
                             </t>
                             <t hangText="condition">
-                                is the sub-condition.
+                                is the subcondition.
                             </t>
                         </list>
                     </t>
@@ -574,16 +574,19 @@ ThresholdSubfulfillment ::= SEQUENCE {
                                 to fulfill a threshold condition, the weights of the provided fulfillments
                                 MUST be greater than or equal to the threshold.
                             </t>
-                            <t hangText="subconditions">
-                                is the set of sub-conditions, each provided as a tuple of weight and
-                                condition.
+                            <t hangText="subfulfillments">
+                                is the set of subconditions and subfulfillments, each provided as a tuple of weight and
+                                condition or fulfillment.
                             </t>
                             <t hangText="weight">
                                 is the numeric weight of this subcondition, i.e. how many times it counts
                                 against the threshold. It MUST be an integer in the range 1 ... 2^32 - 1.
                             </t>
                             <t hangText="condition">
-                                is the sub-condition.
+                                is the subcondition if this subcondition is not fulfilled.
+                            </t>
+                            <t hangText="fulfillment">
+                                is the subfulfillment if this subcondition is fulfilled.
                             </t>
                         </list>
                     </t>
