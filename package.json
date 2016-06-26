@@ -27,7 +27,7 @@
     "interledger-jsdoc-template": "^2.0.0",
     "istanbul-harmony": "^0.3.16",
     "jsdoc": "^3.4.0",
-    "karma": "^0.13.22",
+    "karma": "^1.1.0",
     "karma-browserify": "^5.0.5",
     "karma-mocha": "^1.0.1",
     "karma-phantomjs-launcher": "^1.0.0",
