@@ -18,14 +18,9 @@ exec('npm run docs:jsdoc', { cwd })
 exec('mkdir -p web/jsdoc', { cwd })
 exec('cp -r jsdoc-out/* web/jsdoc/', { cwd })
 
-// Update spec
-cwd = path.resolve(cwd, 'web')
-exec('xml2rfc ../docs/spec.xml --html -o spec.html', { cwd })
-exec('xml2rfc ../docs/spec.xml --text -o spec.txt', { cwd })
-
 // Push changes
 console.log('\n# Pushing web branch')
-exec('cd web')
+cwd = path.resolve(cwd, 'web')
 exec('git add --all', { cwd })
 
 const status = exec('git status --porcelain', { cwd }).toString('utf8')

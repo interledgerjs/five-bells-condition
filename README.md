@@ -11,13 +11,13 @@
 
 ## Specification
 
-Editor's Draft: [**draft-thomas-crypto-conditions-01**](https://interledger.org/five-bells-condition/spec.html)
+Editor's Draft: [**draft-thomas-crypto-conditions-00**](https://tools.ietf.org/html/draft-thomas-crypto-conditions-00)
 
 This specification is only a draft at this stage and has not been submitted.
 
 ## Table of Contents
 
-- [Crypto Conditions](#crypto-conditions)
+- [Crypto Conditions [![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]](#crypto-conditions-npmnpm-imagenpm-url-circlecircle-imagecircle-url-codecovcodecov-imagecodecov-url)
     - [Specification](#specification)
     - [Table of Contents](#table-of-contents)
     - [API Documentation](#api-documentation)
