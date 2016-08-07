@@ -1,4 +1,6 @@
-# Crypto Conditions [![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]
+# Crypto Conditions
+
+[![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]
 
 [npm-image]: https://img.shields.io/npm/v/five-bells-condition.svg?style=flat
 [npm-url]: https://npmjs.org/package/five-bells-condition
@@ -17,7 +19,7 @@ This specification is only a draft at this stage and has not been submitted.
 
 ## Table of Contents
 
-- [Crypto Conditions [![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]](#crypto-conditions-npmnpm-imagenpm-url-circlecircle-imagecircle-url-codecovcodecov-imagecodecov-url)
+- [Crypto Conditions](#crypto-conditions)
     - [Specification](#specification)
     - [Table of Contents](#table-of-contents)
     - [API Documentation](#api-documentation)
