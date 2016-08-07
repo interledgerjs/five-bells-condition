@@ -1,4 +1,6 @@
-# Crypto Conditions [![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]
+# Crypto Conditions
+
+[![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]
 
 [npm-image]: https://img.shields.io/npm/v/five-bells-condition.svg?style=flat
 [npm-url]: https://npmjs.org/package/five-bells-condition
@@ -11,7 +13,7 @@
 
 ## Specification
 
-Editor's Draft: [**draft-thomas-crypto-conditions-01**](https://interledger.org/five-bells-condition/spec.html)
+Editor's Draft: [**draft-thomas-crypto-conditions-00**](https://tools.ietf.org/html/draft-thomas-crypto-conditions-00)
 
 This specification is only a draft at this stage and has not been submitted.
 
