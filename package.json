@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "asn1": "^0.2.3",
+    "oer-utils": "^1.1.1",
     "tweetnacl": "^0.14.1"
   },
   "devDependencies": {

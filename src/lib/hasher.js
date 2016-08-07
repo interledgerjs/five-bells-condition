@@ -1,7 +1,7 @@
 'use strict'
 
 const crypto = require('crypto')
-const Writer = require('./writer')
+const Writer = require('oer-utils/writer')
 
 class Hasher extends Writer {
   constructor (algorithm) {

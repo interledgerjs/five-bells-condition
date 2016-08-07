@@ -10,8 +10,8 @@ const ParseError = require('../errors/parse-error')
 const MissingDataError = require('../errors/missing-data-error')
 
 const base64url = require('../util/base64url')
-const Reader = require('./reader')
-const Writer = require('../lib/writer')
+const Reader = require('oer-utils/reader')
+const Writer = require('oer-utils/writer')
 
 // Regex for validating conditions
 //
