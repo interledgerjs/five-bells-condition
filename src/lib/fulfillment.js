@@ -6,9 +6,9 @@
 
 const TypeRegistry = require('./type-registry')
 const Condition = require('./condition')
-const Predictor = require('./predictor')
-const Writer = require('./writer')
-const Reader = require('./reader')
+const Predictor = require('oer-utils/predictor')
+const Writer = require('oer-utils/writer')
+const Reader = require('oer-utils/reader')
 const base64url = require('../util/base64url')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')

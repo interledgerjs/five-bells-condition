@@ -7,8 +7,8 @@
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('../lib/predictor')
-const Writer = require('../lib/writer')
+const Predictor = require('oer-utils/predictor')
+const Writer = require('oer-utils/writer')
 const MissingDataError = require('../errors/missing-data-error')
 const ParseError = require('../errors/parse-error')
 

@@ -9,7 +9,7 @@ const constants = require('constants')
 const Pss = require('../crypto/pss')
 const pem = require('../util/pem')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('../lib/predictor')
+const Predictor = require('oer-utils/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
 
