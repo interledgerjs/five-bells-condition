@@ -13,9 +13,6 @@ class Pss {
     this.hashAlgorithm = opts.hashAlgorithm || 'sha256'
     this.hashLength = Hasher.getLength(this.hashAlgorithm)
     this.saltLength = this.hashLength
-
-    // Used for testing
-    this.forceSalt = null
   }
 
   /**
@@ -38,7 +35,7 @@ class Pss {
       throw new Error('Encoding error: RSA modulus is too small for ' + this.hashAlgorithm)
     }
     // Step 4. Generate a random salt
-    const salt = this.forceSalt || crypto.randomBytes(this.saltLength)
+    const salt = crypto.randomBytes(this.saltLength)
 
     // Step 5. M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 6. H = Hash(M')
@@ -138,6 +135,7 @@ class Pss {
     }
     // Step 11. Let salt be the last sLen octets of DB.
     const salt = dataBlock.slice(dataBlock.length - this.saltLength)
+
     // Step 12. Let M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 13. Let H' = Hash(M'), an octet string of length hLen.
     const reconstructedHash = crypto.createHash(this.hashAlgorithm)
@@ -149,5 +147,7 @@ class Pss {
     return Buffer.compare(hash, reconstructedHash) === 0
   }
 }
+
+Pss.EMPTY_BUFFER = new Buffer(0)
 
 module.exports = Pss

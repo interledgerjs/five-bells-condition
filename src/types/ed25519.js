@@ -30,23 +30,6 @@ class Ed25519 extends Fulfillment {
   }
 
   /**
-   * Write static header fields.
-   *
-   * Some fields are common between the hash and the fulfillment payload. This
-   * method writes those field to anything implementing the Writer interface.
-   * It is used internally when generating the hash of the condition, when
-   * generating the fulfillment payload and when calculating the maximum
-   * fulfillment size.
-   *
-   * @param {Writer|Hasher|Predictor} Target for outputting the header.
-   *
-   * @private
-   */
-  writeCommonHeader (writer) {
-    writer.writeVarOctetString(this.publicKey)
-  }
-
-  /**
    * Set the public publicKey.
    *
    * This is the Ed25519 public key. It has to be provided as a buffer.
@@ -134,7 +117,7 @@ class Ed25519 extends Fulfillment {
    */
   generateHash () {
     if (!this.publicKey) {
-      throw new MissingDataError('Requires a public publicKey')
+      throw new MissingDataError('Requires a public key')
     }
 
     return this.publicKey
@@ -193,6 +176,10 @@ class Ed25519 extends Fulfillment {
    * @return {Boolean} Whether this fulfillment is valid.
    */
   validate (message) {
+    if (!Buffer.isBuffer(message)) {
+      throw new TypeError('Message must be a Buffer')
+    }
+
     // Use native library if available (~60x faster)
     let result
     if (ed25519) {

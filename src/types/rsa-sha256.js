@@ -4,14 +4,15 @@
  * @module types
  */
 
-const crypto = require('crypto')
-const constants = require('constants')
-const Pss = require('../crypto/pss')
+const Rsa = require('../crypto/rsa')
 const pem = require('../util/pem')
 const BaseSha256 = require('./base-sha256')
 const Predictor = require('oer-utils/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
+
+// Instantiate RSA signer with standard settings
+const rsa = new Rsa()
 
 /**
  * RSA-SHA-256: RSA signature condition using SHA-256.
@@ -111,14 +112,7 @@ class RsaSha256 extends BaseSha256 {
     if (!this.modulus) {
       this.setPublicModulus(pem.modulusFromPrivateKey(privateKey))
     }
-    const pss = new Pss()
-    const modulusHighByteBitLength = this.modulus[0].toString(2).length
-    const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
-    const paddedMessage = pss.encode(message, modulusBitLength - 1)
-    this.signature = crypto.privateEncrypt({
-      key: privateKey,
-      padding: constants.RSA_NO_PADDING
-    }, paddedMessage)
+    this.signature = rsa.sign(privateKey, message)
   }
 
   /**
@@ -208,16 +202,7 @@ class RsaSha256 extends BaseSha256 {
       throw new Error('Message must be provided as a Buffer, was: ' + message)
     }
 
-    // Verify signature
-    const publicKey = pem.modulusToPem(this.modulus)
-    const encodedMessage = crypto.publicDecrypt({
-      key: publicKey,
-      padding: constants.RSA_NO_PADDING
-    }, this.signature)
-    const pss = new Pss()
-    const modulusHighByteBitLength = this.modulus[0].toString(2).length
-    const modulusBitLength = (this.modulus.length - 1) * 8 + modulusHighByteBitLength
-    const pssResult = pss.verify(message, encodedMessage, modulusBitLength - 1)
+    const pssResult = rsa.verify(this.modulus, message, this.signature)
 
     if (!pssResult) {
       throw new ValidationError('Invalid RSA signature')

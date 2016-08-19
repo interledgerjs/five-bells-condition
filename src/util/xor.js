@@ -5,7 +5,7 @@ function xor (a, b) {
     throw new Error('Arguments must be buffers')
   }
   if (a.length !== b.length) {
-    throw new Error('Can only XOR buffers of the same length')
+    throw new Error('Buffers must be the same length')
   }
   const result = new Buffer(a.length)
   for (let i = 0; i < a.length; i++) {

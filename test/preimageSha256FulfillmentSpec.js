@@ -1,9 +1,91 @@
 'use strict'
 
 const assert = require('chai').assert
-const condition = require('..')
+const cc = require('..')
+const Writer = require('oer-utils/writer')
+const Reader = require('oer-utils/reader')
+require('./helpers/hooks')
 
 describe('PreimageSha256', function () {
+  beforeEach(function () {
+    this.example = new cc.PreimageSha256()
+  })
+
+  describe('writeHashPayload', function () {
+    it('should contain just the preimage', function () {
+      const writer = new Writer()
+      this.example.setPreimage(new Buffer('010203fdfeff', 'hex'))
+      this.example.writeHashPayload(writer)
+
+      assert.equal(writer.getBuffer().toString('hex'), '010203fdfeff')
+    })
+
+    it('should throw if no preimage was provided', function () {
+      const writer = new Writer()
+
+      assert.throws(() => this.example.writeHashPayload(writer),
+        'Could not calculate hash, no preimage provided')
+    })
+  })
+
+  describe('setPreimage', function () {
+    it('should set the preimage property', function () {
+      const buffer = new Buffer('010203fdfeff', 'hex')
+      this.example.setPreimage(buffer)
+
+      assert.equal(this.example.preimage, buffer)
+    })
+
+    it('should throw if the preimage is a string', function () {
+      assert.throws(() => this.example.setPreimage('test'),
+        'Preimage must be a buffer, was')
+    })
+
+    it('should throw if the preimage is an array', function () {
+      assert.throws(() => this.example.setPreimage([0, 1, 2, 3]),
+        'Preimage must be a buffer, was')
+    })
+
+    it('should throw if the preimage is a UInt8Array', function () {
+      assert.throws(() => this.example.setPreimage(new Uint8Array([0, 1, 2, 3])),
+        'Preimage must be a buffer, was')
+    })
+  })
+
+  describe('parsePayload', function () {
+    it('should set the preimage property', function () {
+      const reader = new Reader(new Buffer('010203fdfeff', 'hex'))
+
+      this.example.parsePayload(reader, 6)
+
+      assert.equal(this.example.preimage.toString('hex'), '010203fdfeff')
+    })
+
+    it('should throw when passed too large of a length property', function () {
+      const reader = new Reader(new Buffer('010203fdfeff', 'hex'))
+
+      assert.throws(() => this.example.parsePayload(reader, 8),
+        'Tried to read 8 bytes, but only 6 bytes available')
+    })
+  })
+
+  describe('writePayload', function () {
+    it('should contain just the preimage', function () {
+      const writer = new Writer()
+      this.example.setPreimage(new Buffer('010203fdfeff', 'hex'))
+      this.example.writePayload(writer)
+
+      assert.equal(writer.getBuffer().toString('hex'), '010203fdfeff')
+    })
+
+    it('should throw if no preimage was provided', function () {
+      const writer = new Writer()
+
+      assert.throws(() => this.example.writePayload(writer),
+        'Preimage must be specified')
+    })
+  })
+
   testFromPreimage(
     '',
     'cf:0:',
@@ -94,7 +176,7 @@ describe('PreimageSha256', function () {
       })
 
       it('generates correct fulfillment', function () {
-        const f = new condition.PreimageSha256()
+        const f = new cc.PreimageSha256()
         f.setPreimage(this.preimage)
         const uri = f.serializeUri()
 
@@ -102,7 +184,7 @@ describe('PreimageSha256', function () {
       })
 
       it('generates condition ' + conditionUri, function () {
-        const f = new condition.PreimageSha256()
+        const f = new cc.PreimageSha256()
         f.setPreimage(this.preimage)
         const uri = f.getConditionUri()
 
@@ -110,19 +192,25 @@ describe('PreimageSha256', function () {
       })
 
       it('parsing fulfillment generates condition', function () {
-        const f = condition.fromFulfillmentUri(fulfillmentUri)
+        const f = cc.fromFulfillmentUri(fulfillmentUri)
         const uri = f.getConditionUri()
 
         assert.equal(uri, conditionUri)
       })
 
       it('parsed condition matches generated condition', function () {
-        const f = new condition.PreimageSha256()
+        const f = new cc.PreimageSha256()
         f.setPreimage(this.preimage)
         const generatedCondition = f.getCondition()
-        const parsedCondition = condition.fromConditionUri(conditionUri)
+        const parsedCondition = cc.fromConditionUri(conditionUri)
 
         assert.deepEqual(generatedCondition, parsedCondition)
+      })
+
+      it('validates the fulfillment', function () {
+        const result = cc.validateFulfillment(fulfillmentUri, conditionUri)
+
+        assert.equal(result, true)
       })
     })
   }

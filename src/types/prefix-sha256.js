@@ -41,30 +41,17 @@ class PrefixSha256 extends BaseSha256 {
    * Each prefix condition builds on an existing condition which is provided via
    * this method.
    *
-   * @param {Condition} subcondition Condition that will receive the prefixed
-   *   message.
+   * @param {Condition|String} subcondition Condition object or URI string
+   *   representing the condition that will receive the prefixed message.
    */
   setSubcondition (subcondition) {
-    if (!(subcondition instanceof Condition)) {
+    if (typeof subcondition === 'string') {
+      subcondition = Condition.fromUri(subcondition)
+    } else if (!(subcondition instanceof Condition)) {
       throw new Error('Subconditions must be URIs or objects of type Condition')
     }
 
     this.subcondition = subcondition
-  }
-
-  /**
-   * Set the (unfulfilled) subcondition.
-   *
-   * This will automatically parse the URI and call setSubcondition.
-   *
-   * @param {String} Subcondition URI.
-   */
-  setSubconditionUri (subconditionUri) {
-    if (typeof subconditionUri !== 'string') {
-      throw new TypeError('Subcondition must be provided as a URI string')
-    }
-
-    this.setSubcondition(Condition.fromUri(subconditionUri))
   }
 
   /**
@@ -76,29 +63,17 @@ class PrefixSha256 extends BaseSha256 {
    * Note that you only have to add either the subcondition or a subfulfillment,
    * but not both.
    *
-   * @param {Fulfillment} fulfillment Fulfillment to use for the subcondition.
+   * @param {Fulfillment|String} fulfillment Fulfillment object or URI string
+   *   representing the fulfillment to use as the subcondition.
    */
   setSubfulfillment (subfulfillment) {
-    if (!(subfulfillment instanceof Fulfillment)) {
+    if (typeof subfulfillment === 'string') {
+      subfulfillment = Fulfillment.fromUri(subfulfillment)
+    } else if (!(subfulfillment instanceof Fulfillment)) {
       throw new Error('Subfulfillments must be objects of type Fulfillment')
     }
 
     this.subcondition = subfulfillment
-  }
-
-  /**
-   * Set the (fulfilled) subcondition.
-   *
-   * This will automatically parse the URI and call setSubfulfillment.
-   *
-   * @param {String} Subfulfillment URI.
-   */
-  setSubfulfillmentUri (subfulfillmentUri) {
-    if (typeof subfulfillmentUri !== 'string') {
-      throw new TypeError('Subfulfillment must be provided as a URI string')
-    }
-
-    this.setSubfulfillment(Fulfillment.fromUri(subfulfillmentUri))
   }
 
   /**
@@ -240,5 +215,11 @@ class PrefixSha256 extends BaseSha256 {
 
 PrefixSha256.TYPE_ID = 1
 PrefixSha256.FEATURE_BITMASK = 0x05
+
+// DEPRECATED
+PrefixSha256.prototype.setSubconditionUri =
+  PrefixSha256.prototype.setSubcondition
+PrefixSha256.prototype.setSubfulfillmentUri =
+  PrefixSha256.prototype.setSubfulfillment
 
 module.exports = PrefixSha256

@@ -155,7 +155,7 @@ class Condition {
    */
   getHash () {
     if (!this.hash) {
-      throw new MissingDataError('Maximum fulfillment length not set')
+      throw new MissingDataError('Hash not set')
     }
 
     return this.hash
@@ -172,7 +172,7 @@ class Condition {
    */
   setHash (hash) {
     if (!Buffer.isBuffer(hash)) {
-      throw new Error('Hash must be a Buffer')
+      throw new TypeError('Hash must be a Buffer')
     }
 
     this.hash = hash
@@ -214,6 +214,12 @@ class Condition {
    * @param {Number} Maximum fulfillment payload length in bytes.
    */
   setMaxFulfillmentLength (maxFulfillmentLength) {
+    if (!Number.isInteger(maxFulfillmentLength)) {
+      throw new TypeError('Fulfillment length must be an integer')
+    } else if (maxFulfillmentLength < 0) {
+      throw new TypeError('Fulfillment length must be positive or zero')
+    }
+
     this.maxFulfillmentLength = maxFulfillmentLength
   }
 
