@@ -61,4 +61,28 @@ describe('PrefixSha256', function () {
       })
     })
   }
+
+  describe('instance', function () {
+    beforeEach(function () {
+      this.cond = new cc.PrefixSha256()
+    })
+
+    describe('setSubcondition', function () {
+      it('should accept a Condition object', function () {
+        const preimage = new cc.PreimageSha256()
+        preimage.setPreimage(new Buffer(0))
+        const subcond = preimage.getCondition()
+        this.cond.setSubcondition(subcond)
+
+        assert.equal(this.cond.subcondition, subcond)
+      })
+
+      it('should accept a Condition object', function () {
+        const subcond = 'cc:1:7:Yja3qFj7NS_VwwE7aJjPJos-uFCzStJlJLD4VsNy2XM:1'
+        this.cond.setSubcondition(subcond)
+
+        assert.equal(this.cond.subcondition.serializeUri(), subcond)
+      })
+    })
+  })
 })
