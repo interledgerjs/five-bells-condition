@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "asn1.js": "^4.9.0",
-    "tweetnacl": "^0.14.1"
+    "chloride": "^2.2.2"
   },
   "devDependencies": {
     "babel-loader": "^6.2.7",
@@ -90,8 +90,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "optionalDependencies": {
-    "ed25519": "0.0.4"
   }
 }
