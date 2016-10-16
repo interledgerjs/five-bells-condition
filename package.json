@@ -52,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:interledger/five-bells-condition.git"
+    "url": "git@github.com:interledgerjs/five-bells-condition.git"
   },
   "keywords": [
     "cryptographic",
@@ -66,9 +66,9 @@
   "author": "Ripple <info@ripple.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/interledger/five-bells-condition/issues"
+    "url": "https://github.com/interledgerjs/five-bells-condition/issues"
   },
-  "homepage": "https://github.com/interledger/five-bells-condition",
+  "homepage": "https://github.com/interledgerjs/five-bells-condition",
   "config": {
     "ghooks": {
       "commit-msg": "validate-commit-msg"

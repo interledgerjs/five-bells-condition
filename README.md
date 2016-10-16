@@ -4,10 +4,10 @@
 
 [npm-image]: https://img.shields.io/npm/v/five-bells-condition.svg?style=flat
 [npm-url]: https://npmjs.org/package/five-bells-condition
-[circle-image]: https://circleci.com/gh/interledger/five-bells-condition.svg?style=shield
-[circle-url]: https://circleci.com/gh/interledger/five-bells-condition
-[codecov-image]: https://codecov.io/gh/interledger/five-bells-condition/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/interledger/five-bells-condition
+[circle-image]: https://circleci.com/gh/interledgerjs/five-bells-condition.svg?style=shield
+[circle-url]: https://circleci.com/gh/interledgerjs/five-bells-condition
+[codecov-image]: https://codecov.io/gh/interledgerjs/five-bells-condition/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/interledgerjs/five-bells-condition
 
 > Implementation of crypto-conditions
 
