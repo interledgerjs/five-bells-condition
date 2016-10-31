@@ -1,18 +1,29 @@
 module.exports = function (karma) {
   karma.set({
 
-    frameworks: [ 'browserify', 'mocha' ],
+    frameworks: [ 'mocha' ],
     files: ['test/*Spec.js'],
     preprocessors: {
-      'test/*Spec.js': [ 'browserify' ]
+      'test/*Spec.js': [ 'webpack' ]
     },
 
-    browserify: {
-      debug: true,
-      transform: [
-        'brfs',
-        [ 'babelify', { presets: 'es2015', plugins: 'transform-runtime' } ]
-      ]
+    webpack: {
+      progress: true,
+      module: {
+        loaders: [
+          { test: /\.js$/, exclude: /node_modules/, loader: 'babel'},
+          { test: /\.json$/, loader: 'json-loader' }
+        ],
+        noParse: [
+          /sinon/
+        ],
+      },
+      node: {
+        fs: "empty"
+      },
+      resolve: {
+        alias: { sinon: 'sinon/pkg/sinon' }
+      }
     },
 
     browsers: [ 'PhantomJS' ]
