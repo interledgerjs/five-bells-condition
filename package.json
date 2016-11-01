@@ -7,6 +7,12 @@
   "directories": {
     "test": "test"
   },
+  "files": [
+    "index.js",
+    "src",
+    "dist",
+    "schemas"
+  ],
   "dependencies": {
     "asn1": "^0.2.3",
     "core-js": "^2.4.1",
