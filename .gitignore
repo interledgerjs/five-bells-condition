@@ -7,3 +7,4 @@ docs/build/
 /docs/README.intermediate.md
 .tags*
 /jsdoc-out/
+/dist/

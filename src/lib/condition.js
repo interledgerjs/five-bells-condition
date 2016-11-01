@@ -12,6 +12,7 @@ const MissingDataError = require('../errors/missing-data-error')
 const base64url = require('../util/base64url')
 const Reader = require('oer-utils/reader')
 const Writer = require('oer-utils/writer')
+const isInteger = require('core-js/library/fn/number/is-integer')
 
 // Regex for validating conditions
 //
@@ -214,7 +215,7 @@ class Condition {
    * @param {Number} Maximum fulfillment payload length in bytes.
    */
   setMaxFulfillmentLength (maxFulfillmentLength) {
-    if (!Number.isInteger(maxFulfillmentLength)) {
+    if (!isInteger(maxFulfillmentLength)) {
       throw new TypeError('Fulfillment length must be an integer')
     } else if (maxFulfillmentLength < 0) {
       throw new TypeError('Fulfillment length must be positive or zero')
