@@ -9,7 +9,7 @@ describe('Fulfillment', function () {
     it('successfully parses the minimal fulfillment', function () {
       const fulfillment = Fulfillment.fromUri('cf:0:')
 
-      assert.equal(fulfillment.constructor.name, 'PreimageSha256')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), '')
     })
 
@@ -17,7 +17,7 @@ describe('Fulfillment', function () {
       const fulfillment = Fulfillment.fromUri('cf:0:UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw')
 
       const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
-      assert.equal(fulfillment.constructor.name, 'PreimageSha256')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 
@@ -25,7 +25,7 @@ describe('Fulfillment', function () {
       const fulfillment = Fulfillment.fromUri('cf:0:-u_6')
 
       const expectedPreimage = new Buffer('+u/6', 'base64')
-      assert.equal(fulfillment.constructor.name, 'PreimageSha256')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 
@@ -99,7 +99,7 @@ describe('Fulfillment', function () {
     it('successfully parses the minimal fulfillment', function () {
       const fulfillment = Fulfillment.fromBinary(new Buffer('000000', 'hex'))
 
-      assert.equal(fulfillment.constructor.name, 'PreimageSha256')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), '')
     })
 
@@ -108,7 +108,7 @@ describe('Fulfillment', function () {
       const fulfillment = Fulfillment.fromBinary(fulfillmentBinary)
 
       const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
-      assert.equal(fulfillment.constructor.name, 'PreimageSha256')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 
@@ -116,7 +116,7 @@ describe('Fulfillment', function () {
       const fulfillment = Fulfillment.fromBinary(new Buffer('000003faeffa', 'hex'))
 
       const expectedPreimage = new Buffer('+u/6', 'base64')
-      assert.equal(fulfillment.constructor.name, 'PreimageSha256')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 

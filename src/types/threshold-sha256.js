@@ -11,6 +11,7 @@ const Predictor = require('oer-utils/predictor')
 const Writer = require('oer-utils/writer')
 const MissingDataError = require('../errors/missing-data-error')
 const ParseError = require('../errors/parse-error')
+const isInteger = require('core-js/library/fn/number/is-integer')
 
 const EMPTY_BUFFER = new Buffer(0)
 
@@ -71,7 +72,7 @@ class ThresholdSha256 extends BaseSha256 {
 
     if (typeof weight === 'undefined') {
       weight = 1
-    } else if (!Number.isInteger(weight) || weight < 1) {
+    } else if (!isInteger(weight) || weight < 1) {
       throw new TypeError('Invalid weight, not an integer: ' + weight)
     }
 
@@ -105,7 +106,7 @@ class ThresholdSha256 extends BaseSha256 {
 
     if (typeof weight === 'undefined') {
       weight = 1
-    } else if (!Number.isInteger(weight)) {
+    } else if (!isInteger(weight)) {
       throw new Error('Invalid weight, not an integer: ' + weight)
     }
 
@@ -127,7 +128,7 @@ class ThresholdSha256 extends BaseSha256 {
    * @param {Number} threshold Integer threshold
    */
   setThreshold (threshold) {
-    if (!Number.isInteger(threshold) || threshold < 1) {
+    if (!isInteger(threshold) || threshold < 1) {
       throw new TypeError('Threshold must be a integer greater than zero, was: ' +
         threshold)
     }

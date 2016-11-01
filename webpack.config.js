@@ -1,24 +1,25 @@
 const webpack = require('webpack')
-const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+const path = require('path')
+const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
 
 module.exports = {
-  entry: './index.js',
+  devtool: 'inline-source-map',
+  entry: ['babel-polyfill', './index.js'],
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     filename: 'index.js',
     library: 'FiveBellsCondition',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
-  progress: true,
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel'},
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel' },
       { test: /\.json$/, loader: 'json-loader' }
     ]
   },
   node: {
-    fs: "empty"
+    fs: 'empty'
   },
   plugins: [
     new UglifyJsPlugin()

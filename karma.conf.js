@@ -2,28 +2,32 @@ module.exports = function (karma) {
   karma.set({
 
     frameworks: [ 'mocha' ],
-    files: ['test/*Spec.js'],
+    files: ['test/index.js'],
     preprocessors: {
-      'test/*Spec.js': [ 'webpack' ]
+      'test/index.js': [ 'webpack', 'sourcemap' ]
     },
 
     webpack: {
-      progress: true,
+      devtool: 'inline-source-map',
       module: {
         loaders: [
-          { test: /\.js$/, exclude: /node_modules/, loader: 'babel'},
+          { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel' },
           { test: /\.json$/, loader: 'json-loader' }
         ],
         noParse: [
           /sinon/
-        ],
-      },
-      node: {
-        fs: "empty"
+        ]
       },
       resolve: {
         alias: { sinon: 'sinon/pkg/sinon' }
+      },
+      node: {
+        fs: 'empty'
       }
+    },
+
+    webpackMiddleware: {
+      stats: 'errors-only'
     },
 
     browsers: [ 'PhantomJS' ]
