@@ -1,6 +1,5 @@
 module.exports = function (karma) {
   karma.set({
-
     frameworks: [ 'mocha' ],
     files: ['test/index.js'],
     preprocessors: {
