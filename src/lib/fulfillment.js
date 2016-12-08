@@ -185,8 +185,7 @@ class Fulfillment {
    */
   serializeUri () {
     return 'cf' +
-      ':' + this.getTypeId().toString(16) +
-      ':' + base64url.encode(this.serializePayload())
+      ':' + base64url.encode(this.serializeBinary())
   }
 
   /**
