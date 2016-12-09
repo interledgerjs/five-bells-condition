@@ -111,22 +111,20 @@ describe('ThresholdSha256', function () {
     const calc = cc.ThresholdSha256.calculateWorstCaseLength
       .bind(cc.ThresholdSha256)
 
-    testWith(3, [1, 4], [2, 3], 3)
-    testWith(200, [115, 300], [52, 9001], 9001)
-    testWith(200, [115, 142, 300], [52, 18, 9001], 9001)
-    testWith(400, [162, 210, 143, 195, 43], [768, 514, 350, 382, 57], 1632)
-    testWith(100, [15, 31, 12, 33, 8], [139, 134, 314, 133, 464], -Infinity)
+    testWith(2, [300, 200, 100], 500)
+    testWith(2, [100, 200, 300], 500)
+    testWith(1, [200, 100, 300], 300)
+    testWith(1, [200, 100, 300], 300)
+    testWith(3, [100, 200], -Infinity)
 
-    function testWith (threshold, weights, costs, expectedResult) {
-      it(`when given threshold=${threshold} weights=${weights} costs=${costs} returns ${expectedResult}`, function () {
+    function testWith (threshold, costs, expectedResult) {
+      it(`when given threshold=${threshold} costs=${costs} returns ${expectedResult}`, function () {
         const subconditions = []
-        for (let i = 0; i < weights.length; i++) {
+        for (let i = 0; i < costs.length; i++) {
           subconditions.push({
-            weight: weights[i],
             size: costs[i]
           })
         }
-        subconditions.sort((a, b) => b.weight - a.weight)
 
         const worstCase = calc(threshold, subconditions)
 

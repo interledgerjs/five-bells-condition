@@ -27,8 +27,6 @@ const FULFILLMENT = 'fulfillment'
  * to equal the number of subconditions (n-of-n) or the OR operator by setting
  * the thresold to one (1-of-n).
  *
- * Threshold conditions allows each subcondition to carry an integer weight.
- *
  * Since threshold conditions operate on conditions, they can be nested as well
  * which allows the creation of deep threshold trees of public keys.
  *
@@ -37,9 +35,8 @@ const FULFILLMENT = 'fulfillment'
  * actually used in a fulfillment, will actually appear in the fulfillment,
  * saving space.
  *
- * One way to formally interpret threshold conditions is as a boolean weighted
- * threshold gate. A tree of threshold conditions forms a boolean weighted
- * threhsold circuit.
+ * One way to formally interpret a threshold condition is as a booleanthreshold
+ * gate. A tree of threshold conditions forms a boolean threshold circuit.
  *
  * THRESHOLD-SHA-256 is assigned the type ID 2. It relies on the SHA-256 and
  * THRESHOLD feature suites which corresponds to a feature bitmask of 0x09.
@@ -61,25 +58,17 @@ class ThresholdSha256 extends BaseSha256 {
    *
    * @param {Condition|String} subcondition Condition object or URI string
    *   representing a new subcondition to be added.
-   * @param {Number} [weight=1] Integer weight of the subcondition.
    */
-  addSubcondition (subcondition, weight) {
+  addSubcondition (subcondition) {
     if (typeof subcondition === 'string') {
       subcondition = Condition.fromUri(subcondition)
     } else if (!(subcondition instanceof Condition)) {
       throw new Error('Subconditions must be URIs or objects of type Condition')
     }
 
-    if (typeof weight === 'undefined') {
-      weight = 1
-    } else if (!isInteger(weight) || weight < 1) {
-      throw new TypeError('Invalid weight, not an integer: ' + weight)
-    }
-
     this.subconditions.push({
       type: CONDITION,
-      body: subcondition,
-      weight: weight
+      body: subcondition
     })
   }
 
@@ -95,35 +84,26 @@ class ThresholdSha256 extends BaseSha256 {
    *
    * @param {Fulfillment|String} subfulfillment Fulfillment object or URI string
    *   representing a new subfulfillment to be added.
-   * @param {Number} [weight=1] Integer weight of the subcondition.
    */
-  addSubfulfillment (subfulfillment, weight) {
+  addSubfulfillment (subfulfillment) {
     if (typeof subfulfillment === 'string') {
       subfulfillment = Fulfillment.fromUri(subfulfillment)
     } else if (!(subfulfillment instanceof Fulfillment)) {
       throw new Error('Subfulfillments must be URIs or objects of type Fulfillment')
     }
 
-    if (typeof weight === 'undefined') {
-      weight = 1
-    } else if (!isInteger(weight)) {
-      throw new Error('Invalid weight, not an integer: ' + weight)
-    }
-
     this.subconditions.push({
       type: FULFILLMENT,
-      body: subfulfillment,
-      weight: weight
+      body: subfulfillment
     })
   }
 
   /**
    * Set the threshold.
    *
-   * Determines the weighted threshold that is used to consider this condition
-   * fulfilled. If the added weight of all valid subfulfillments is greater or
-   * equal to this number, the threshold condition is considered to be
-   * fulfilled.
+   * Determines the threshold that is used to consider this condition fulfilled.
+   * If the number of valid subfulfillments is greater or equal to this number,
+   * the threshold condition is considered to be fulfilled.
    *
    * @param {Number} threshold Integer threshold
    */
@@ -172,10 +152,9 @@ class ThresholdSha256 extends BaseSha256 {
     }
 
     const subconditions = this.subconditions
-      // Serialize each subcondition with weight
+      // Serialize each subcondition
       .map((c) => {
         const writer = new Writer()
-        writer.writeVarUInt(c.weight)
         writer.write(
           c.type === FULFILLMENT
             ? c.body.getConditionBinary()
@@ -219,11 +198,9 @@ class ThresholdSha256 extends BaseSha256 {
         totalConditionLength += conditionLength
 
         return {
-          weight: cond.weight,
           size: fulfillmentLength - conditionLength
         }
       })
-      .sort((a, b) => b.weight - a.weight)
 
     const worstCaseFulfillmentsLength =
       totalConditionLength +
@@ -233,7 +210,7 @@ class ThresholdSha256 extends BaseSha256 {
       )
 
     if (worstCaseFulfillmentsLength === -Infinity) {
-      throw new MissingDataError('Insufficient subconditions/weights to meet the threshold')
+      throw new MissingDataError('Insufficient number of subconditions to meet the threshold')
     }
 
     // Calculate resulting total maximum fulfillment size
@@ -242,9 +219,6 @@ class ThresholdSha256 extends BaseSha256 {
     predictor.writeVarUInt(this.subconditions.length)  // count
     this.subconditions.forEach((cond) => {
       predictor.writeUInt8()                 // presence bitmask
-      if (cond.weight !== 1) {
-        predictor.writeUInt32(cond.weight)   // weight
-      }
     })
     // Represents the sum of CONDITION/FULFILLMENT values
     predictor.skip(worstCaseFulfillmentsLength)
@@ -277,9 +251,6 @@ class ThresholdSha256 extends BaseSha256 {
    * length for a valid, minimal (no fulfillment can be removed) set of
    * subconditions.
    *
-   * Note that the input array of subconditions must be sorted by weight
-   * descending.
-   *
    * The algorithm works by recursively adding and not adding each subcondition.
    * Finally, it determines the maximum of all valid solutions.
    *
@@ -288,12 +259,8 @@ class ThresholdSha256 extends BaseSha256 {
    * @param {Number} threshold Threshold that the remaining subconditions have
    *   to meet.
    * @param {Object[]} subconditions Set of subconditions.
-   * @param {Number} subconditions[].weight Weight of the subcondition
    * @param {Number} subconditions[].size Maximum number of bytes added to the
    *   size if the fulfillment is included.
-   * @param {Number} subconditions[].omitSize Maximum number of bytes added to
-   *   the size if the fulfillment is omitted (and the condition is added
-   *   instead.)
    * @param {Number} [size=0] Size the fulfillment already has (used by the
    *   recursive calls.)
    * @param {Number} [index=0] Current index in the subconditions array (used by
@@ -306,26 +273,13 @@ class ThresholdSha256 extends BaseSha256 {
   static calculateWorstCaseLength (threshold, subconditions, index) {
     index = index || 0
 
-    if (threshold <= 0) {
-      return 0
-    } else if (index < subconditions.length) {
-      const nextCondition = subconditions[index]
+    subconditions = subconditions.map(cond => cond.size).sort()
 
-      return Math.max(
-        nextCondition.size + this.calculateWorstCaseLength(
-          threshold - nextCondition.weight,
-          subconditions,
-          index + 1
-        ),
-        this.calculateWorstCaseLength(
-          threshold,
-          subconditions,
-          index + 1
-        )
-      )
-    } else {
+    if (subconditions.length < threshold) {
       return -Infinity
     }
+
+    return subconditions.slice(-threshold).reduce((total, size) => total + size, 0)
   }
 
   /**
@@ -343,16 +297,15 @@ class ThresholdSha256 extends BaseSha256 {
 
     const conditionCount = reader.readVarUInt()
     for (let i = 0; i < conditionCount; i++) {
-      const weight = reader.readVarUInt()
       const fulfillment = reader.readVarOctetString()
       const condition = reader.readVarOctetString()
 
       if (fulfillment.length && condition.length) {
         throw new ParseError('Subconditions may not provide both subcondition and fulfillment.')
       } else if (fulfillment.length) {
-        this.addSubfulfillment(Fulfillment.fromBinary(fulfillment), weight)
+        this.addSubfulfillment(Fulfillment.fromBinary(fulfillment))
       } else if (condition.length) {
-        this.addSubcondition(Condition.fromBinary(condition), weight)
+        this.addSubcondition(Condition.fromBinary(condition))
       } else {
         throw new ParseError('Subconditions must provide either subcondition or fulfillment.')
       }
@@ -383,7 +336,7 @@ class ThresholdSha256 extends BaseSha256 {
     const smallestSet = this.constructor.calculateSmallestValidFulfillmentSet(
       this.threshold,
       subfulfillments
-    ).set
+    )
 
     const optimizedSubfulfillments =
       // Take minimum set of fulfillments and turn rest into conditions
@@ -401,7 +354,6 @@ class ThresholdSha256 extends BaseSha256 {
     const serializedSubconditions = optimizedSubfulfillments
       .map((cond) => {
         const writer = new Writer()
-        writer.writeVarUInt(cond.weight)
         writer.writeVarOctetString(cond.type === FULFILLMENT ? cond.body.serializeBinary() : EMPTY_BUFFER)
         writer.writeVarOctetString(cond.type === CONDITION ? cond.body.serializeBinary() : EMPTY_BUFFER)
         return writer.getBuffer()
@@ -422,57 +374,14 @@ class ThresholdSha256 extends BaseSha256 {
    *
    * @param {Number} threshold (Remaining) threshold that must be met.
    * @param {Object[]} fulfillments Set of fulfillments
-   * @param {Object} [state] Used for recursion
-   * @param {Number} state.index Current index being processed.
-   * @param {Number} state.size Size of the binary so far
-   * @param {Object[]} state.set Set of fulfillments that were included.
-   * @return {Object} Result with size and set properties.
+   * @return {Object[]} Minimal set of fulfillments.
    *
    * @private
    */
-  static calculateSmallestValidFulfillmentSet (threshold, fulfillments, state) {
-    state = state || {
-      index: 0,
-      size: 0,
-      set: []
-    }
+  static calculateSmallestValidFulfillmentSet (threshold, fulfillments) {
+    fulfillments.sort((a, b) => b.size - a.size)
 
-    if (threshold <= 0) {
-      return {
-        size: state.size,
-        set: state.set
-      }
-    } else if (state.index < fulfillments.length) {
-      const nextFulfillment = fulfillments[state.index]
-
-      const withNext = this.calculateSmallestValidFulfillmentSet(
-        threshold - nextFulfillment.weight,
-        fulfillments,
-        {
-          size: state.size + nextFulfillment.size,
-          index: state.index + 1,
-          set: state.set.concat(nextFulfillment.index)
-        }
-      )
-
-      const withoutNext = this.calculateSmallestValidFulfillmentSet(
-        threshold,
-        fulfillments,
-        {
-          size: state.size + nextFulfillment.omitSize,
-          index: state.index + 1,
-          set: state.set
-        }
-      )
-
-      return withNext.size < withoutNext.size
-        ? withNext
-        : withoutNext
-    } else {
-      return {
-        size: Infinity
-      }
-    }
+    return fulfillments.slice(0, threshold)
   }
 
   /**
@@ -506,21 +415,14 @@ class ThresholdSha256 extends BaseSha256 {
   validate (message) {
     const fulfillments = this.subconditions.filter((cond) => cond.type === FULFILLMENT)
 
-    // Find total weight and smallest individual weight
-    let minWeight = Infinity
-    const totalWeight = fulfillments.reduce((total, cond) => {
-      minWeight = Math.min(minWeight, cond.weight)
-      return total + cond.weight
-    }, 0)
-
-    // Total weight must meet the threshold
-    if (totalWeight < this.threshold) {
+    // Number of fulfilled conditions must meet the threshold
+    if (fulfillments.length < this.threshold) {
       throw new Error('Threshold not met')
     }
 
     // But the set must be minimal, there mustn't be any fulfillments
     // we could take out
-    if (this.threshold + minWeight <= totalWeight) {
+    if (fulfillments.length > this.threshold) {
       throw new Error('Fulfillment is not minimal')
     }
 
