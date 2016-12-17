@@ -10,7 +10,7 @@ module.exports = function (karma) {
       devtool: 'inline-source-map',
       module: {
         loaders: [
-          { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel' },
+          { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel-loader' },
           { test: /\.json$/, loader: 'json-loader' }
         ],
         noParse: [
