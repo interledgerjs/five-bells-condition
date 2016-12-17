@@ -311,7 +311,7 @@ const myCondition = new cc.Condition()
 myCondition.setTypeId(cc.PreimageSha256.TYPE_ID)
 myCondition.setBitmask(cc.PreimageSha256.FEATURE_BITMASK)
 myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
-myCondition.setMaxFulfillmentLength(0)
+myCondition.setCost(0)
 console.log(myCondition.serializeUri())
 // prints 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
 ```

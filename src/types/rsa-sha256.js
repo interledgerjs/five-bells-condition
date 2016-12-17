@@ -7,7 +7,6 @@
 const Rsa = require('../crypto/rsa')
 const pem = require('../util/pem')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('oer-utils/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
 
@@ -42,7 +41,7 @@ class RsaSha256 extends BaseSha256 {
    * generating the fulfillment payload and when calculating the maximum
    * fulfillment size.
    *
-   * @param {Writer|Hasher|Predictor} Target for outputting the header.
+   * @param {Writer|Hasher} Target for outputting the header.
    *
    * @private
    */
@@ -163,29 +162,20 @@ class RsaSha256 extends BaseSha256 {
   }
 
   /**
-   * Calculates the longest possible fulfillment length.
+   * Calculate the cost of fulfilling this condition.
    *
-   * The longest fulfillment for an RSA condition is the length of a fulfillment
-   * where the dynamic message length equals its maximum length.
+   * The cost of the RSA condition is the size of the modulus squared, divided
+   * by 64.
    *
-   * @return {Number} Maximum length of the fulfillment payload
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  calculateMaxFulfillmentLength () {
-    const predictor = new Predictor()
-
+  calculateCost () {
     if (!this.modulus) {
       throw new MissingDataError('Requires a public modulus')
     }
 
-    // Calculate the length that the common header would have
-    this.writeCommonHeader(predictor)
-
-    // Signature
-    predictor.writeVarOctetString(this.modulus)
-
-    return predictor.getSize()
+    return Math.pow(rsa.getModulusBitLength(this.modulus), 2) >>> RsaSha256.COST_RIGHT_SHIFT
   }
 
   /**
@@ -214,5 +204,7 @@ class RsaSha256 extends BaseSha256 {
 
 RsaSha256.TYPE_ID = 3
 RsaSha256.FEATURE_BITMASK = 0x11
+
+RsaSha256.COST_RIGHT_SHIFT = 6 // 2^6 = 64
 
 module.exports = RsaSha256

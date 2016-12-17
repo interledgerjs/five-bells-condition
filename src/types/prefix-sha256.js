@@ -7,7 +7,6 @@
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('oer-utils/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 
 /**
@@ -129,33 +128,31 @@ class PrefixSha256 extends BaseSha256 {
   }
 
   /**
-   * Calculates the maximum size of any fulfillment for this condition.
+   * Calculate the cost of fulfilling this condition.
    *
-   * In a threshold condition, the maximum length of the fulfillment depends on
-   * the maximum lengths of the fulfillments of the subconditions. However,
-   * usually not all subconditions must be fulfilled in order to meet the
-   * threshold.
+   * The cost of the prefix condition equals (1 + l/256) * (16384 + s) where l
+   * is the prefix length in bytes and s is the subcondition cost.
    *
-   * Consequently, this method relies on an algorithm to determine which
-   * combination of fulfillments, where no fulfillment can be left out, results
-   * in the largest total fulfillment size.
-   *
-   * @return {Number} Maximum length of the fulfillment payload
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  calculateMaxFulfillmentLength () {
-    // Calculate length of subfulfillment
-    const subfulfillmentLength = this.subcondition instanceof Condition
-      ? this.subcondition.getMaxFulfillmentLength()
-      : this.subcondition.getCondition().getMaxFulfillmentLength()
+  calculateCost () {
+    if (!this.prefix) {
+      throw new MissingDataError('Prefix must be specified')
+    }
 
-    // Calculate resulting total maximum fulfillment size
-    const predictor = new Predictor()
-    predictor.writeVarOctetString(this.prefix)
-    predictor.skip(subfulfillmentLength)
+    if (!this.subcondition) {
+      throw new MissingDataError('Subcondition must be specified')
+    }
 
-    return predictor.getSize()
+    const subconditionCost = this.subcondition instanceof Condition
+      ? this.subcondition.getCost()
+      : this.subcondition.getCondition().getCost()
+
+    return Math.floor(
+      (1 + this.prefix.length / PrefixSha256.CONSTANT_COST_DIVISOR) *
+      (PrefixSha256.CONSTANT_BASE_COST + subconditionCost)
+    )
   }
 
   /**
@@ -215,6 +212,9 @@ class PrefixSha256 extends BaseSha256 {
 
 PrefixSha256.TYPE_ID = 1
 PrefixSha256.FEATURE_BITMASK = 0x05
+
+PrefixSha256.CONSTANT_BASE_COST = 16384
+PrefixSha256.CONSTANT_COST_DIVISOR = 256
 
 // DEPRECATED
 PrefixSha256.prototype.setSubconditionUri =

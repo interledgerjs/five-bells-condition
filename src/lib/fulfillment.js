@@ -6,7 +6,6 @@
 
 const TypeRegistry = require('./type-registry')
 const Condition = require('./condition')
-const Predictor = require('oer-utils/predictor')
 const Writer = require('oer-utils/writer')
 const Reader = require('oer-utils/reader')
 const base64url = require('../util/base64url')
@@ -118,7 +117,7 @@ class Fulfillment {
     condition.setTypeId(this.getTypeId())
     condition.setBitmask(this.getBitmask())
     condition.setHash(this.generateHash())
-    condition.setMaxFulfillmentLength(this.calculateMaxFulfillmentLength())
+    condition.setCost(this.calculateCost())
     return condition
   }
 
@@ -158,20 +157,18 @@ class Fulfillment {
   }
 
   /**
-   * Calculate the maximum length of the fulfillment payload.
+   * Calculate the cost of the fulfillment payload.
    *
-   * This implementation works by measuring the length of the fulfillment.
-   * Condition types that do not have a constant length will override this
-   * method with one that calculates the maximum possible length.
+   * Each condition type has a standard deterministic formula for estimating the
+   * cost of validating the fulfillment. This is an abstract function which will
+   * be overridden by each of the types with the actual formula.
    *
-   * @return {Number} Maximum fulfillment length
+   * @return {Number} Cost
    *
    * @private
    */
-  calculateMaxFulfillmentLength () {
-    const predictor = new Predictor()
-    this.writePayload(predictor)
-    return predictor.getSize()
+  calculateCost () {
+    throw new Error('Condition types must implement calculateCost')
   }
 
   /**

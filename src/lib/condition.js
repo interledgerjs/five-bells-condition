@@ -71,7 +71,7 @@ class Condition {
     condition.setTypeId(parseInt(pieces[1], 16))
     condition.setBitmask(parseInt(pieces[2], 16))
     condition.setHash(base64url.decode(pieces[3]))
-    condition.setMaxFulfillmentLength(parseInt(pieces[4], 10))
+    condition.setCost(parseInt(pieces[4], 10))
 
     return condition
   }
@@ -198,12 +198,12 @@ class Condition {
    * @return {Number} Maximum length (in bytes) of any fulfillment payload that
    *   fulfills this condition..
    */
-  getMaxFulfillmentLength () {
-    if (typeof this.maxFulfillmentLength !== 'number') {
-      throw new MissingDataError('Maximum fulfillment length not set')
+  getCost () {
+    if (typeof this.cost !== 'number') {
+      throw new MissingDataError('Cost not set')
     }
 
-    return this.maxFulfillmentLength
+    return this.cost
   }
 
   /**
@@ -214,14 +214,14 @@ class Condition {
    *
    * @param {Number} Maximum fulfillment payload length in bytes.
    */
-  setMaxFulfillmentLength (maxFulfillmentLength) {
-    if (!isInteger(maxFulfillmentLength)) {
-      throw new TypeError('Fulfillment length must be an integer')
-    } else if (maxFulfillmentLength < 0) {
-      throw new TypeError('Fulfillment length must be positive or zero')
+  setCost (cost) {
+    if (!isInteger(cost)) {
+      throw new TypeError('Cost must be an integer')
+    } else if (cost < 0) {
+      throw new TypeError('Cost must be positive or zero')
     }
 
-    this.maxFulfillmentLength = maxFulfillmentLength
+    this.cost = cost
   }
 
   /**
@@ -238,7 +238,7 @@ class Condition {
       ':' + this.getTypeId().toString(16) +
       ':' + this.getBitmask().toString(16) +
       ':' + base64url.encode(this.getHash()) +
-      ':' + this.getMaxFulfillmentLength()
+      ':' + this.getCost()
   }
 
   /**
@@ -255,7 +255,7 @@ class Condition {
     writer.writeUInt16(this.getTypeId())                // type
     writer.writeVarUInt(this.getBitmask())              // requiredSuites
     writer.writeVarOctetString(this.getHash())          // fingerprint
-    writer.writeVarUInt(this.getMaxFulfillmentLength()) // maxFulfillmentLength
+    writer.writeVarUInt(this.getCost()) // cost
     return writer.getBuffer()
   }
 
@@ -274,7 +274,7 @@ class Condition {
     this.setBitmask(reader.readVarUInt())
     // TODO Ensure bitmask is supported?
     this.setHash(reader.readVarOctetString())
-    this.setMaxFulfillmentLength(reader.readVarUInt())
+    this.setCost(reader.readVarUInt())
   }
 
   /**
@@ -300,7 +300,7 @@ class Condition {
     }
 
     // Assert the requested fulfillment size is supported by this implementation
-    if (this.getMaxFulfillmentLength() > Condition.MAX_FULFILLMENT_LENGTH) {
+    if (this.getCost() > Condition.MAX_COST) {
       throw new Error('Condition requested too large of a max fulfillment size')
     }
 
@@ -315,7 +315,7 @@ Condition.MAX_SAFE_BITMASK = 0xffffffff
 Condition.SUPPORTED_BITMASK = 0x3f
 
 // Max fulfillment size supported by this implementation
-Condition.MAX_FULFILLMENT_LENGTH = 65535
+Condition.MAX_COST = 2097152
 
 // Expose regular expressions
 Condition.REGEX = CONDITION_REGEX

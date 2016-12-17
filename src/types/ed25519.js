@@ -153,17 +153,15 @@ class Ed25519 extends Fulfillment {
   }
 
   /**
-   * Calculates the fulfillment length.
+   * Calculate the cost of fulfilling this condition.
    *
-   * Ed25519 signatures are constant size. Consequently fulfillments for this
-   * type of condition are also constant size.
+   * The cost of the Ed25519 condition is 2^17 = 131072.
    *
-   * @return {Number} Length of the fulfillment payload.
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  calculateMaxFulfillmentLength () {
-    return Ed25519.FULFILLMENT_LENGTH
+  calculateCost () {
+    return Ed25519.CONSTANT_COST
   }
 
   /**
@@ -198,10 +196,7 @@ class Ed25519 extends Fulfillment {
 
 Ed25519.TYPE_ID = 4
 Ed25519.FEATURE_BITMASK = 0x20
-Ed25519.PUBKEY_LENGTH = 32
-Ed25519.SIGNATURE_LENGTH = 64
-Ed25519.FULFILLMENT_LENGTH =
-  Ed25519.PUBKEY_LENGTH +
-  Ed25519.SIGNATURE_LENGTH
+
+Ed25519.CONSTANT_COST = 131072
 
 module.exports = Ed25519

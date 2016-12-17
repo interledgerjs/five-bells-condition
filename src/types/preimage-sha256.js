@@ -93,6 +93,23 @@ class PreimageSha256 extends BaseSha256 {
   }
 
   /**
+   * Calculate the cost of fulfilling this condition.
+   *
+   * The cost of the preimage condition equals the size of the preimage in
+   * bytes.
+   *
+   * @return {Number} Expected maximum cost to fulfill this condition
+   * @private
+   */
+  calculateCost () {
+    if (!this.preimage) {
+      throw new MissingDataError('Preimage must be specified')
+    }
+
+    return this.preimage.length
+  }
+
+  /**
    * Validate this fulfillment.
    *
    * For a SHA256 hashlock fulfillment, successful parsing implies that the

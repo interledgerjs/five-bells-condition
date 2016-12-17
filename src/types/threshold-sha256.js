@@ -7,7 +7,6 @@
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('oer-utils/predictor')
 const Writer = require('oer-utils/writer')
 const MissingDataError = require('../errors/missing-data-error')
 const ParseError = require('../errors/parse-error')
@@ -172,114 +171,62 @@ class ThresholdSha256 extends BaseSha256 {
   }
 
   /**
-   * Calculates the longest possible fulfillment length.
+   * Calculate the cost of fulfilling this condition.
    *
-   * In a threshold condition, the maximum length of the fulfillment depends on
-   * the maximum lengths of the fulfillments of the subconditions. However,
-   * usually not all subconditions must be fulfilled in order to meet the
-   * threshold.
+   * In a threshold condition, the cost consists of the t most expensive
+   * subconditions plus n times 32 where t is the threshold and n is the
+   * total number of subconditions.
    *
-   * Consequently, this method relies on an algorithm to determine which
-   * combination of fulfillments, where no fulfillment can be left out, results
-   * in the largest total fulfillment size.
-   *
-   * @return {Number} Maximum length of the fulfillment payload
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  calculateMaxFulfillmentLength () {
+  calculateCost () {
     // Calculate length of longest fulfillments
-    let totalConditionLength = 0
     const subconditions = this.subconditions
-      .map((cond) => {
-        const conditionLength = this.constructor.predictSubconditionLength(cond)
-        const fulfillmentLength = this.constructor.predictSubfulfillmentLength(cond)
+      .map(this.constructor.getSubconditionCost)
 
-        totalConditionLength += conditionLength
-
-        return {
-          size: fulfillmentLength - conditionLength
-        }
-      })
-
-    const worstCaseFulfillmentsLength =
-      totalConditionLength +
+    const worstCaseFulfillmentsCost =
       this.constructor.calculateWorstCaseLength(
         this.threshold,
         subconditions
       )
 
-    if (worstCaseFulfillmentsLength === -Infinity) {
+    if (worstCaseFulfillmentsCost === -Infinity) {
       throw new MissingDataError('Insufficient number of subconditions to meet the threshold')
     }
 
-    // Calculate resulting total maximum fulfillment size
-    const predictor = new Predictor()
-    predictor.writeUInt32(this.threshold)              // threshold
-    predictor.writeVarUInt(this.subconditions.length)  // count
-    this.subconditions.forEach((cond) => {
-      predictor.writeUInt8()                 // presence bitmask
-    })
-    // Represents the sum of CONDITION/FULFILLMENT values
-    predictor.skip(worstCaseFulfillmentsLength)
-
-    return predictor.getSize()
+    return worstCaseFulfillmentsCost + 32 * subconditions.length
   }
 
-  static predictSubconditionLength (cond) {
+  static getSubconditionCost (cond) {
     return cond.type === FULFILLMENT
-      ? cond.body.getConditionBinary().length
-      : cond.body.serializeBinary().length
-  }
-
-  static predictSubfulfillmentLength (cond) {
-    const fulfillmentLength = cond.type === FULFILLMENT
-      ? cond.body.getCondition().getMaxFulfillmentLength()
-      : cond.body.getMaxFulfillmentLength()
-
-    const predictor = new Predictor()
-    predictor.writeUInt16()                                      // type
-    predictor.writeVarOctetString({ length: fulfillmentLength }) // payload
-
-    return predictor.getSize()
+      ? cond.body.getCondition().getCost()
+      : cond.body.getCost()
   }
 
   /**
-   * Calculate the worst case length of a set of conditions.
+   * Calculate the worst case cost of a set of subconditions.
    *
-   * This implements a recursive algorithm to determine the longest possible
-   * length for a valid, minimal (no fulfillment can be removed) set of
-   * subconditions.
-   *
-   * The algorithm works by recursively adding and not adding each subcondition.
-   * Finally, it determines the maximum of all valid solutions.
-   *
-   * @author Evan Schwartz <evan@ripple.com>
+   * Given a set of costs C and a threshold t, it returns the sum of the largest
+   * t elements in C.
    *
    * @param {Number} threshold Threshold that the remaining subconditions have
    *   to meet.
-   * @param {Object[]} subconditions Set of subconditions.
-   * @param {Number} subconditions[].size Maximum number of bytes added to the
-   *   size if the fulfillment is included.
-   * @param {Number} [size=0] Size the fulfillment already has (used by the
-   *   recursive calls.)
-   * @param {Number} [index=0] Current index in the subconditions array (used by
-   *   the recursive calls.)
-   * @return {Number} Maximum size of a valid, minimal set of fulfillments or
+   * @param {Number[]} subconditionCosts Set of subconditions.
+   * @return {Number} Maximum cost of a valid, minimal set of fulfillments or
    *   -Infinity if there is no valid set.
    *
    * @private
    */
-  static calculateWorstCaseLength (threshold, subconditions, index) {
-    index = index || 0
-
-    subconditions = subconditions.map(cond => cond.size).sort()
-
-    if (subconditions.length < threshold) {
+  static calculateWorstCaseLength (threshold, subconditionCosts) {
+    if (subconditionCosts.length < threshold) {
       return -Infinity
     }
 
-    return subconditions.slice(-threshold).reduce((total, size) => total + size, 0)
+    return subconditionCosts
+      .sort((a, b) => a > b)
+      .slice(-threshold)
+      .reduce((total, size) => total + size, 0)
   }
 
   /**

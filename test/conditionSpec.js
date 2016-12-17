@@ -13,7 +13,7 @@ describe('Condition', function () {
       assert.equal(cond.getTypeId(), 0)
       assert.equal(cond.getBitmask(), 3)
       assert.equal(cond.getHash().toString('hex'), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
-      assert.equal(cond.getMaxFulfillmentLength(), 0)
+      assert.equal(cond.getCost(), 0)
     })
 
     it('rejects a condition with invalid prefix af:', function () {
@@ -186,11 +186,11 @@ describe('Condition', function () {
     })
   })
 
-  describe('getMaxFulfillmentLength', function () {
+  describe('getCost', function () {
     it('should return the fulfillment length', function () {
       const condition = Condition.fromUri('cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0')
 
-      const length = condition.getMaxFulfillmentLength()
+      const length = condition.getCost()
 
       assert.equal(length, 0)
     })
@@ -198,29 +198,29 @@ describe('Condition', function () {
     it('should throw if no fulfillment length was defined', function () {
       const condition = new Condition()
 
-      assert.throws(() => condition.getMaxFulfillmentLength(), 'Maximum fulfillment length not set')
+      assert.throws(() => condition.getCost(), 'Cost not set')
     })
   })
 
-  describe('setMaxFulfillmentLength', function () {
+  describe('setCost', function () {
     it('should set the fulfillment length', function () {
       const condition = new Condition()
 
-      condition.setMaxFulfillmentLength(42)
+      condition.setCost(42)
 
-      assert.equal(condition.maxFulfillmentLength, 42)
+      assert.equal(condition.cost, 42)
     })
 
     it('should throw when given a string', function () {
       const condition = new Condition()
 
-      assert.throws(() => condition.setMaxFulfillmentLength('42'), 'Fulfillment length must be an integer')
+      assert.throws(() => condition.setCost('42'), 'Cost must be an integer')
     })
 
     it('should throw when given a negative number', function () {
       const condition = new Condition()
 
-      assert.throws(() => condition.setMaxFulfillmentLength(-42), 'Fulfillment length must be positive or zero')
+      assert.throws(() => condition.setCost(-42), 'Cost must be positive or zero')
     })
   })
 
@@ -252,7 +252,7 @@ describe('Condition', function () {
     it('should throw if the fulfillment size exceeds the local limit', function () {
       const condition = Condition.fromUri('cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0')
 
-      condition.maxFulfillmentLength = 0x100000000
+      condition.cost = 0x100000000
 
       assert.throws(() => condition.validate(), 'Condition requested too large of a max fulfillment size')
     })

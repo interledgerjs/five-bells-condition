@@ -27,6 +27,19 @@ class Rsa {
   }
 
   /**
+   * Get the length in bits of an RSA modulus.
+   *
+   * @param {Buffer} modulus RSA modulus.
+   * @return {Number} Number of bits in RSA modulus.
+   */
+  getModulusBitLength (modulus) {
+    const modulusHighByteBitLength = modulus[0].toString(2).length
+    const modulusBitLength = (modulus.length - 1) * 8 + modulusHighByteBitLength
+
+    return modulusBitLength
+  }
+
+  /**
    * Sign a message using RSA-PSS.
    *
    * @param {String} privateKey PEM-encoded RSA private key.
@@ -36,8 +49,7 @@ class Rsa {
   sign (privateKey, message) {
     // Calculate modulus bit length
     const modulus = pem.modulusFromPrivateKey(privateKey)
-    const modulusHighByteBitLength = modulus[0].toString(2).length
-    const modulusBitLength = (modulus.length - 1) * 8 + modulusHighByteBitLength
+    const modulusBitLength = this.getModulusBitLength(modulus)
 
     // Pad message using PSS
     const encodedMessage = this.pss.encode(message, modulusBitLength - 1)
@@ -77,13 +89,10 @@ class Rsa {
       signature
     )
 
-    // Calculate modulus bit length
-    const modulusHighByteBitLength = modulus[0].toString(2).length
-    const modulusBitLength = (modulus.length - 1) * 8 + modulusHighByteBitLength
-
-    // OpenSSL returns a buffer based on the bitlength of the modulus, but we
-    // a buffer just long enough to fit the bitlength of the encodedMessage,
-    // which is one bit shorter.
+    // OpenSSL returns a buffer that fits the bitlength of the modulus, but we
+    // need this buffer to be just long enough to fit the bitlength of the
+    // encodedMessage, which is one bit shorter.
+    const modulusBitLength = this.getModulusBitLength(modulus)
     const encodedMessage = modulusBitLength % 8 === 1
       ? paddedMessage.slice(1)
       : paddedMessage
