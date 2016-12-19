@@ -1,2 +1,3 @@
 coverage/
+scripts/*.template.js
 dist/index.js
