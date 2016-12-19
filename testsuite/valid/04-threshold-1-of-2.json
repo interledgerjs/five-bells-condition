@@ -1,0 +1,17 @@
+{
+  "json": {
+    "type": "threshold-sha-256",
+    "threshold": 1,
+    "subfulfillments": [{
+      "type": "preimage-sha-256",
+      "preimage": ""
+    }, {
+      "type": "preimage-sha-256",
+      "preimage": "SGVsbG8gV29ybGQh"
+    }]
+  },
+  "fingerprintContents": "MFOAAQGhTqAlgCB_g7Flf_H8U7ktwYFIodZd_C1LH6PWdyhK3dIAEm2QaYEBDKAlgCDjsMRCmPwcFJr79MiZb7kkJ65B5GSbk0yklZkbeFK4VYEBAA",
+  "fulfillment": "oi-gBKACgAChJ6AlgCB_g7Flf_H8U7ktwYFIodZd_C1LH6PWdyhK3dIAEm2QaYEBDA",
+  "conditionUri": "ni:sha-256;WiGOznrEvHcVfwTLS8jfzVydIlpVvQqnYLyipPF3PcY?fpt=threshold-sha-256&cost=2060&subtypes=preimage-sha-256",
+  "conditionBinary": "oiqAIFohjs56xLx3FX8Ey0vI381cnSJaVb0Kp2C8oqTxdz3GgQIIDIICB4A"
+}

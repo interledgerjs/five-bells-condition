@@ -15,8 +15,8 @@
   ],
   "dependencies": {
     "asn1": "^0.2.3",
+    "asn1.js": "^4.9.0",
     "core-js": "^2.4.1",
-    "oer-utils": "^1.2.0",
     "tweetnacl": "^0.14.1"
   },
   "devDependencies": {
@@ -46,6 +46,7 @@
     "karma-webpack": "^1.8.0",
     "md-toc-filter": "^0.9.0",
     "mocha": "^3.0.0",
+    "mustache": "^2.3.0",
     "phantomjs-prebuilt": "^2.1.5",
     "readme-to-test": "justmoon/readme-to-test#feature/st-improvements",
     "sinon": "^1.17.4",
@@ -55,6 +56,7 @@
   },
   "scripts": {
     "lint": "eslint .",
+    "build": "npm run build:web",
     "build:web": "webpack --config webpack.config.js",
     "prepublish": "npm run build:web",
     "test:readme": "readme-to-test",

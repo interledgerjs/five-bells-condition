@@ -7,12 +7,10 @@
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
-const Writer = require('oer-utils/writer')
 const MissingDataError = require('../errors/missing-data-error')
-const ParseError = require('../errors/parse-error')
 const isInteger = require('core-js/library/fn/number/is-integer')
 
-const EMPTY_BUFFER = new Buffer(0)
+const Asn1ThresholdFingerprintContents = require('../schemas/fingerprint').ThresholdFingerprintContents
 
 const CONDITION = 'condition'
 const FULFILLMENT = 'fulfillment'
@@ -116,24 +114,20 @@ class ThresholdSha256 extends BaseSha256 {
   }
 
   /**
-   * Get full bitmask.
+   * Get set of used type names.
    *
    * This is a type of condition that can contain subconditions. A complete
-   * bitmask must contain the set of types that must be supported in order to
-   * validate this fulfillment. Therefore, we need to calculate the bitwise OR
-   * of this condition's FEATURE_BITMASK and all subcondition's and
-   * subfulfillment's bitmasks.
+   * set of subtypes must contain all types that must be supported in order to
+   * validate this fulfillment. Therefore, we need to join the type of this
+   * fulfillment with all of the sets of subtypes for each of the subconditions.
    *
-   * @return {Number} Complete bitmask for this fulfillment.
+   * @return {Number} Complete set of types for this fulfillment.
    */
-  getBitmask () {
-    let bitmask = super.getBitmask()
+  getSubtypes () {
+    const typeSets = this.subconditions
+      .map(x => Array.from(x.body.getSubtypes()).concat(x.body.getTypeName()))
 
-    for (let cond of this.subconditions) {
-      bitmask |= cond.body.getBitmask()
-    }
-
-    return bitmask
+    return new Set(Array.prototype.concat.apply([], typeSets))
   }
 
   /**
@@ -141,33 +135,21 @@ class ThresholdSha256 extends BaseSha256 {
    *
    * This function is called internally by the `getCondition` method.
    *
-   * @param {Hasher} hasher Hash generator
+   * @return {Buffer} Encoded contents of fingerprint hash.
    *
    * @private
    */
-  writeHashPayload (hasher) {
-    if (!this.subconditions.length) {
-      throw new MissingDataError('Requires subconditions')
-    }
-
-    const subconditions = this.subconditions
-      // Serialize each subcondition
-      .map((c) => {
-        const writer = new Writer()
-        writer.write(
-          c.type === FULFILLMENT
-            ? c.body.getConditionBinary()
-            : c.body.serializeBinary()
-        )
-        return writer.getBuffer()
-      })
-
-    // Canonically sort all conditions, first by length, then lexicographically
-    const sortedSubconditions = this.constructor.sortBuffers(subconditions)
-
-    hasher.writeUInt32(this.threshold)
-    hasher.writeVarUInt(sortedSubconditions.length)
-    sortedSubconditions.forEach((c) => hasher.write(c))
+  getFingerprintContents () {
+    return Asn1ThresholdFingerprintContents.encode({
+      threshold: this.threshold,
+      subconditions: this.subconditions
+        .map(x => (
+          x.body instanceof Condition
+          ? x.body.getAsn1Json()
+          : x.body.getCondition().getAsn1Json()
+        ))
+        .sort((a, b) => Buffer.compare(a.value.fingerprint, b.value.fingerprint))
+    })
   }
 
   /**
@@ -195,7 +177,7 @@ class ThresholdSha256 extends BaseSha256 {
       throw new MissingDataError('Insufficient number of subconditions to meet the threshold')
     }
 
-    return worstCaseFulfillmentsCost + 32 * subconditions.length
+    return worstCaseFulfillmentsCost + 1024 * subconditions.length
   }
 
   static getSubconditionCost (cond) {
@@ -229,88 +211,58 @@ class ThresholdSha256 extends BaseSha256 {
       .reduce((total, size) => total + size, 0)
   }
 
-  /**
-   * Parse a fulfillment payload.
-   *
-   * Read a fulfillment payload from a Reader and populate this object with that
-   * fulfillment.
-   *
-   * @param {Reader} reader Source to read the fulfillment payload from.
-   *
-   * @private
-   */
-  parsePayload (reader) {
-    this.setThreshold(reader.readVarUInt())
-
-    const conditionCount = reader.readVarUInt()
-    for (let i = 0; i < conditionCount; i++) {
-      const fulfillment = reader.readVarOctetString()
-      const condition = reader.readVarOctetString()
-
-      if (fulfillment.length && condition.length) {
-        throw new ParseError('Subconditions may not provide both subcondition and fulfillment.')
-      } else if (fulfillment.length) {
-        this.addSubfulfillment(Fulfillment.fromBinary(fulfillment))
-      } else if (condition.length) {
-        this.addSubcondition(Condition.fromBinary(condition))
-      } else {
-        throw new ParseError('Subconditions must provide either subcondition or fulfillment.')
+  parseJson (json) {
+    this.setThreshold(json.threshold)
+    if (json.subfulfillments) {
+      for (let fulfillmentJson of json.subfulfillments) {
+        this.addSubfulfillment(Fulfillment.fromJson(fulfillmentJson))
+      }
+    }
+    if (json.subconditions) {
+      for (let conditionJson of json.subconditions) {
+        this.addSubcondition(Condition.fromJson(conditionJson))
       }
     }
   }
 
-  /**
-   * Generate the fulfillment payload.
-   *
-   * This writes the fulfillment payload to a Writer.
-   *
-   * @param {Writer} writer Subject for writing the fulfillment payload.
-   *
-   * @private
-   */
-  writePayload (writer) {
-    const subfulfillments = this.subconditions
-      .map((x, i) => (
-        x.type === FULFILLMENT
-        ? Object.assign({}, x, {
-          index: i,
-          size: x.body.serializeBinary().length,
-          omitSize: x.body.getConditionBinary().length
-        })
-        : null))
-      .filter(Boolean)
+  parseAsn1JsonPayload (json) {
+    this.setThreshold(json.subfulfillments.length)
+    if (json.subfulfillments) {
+      for (let fulfillmentJson of json.subfulfillments) {
+        this.addSubfulfillment(Fulfillment.fromAsn1Json(fulfillmentJson))
+      }
+    }
+    if (json.subconditions) {
+      for (let conditionJson of json.subconditions) {
+        this.addSubcondition(Condition.fromAsn1Json(conditionJson))
+      }
+    }
+  }
 
-    const smallestSet = this.constructor.calculateSmallestValidFulfillmentSet(
-      this.threshold,
-      subfulfillments
-    )
+  getAsn1JsonPayload () {
+    const fulfillments = this.subconditions.filter(x => x.type === FULFILLMENT)
+      .sort((a, b) => a.body.getCondition().getCost() - b.body.getCondition().getCost())
+    const conditions = this.subconditions.filter(x => x.type === CONDITION)
 
-    const optimizedSubfulfillments =
-      // Take minimum set of fulfillments and turn rest into conditions
-      this.subconditions.map((c, i) => {
-        if (c.type === FULFILLMENT && smallestSet.indexOf(i) === -1) {
-          return Object.assign({}, c, {
-            type: CONDITION,
-            body: c.body.getCondition()
-          })
-        } else {
-          return c
-        }
-      })
+    if (fulfillments.length < this.threshold) {
+      throw new Error('Not enough fulfillments')
+    }
 
-    const serializedSubconditions = optimizedSubfulfillments
-      .map((cond) => {
-        const writer = new Writer()
-        writer.writeVarOctetString(cond.type === FULFILLMENT ? cond.body.serializeBinary() : EMPTY_BUFFER)
-        writer.writeVarOctetString(cond.type === CONDITION ? cond.body.serializeBinary() : EMPTY_BUFFER)
-        return writer.getBuffer()
-      })
+    const minimalFulfillments = fulfillments
+      .slice(0, this.threshold)
 
-    const sortedSubconditions = this.constructor.sortBuffers(serializedSubconditions)
+    const remainingConditions = conditions
+      .map(x => x.body)
+      .concat(
+        fulfillments
+          .slice(this.threshold)
+          .map(x => x.body.getCondition())
+      )
 
-    writer.writeVarUInt(this.threshold)
-    writer.writeVarUInt(sortedSubconditions.length)
-    sortedSubconditions.forEach(writer.write.bind(writer))
+    return {
+      subfulfillments: minimalFulfillments.map(x => x.body.getAsn1Json()),
+      subconditions: remainingConditions.map(x => x.getAsn1Json())
+    }
   }
 
   /**
@@ -329,25 +281,6 @@ class ThresholdSha256 extends BaseSha256 {
     fulfillments.sort((a, b) => b.size - a.size)
 
     return fulfillments.slice(0, threshold)
-  }
-
-  /**
-   * Sort buffers according to spec.
-   *
-   * Buffers must be sorted first by length. Buffers with the same length are
-   * sorted lexicographically.
-   *
-   * @param {Buffer[]} buffers Set of octet strings to sort.
-   * @return {Buffer[]} Sorted buffers.
-   *
-   * @private
-   */
-  static sortBuffers (buffers) {
-    return buffers.slice().sort((a, b) => (
-      a.length !== b.length
-      ? a.length - b.length
-      : Buffer.compare(a, b)
-    ))
   }
 
   /**
@@ -379,7 +312,10 @@ class ThresholdSha256 extends BaseSha256 {
 }
 
 ThresholdSha256.TYPE_ID = 2
-ThresholdSha256.FEATURE_BITMASK = 0x09
+ThresholdSha256.TYPE_NAME = 'threshold-sha-256'
+ThresholdSha256.TYPE_ASN1_CONDITION = 'thresholdSha256Condition'
+ThresholdSha256.TYPE_ASN1_FULFILLMENT = 'thresholdSha256Fulfillment'
+ThresholdSha256.TYPE_CATEGORY = 'compound'
 
 // DEPRECATED
 ThresholdSha256.prototype.addSubconditionUri =

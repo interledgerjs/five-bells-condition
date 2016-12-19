@@ -6,11 +6,8 @@
 
 const TypeRegistry = require('./type-registry')
 const Condition = require('./condition')
-const Writer = require('oer-utils/writer')
-const Reader = require('oer-utils/reader')
 const base64url = require('../util/base64url')
-const PrefixError = require('../errors/prefix-error')
-const ParseError = require('../errors/parse-error')
+const Asn1Fulfillment = require('../schemas/fulfillment').Fulfillment
 
 // Regex for validating fulfillments
 //
@@ -32,27 +29,7 @@ class Fulfillment {
    * @return {Fulfillment} Resulting object
    */
   static fromUri (serializedFulfillment) {
-    if (serializedFulfillment instanceof Fulfillment) {
-      return serializedFulfillment
-    } else if (typeof serializedFulfillment !== 'string') {
-      throw new Error('Serialized fulfillment must be a string')
-    }
-
-    const pieces = serializedFulfillment.split(':')
-    if (pieces[0] !== 'cf') {
-      throw new PrefixError('Serialized fulfillment must start with "cf:"')
-    }
-
-    if (!Fulfillment.REGEX.exec(serializedFulfillment)) {
-      throw new ParseError('Invalid fulfillment format')
-    }
-
-    const typeId = parseInt(pieces[1], 16)
-    const payload = base64url.decode(pieces[2])
-
-    const ConditionClass = TypeRegistry.getClassFromTypeId(typeId)
-    const fulfillment = new ConditionClass()
-    fulfillment.parsePayload(Reader.from(payload), payload.length)
+    const fulfillment = Fulfillment.fromBinary(Buffer.from(serializedFulfillment, 'base64'))
 
     return fulfillment
   }
@@ -63,17 +40,28 @@ class Fulfillment {
    * This method will parse a stream of binary data and construct a
    * corresponding Fulfillment object.
    *
-   * @param {Reader} reader Binary stream implementing the Reader interface
+   * @param {Buffer} data Binary buffer
    * @return {Fulfillment} Resulting object
    */
-  static fromBinary (reader) {
-    reader = Reader.from(reader)
+  static fromBinary (data) {
+    const fulfillmentJson = Asn1Fulfillment.decode(data)
+    return Fulfillment.fromAsn1Json(fulfillmentJson)
+  }
 
-    const ConditionClass = TypeRegistry.getClassFromTypeId(reader.readUInt16())
+  static fromAsn1Json (json) {
+    const FulfillmentClass = TypeRegistry.findByAsn1FulfillmentType(json.type).Class
+
+    const condition = new FulfillmentClass()
+    condition.parseAsn1JsonPayload(json.value)
+
+    return condition
+  }
+
+  static fromJson (json) {
+    const ConditionClass = TypeRegistry.findByName(json.type).Class
 
     const condition = new ConditionClass()
-    const payloadLength = reader.readLengthPrefix()
-    condition.parsePayload(reader, payloadLength)
+    condition.parseJson(json)
 
     return condition
   }
@@ -87,18 +75,22 @@ class Fulfillment {
     return this.constructor.TYPE_ID
   }
 
+  getTypeName () {
+    return this.constructor.TYPE_NAME
+  }
+
   /**
    * Return the bitmask of this fulfillment.
    *
-   * For simple fulfillment types this is simply the bit representing this type.
+   * For simple fulfillment types this is simply the empty set.
    *
-   * For meta-fulfillments, these are the bits representing the types of the
-   * subconditions.
+   * For compound fulfillments, this returns the set of names of all
+   * subfulfillment types, recursively.
    *
-   * @return {Number} Bitmask corresponding to this fulfillment.
+   * @return {Set<String>} Set of subtype names.
    */
-  getBitmask () {
-    return this.constructor.FEATURE_BITMASK
+  getSubtypes () {
+    return new Set()
   }
 
   /**
@@ -114,10 +106,10 @@ class Fulfillment {
    */
   getCondition () {
     const condition = new Condition()
-    condition.setTypeId(this.getTypeId())
-    condition.setBitmask(this.getBitmask())
     condition.setHash(this.generateHash())
+    condition.setTypeId(this.getTypeId())
     condition.setCost(this.calculateCost())
+    condition.setSubtypes(this.getSubtypes())
     return condition
   }
 
@@ -171,6 +163,10 @@ class Fulfillment {
     throw new Error('Condition types must implement calculateCost')
   }
 
+  parseAsn1JsonPayload (json) {
+    this.parseJson(json)
+  }
+
   /**
    * Generate the URI form encoding of this fulfillment.
    *
@@ -181,8 +177,14 @@ class Fulfillment {
    * @return {String} Fulfillment as a URI
    */
   serializeUri () {
-    return 'cf' +
-      ':' + base64url.encode(this.serializeBinary())
+    return base64url.encode(this.serializeBinary())
+  }
+
+  getAsn1Json () {
+    return {
+      type: this.constructor.TYPE_ASN1_FULFILLMENT,
+      value: this.getAsn1JsonPayload()
+    }
   }
 
   /**
@@ -195,28 +197,12 @@ class Fulfillment {
    * @return {Buffer} Serialized fulfillment
    */
   serializeBinary () {
-    const writer = new Writer()
-    writer.writeUInt16(this.getTypeId())
-    writer.writeVarOctetString(this.serializePayload())
-    return writer.getBuffer()
+    const asn1Json = this.getAsn1Json()
+    return Asn1Fulfillment.encode(asn1Json)
   }
 
-  /**
-   * Return the fulfillment payload as a buffer.
-   *
-   * Note that the fulfillment payload is not the standard format for passing
-   * fulfillments in binary protocols. Use `serializeBinary` for that. The
-   * fulfillment payload is purely the type-specific data and does not include
-   * the bitmask.
-   *
-   * @return {Buffer} Fulfillment payload
-   *
-   * @private
-   */
-  serializePayload () {
-    const writer = new Writer()
-    this.writePayload(writer)
-    return writer.getBuffer()
+  serializeBase64Url () {
+    return base64url.encode(this.serializeBinary())
   }
 
   /**

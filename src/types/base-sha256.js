@@ -1,7 +1,7 @@
 'use strict'
 
 const Fulfillment = require('../lib/fulfillment')
-const Hasher = require('../lib/hasher')
+const crypto = require('crypto')
 
 class BaseSha256 extends Fulfillment {
   /**
@@ -13,9 +13,10 @@ class BaseSha256 extends Fulfillment {
    * @return {Buffer} Result from hashing the hash payload.
    */
   generateHash () {
-    const hasher = new Hasher('sha256')
-    this.writeHashPayload(hasher)
-    return hasher.getDigest()
+    const hash = crypto.createHash('sha256')
+    hash.update(this.getFingerprintContents())
+
+    return hash.digest()
   }
 }
 

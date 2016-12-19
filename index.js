@@ -7,7 +7,7 @@ const PreimageSha256 = require('./src/types/preimage-sha256')
 const PrefixSha256 = require('./src/types/prefix-sha256')
 const ThresholdSha256 = require('./src/types/threshold-sha256')
 const RsaSha256 = require('./src/types/rsa-sha256')
-const Ed25519 = require('./src/types/ed25519')
+const Ed25519Sha256 = require('./src/types/ed25519-sha256')
 const base64url = require('./src/util/base64url')
 
 const EMPTY_BUFFER = new Buffer(0)
@@ -50,11 +50,17 @@ const fulfillmentToCondition = (serializedFulfillment) => {
   return fulfillment.getConditionUri()
 }
 
+const fromJson = (json) => {
+  const fulfillment = Fulfillment.fromJson(json)
+
+  return fulfillment
+}
+
 TypeRegistry.registerType(PreimageSha256)
 TypeRegistry.registerType(PrefixSha256)
 TypeRegistry.registerType(ThresholdSha256)
 TypeRegistry.registerType(RsaSha256)
-TypeRegistry.registerType(Ed25519)
+TypeRegistry.registerType(Ed25519Sha256)
 
 module.exports = {
   Condition,
@@ -64,10 +70,11 @@ module.exports = {
   RsaSha256,
   PrefixSha256,
   ThresholdSha256,
-  Ed25519,
+  Ed25519Sha256,
   validateCondition,
   validateFulfillment,
   fulfillmentToCondition,
+  fromJson,
   base64url,
   fromConditionUri: Condition.fromUri.bind(Condition),
   fromConditionBinary: Condition.fromBinary.bind(Condition),

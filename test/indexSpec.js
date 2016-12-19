@@ -11,7 +11,7 @@ describe('five-bells-condition', function () {
 
   describe('validateCondition', function () {
     it('should return true when validating a valid condition', function () {
-      const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
+      const condition = 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
 
       const result = cc.validateCondition(condition)
 
@@ -25,16 +25,16 @@ describe('five-bells-condition', function () {
 
   describe('validateFulfillment', function () {
     it('should return true when validating a valid fulfillment without message', function () {
-      const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
-      const fulfillment = 'cf:0:'
+      const condition = 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
+      const fulfillment = 'oAKAAA'
       const validationResult = cc.validateFulfillment(fulfillment, condition)
 
       assert.isTrue(validationResult)
     })
 
     it('should throw when condition and fulfillment do not match', function () {
-      const condition = 'cc:4:20:7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r8:96'
-      const fulfillment = 'cf:0:'
+      const condition = 'ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=prefix-sha-256,preimage-sha-256'
+      const fulfillment = 'oAKAAA'
 
       assert.throws(() => cc.validateFulfillment(fulfillment, condition),
         'Fulfillment does not match condition')
@@ -51,11 +51,11 @@ describe('five-bells-condition', function () {
 
   describe('fulfillmentToCondition', function () {
     it('should turn a fulfillment into a condition', function () {
-      const fulfillment = 'cf:0:'
+      const fulfillment = 'oAKAAA'
 
       const condition = cc.fulfillmentToCondition(fulfillment)
 
-      assert.equal(condition, 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0')
+      assert.equal(condition, 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
     })
   })
 })
