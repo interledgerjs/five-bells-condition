@@ -4,6 +4,8 @@
  * @module types
  */
 
+const querystring = require('querystring')
+
 const TypeRegistry = require('./type-registry')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
@@ -70,7 +72,7 @@ class Condition {
       throw new ParseError('Invalid condition format')
     }
 
-    const query = require('querystring').parse(parsed[2])
+    const query = querystring.parse(parsed[2])
 
     const type = TypeRegistry.findByName(query.fpt)
 
