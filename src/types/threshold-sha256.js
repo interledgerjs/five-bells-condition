@@ -127,7 +127,14 @@ class ThresholdSha256 extends BaseSha256 {
     const typeSets = this.subconditions
       .map(x => Array.from(x.body.getSubtypes()).concat(x.body.getTypeName()))
 
-    return new Set(Array.prototype.concat.apply([], typeSets))
+    const subtypes = new Set(Array.prototype.concat.apply([], typeSets))
+
+    // Never include our own type as a subtype. The reason is that we already
+    // know that the validating implementation knows how to interpret this type,
+    // otherwise it wouldn't be able to verify this fulfillment to begin with.
+    subtypes.delete(this.constructor.TYPE_NAME)
+
+    return subtypes
   }
 
   /**

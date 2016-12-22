@@ -124,7 +124,14 @@ class PrefixSha256 extends BaseSha256 {
    * @return {Set<String>} Complete type names for this fulfillment.
    */
   getSubtypes () {
-    return new Set([...this.subcondition.getSubtypes(), this.subcondition.getTypeName()])
+    const subtypes = new Set([...this.subcondition.getSubtypes(), this.subcondition.getTypeName()])
+
+    // Never include our own type as a subtype. The reason is that we already
+    // know that the validating implementation knows how to interpret this type,
+    // otherwise it wouldn't be able to verify this fulfillment to begin with.
+    subtypes.delete(this.constructor.TYPE_NAME)
+
+    return subtypes
   }
 
   /**
