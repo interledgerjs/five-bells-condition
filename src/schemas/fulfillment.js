@@ -20,8 +20,8 @@ const PrefixFulfillment = asn.define('PrefixFulfillment', function () {
 
 const ThresholdFulfillment = asn.define('ThresholdFulfillment', function () {
   this.seq().obj(
-    this.key('subfulfillments').implicit(0).seqof(Fulfillment),
-    this.key('subconditions').implicit(1).seqof(Condition)
+    this.key('subfulfillments').implicit(0).setof(Fulfillment),
+    this.key('subconditions').implicit(1).setof(Condition)
   )
 })
 
