@@ -1,0 +1,12 @@
+{
+  "json": {
+    "type": "preimage-sha-256",
+    "preimage": "SGVsbG8gV29ybGQh"
+  },
+  "cost": 12,
+  "subtypes": [],
+  "fingerprintContents": "48656C6C6F20576F726C6421",
+  "fulfillment": "A00E800C48656C6C6F20576F726C6421",
+  "conditionBinary": "A02580207F83B1657FF1FC53B92DC18148A1D65DFC2D4B1FA3D677284ADDD200126D906981010C",
+  "conditionUri": "ni:sha-256;f4OxZX_x_FO5LcGBSKHWXfwtSx-j1ncoSt3SABJtkGk?fpt=preimage-sha-256&cost=12"
+}

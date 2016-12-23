@@ -17,14 +17,14 @@ describe('{{suite}}', function () {
       const fulfillment = cc.fromJson(JSON.parse('{{json}}'))
       const fingerprintContents = fulfillment.getFingerprintContents()
 
-      assert.equal(fingerprintContents.toString('hex'), Buffer.from('{{fingerprintContents}}', 'base64').toString('hex'))
+      assert.equal(fingerprintContents.toString('hex').toUpperCase(), '{{fingerprintContents}}')
     })
 
     it('should correctly serialize the condition to binary', function () {
       const parsedCondition = cc.fromConditionUri('{{conditionUri}}')
       const generatedCondition = parsedCondition.serializeBinary()
 
-      assert.equal(generatedCondition.toString('hex'), Buffer.from('{{conditionBinary}}', 'base64').toString('hex'))
+      assert.equal(generatedCondition.toString('hex').toUpperCase(), '{{conditionBinary}}')
     })
 
     it('should correctly serialize the condition from a URI', function () {
@@ -38,7 +38,7 @@ describe('{{suite}}', function () {
       const jsonData = JSON.parse('{{json}}')
       const fulfillment = cc.fromJson(jsonData).serializeBinary()
 
-      assert.equal(fulfillment.toString('hex'), Buffer.from('{{fulfillment}}', 'base64').toString('hex'))
+      assert.equal(fulfillment.toString('hex').toUpperCase(), '{{fulfillment}}')
     })
 
     it('should correctly serialize the condition URI from json', function () {
@@ -48,17 +48,17 @@ describe('{{suite}}', function () {
     })
 
     it('should correctly parse the condition binary', function () {
-      const condition = cc.fromConditionBinary(Buffer.from('{{conditionBinary}}', 'base64'))
+      const condition = cc.fromConditionBinary(Buffer.from('{{conditionBinary}}', 'hex'))
       const generatedCondition = condition.serializeUri()
 
       assert.equal(generatedCondition, '{{conditionUri}}')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
-      const fulfillment = cc.fromFulfillmentUri('{{fulfillment}}')
+      const fulfillment = cc.fromFulfillmentUri(Buffer.from('{{fulfillment}}', 'hex').toString('base64'))
       const generatedFulfillment = fulfillment.serializeBase64Url()
 
-      assert.equal(Buffer.from(generatedFulfillment, 'base64').toString('hex'), Buffer.from('{{fulfillment}}', 'base64').toString('hex'))
+      assert.equal(Buffer.from(generatedFulfillment, 'base64').toString('hex').toUpperCase(), '{{fulfillment}}')
     })
   })
 {{/cases}}

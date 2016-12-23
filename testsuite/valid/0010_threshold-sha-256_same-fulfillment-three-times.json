@@ -1,0 +1,32 @@
+{
+  "json": {
+    "type": "threshold-sha-256",
+    "threshold": 3,
+    "subfulfillments": [
+      {
+        "type": "preimage-sha-256",
+        "preimage": "SGVsbG8gV29ybGQh"
+      },
+      {
+        "type": "preimage-sha-256",
+        "preimage": ""
+      },
+      {
+        "type": "preimage-sha-256",
+        "preimage": ""
+      },
+      {
+        "type": "preimage-sha-256",
+        "preimage": ""
+      }
+    ]
+  },
+  "cost": 4108,
+  "subtypes": [
+    "preimage-sha-256"
+  ],
+  "fingerprintContents": "3081A2800103A1819CA02580207F83B1657FF1FC53B92DC18148A1D65DFC2D4B1FA3D677284ADDD200126D906981010CA0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100",
+  "fulfillment": "A237A00CA0028000A0028000A0028000A127A02580207F83B1657FF1FC53B92DC18148A1D65DFC2D4B1FA3D677284ADDD200126D906981010C",
+  "conditionBinary": "A22A8020618DDC367978196F17B2F33AA0259930F714814F7E68BFA720BDE8C47BC645168102100C82020780",
+  "conditionUri": "ni:sha-256;YY3cNnl4GW8XsvM6oCWZMPcUgU9-aL-nIL3oxHvGRRY?fpt=threshold-sha-256&cost=4108&subtypes=preimage-sha-256"
+}

@@ -1,0 +1,37 @@
+{
+  "json": {
+    "type": "threshold-sha-256",
+    "threshold": 1,
+    "subfulfillments": [
+      {
+        "type": "rsa-sha-256",
+        "modulus": "4e-LJNb3awnIHtd1KqJi8ETwSodNQ4CdMc6mEvmbDJeotDdBU-Pu89ZmFoQ-DkHCkyZLcbYXPbHPDWzVWMWGV3Bvzwl_cExIPlnL_f1bPue8gNdAxeDwR_PoX8DXWBV3am8_I8XcXnlxOaaILjgzakpfs2E3Yg_zZj264yhHKAGGL3Ly-HsgK5yJrdfNWwoHb3xT41A59n7RfsgV5bQwXMYxlwaNXm5Xm6beX04-V99eTgcv8s5MZutFIzlzh1J1ljnwJXv1fb1cRD-1FYzOCj02rce6AfM6C7bbsr-YnWBxEvI0TZk-d-VjwdNh3t9X2pbvLPxoXwArY4JGpbMJuQ",
+        "signature": "SOiUXv4AdVbVv01fJJ5ICPcwfilRHTJi2u9h2ICY-apKi8BiOoyXVzj2XWv0WdVD8onXPLx69Oo6M_vz7ERARHkR1yKUCR5WGDNijkmncu1gjebERZWpHj4X1s9ew7JSjWPSrdZGOYmxLuxXffZHCWDfaDKp2Ew2DRwhetZMhiW9tZT7CtoIbN7LveWA1CS_l0bS8MMSgm27sArWi1LEy31HFWujXjqYHJc4Y3ksyA0EoYAhClJBWGW2Szphd0sdOXXXipiwgh7lXKD4YwXUJSnhDrAVzv1AL7WbKruN7uUqbyRH0ihGA9IZzU6M-c_91UmIicN4C1ndalfvfXMmIA"
+      },
+      {
+        "type": "threshold-sha-256",
+        "threshold": 1,
+        "subfulfillments": [
+          {
+            "type": "preimage-sha-256",
+            "preimage": "SGVsbG8gV29ybGQh"
+          },
+          {
+            "type": "preimage-sha-256",
+            "preimage": ""
+          }
+        ]
+      }
+    ]
+  },
+  "cost": 67584,
+  "subtypes": [
+    "preimage-sha-256",
+    "rsa-sha-256",
+    "threshold-sha-256"
+  ],
+  "fingerprintContents": "305A800101A155A22A80205A218ECE7AC4BC77157F04CB4BC8DFCD5C9D225A55BD0AA760BCA2A4F1773DC68102080C82020780A3278020B31FA8206E4EA7E515337B3B33082B877651801085ED84FB4DAEB247BF698D7F8103010000",
+  "fulfillment": "A25EA031A22FA004A0028000A127A02580207F83B1657FF1FC53B92DC18148A1D65DFC2D4B1FA3D677284ADDD200126D906981010CA129A3278020B31FA8206E4EA7E515337B3B33082B877651801085ED84FB4DAEB247BF698D7F8103010000",
+  "conditionBinary": "A22B8020BB0CB11735A8AF665A7A11EED17600ED5DDA1D563A6EF3CC77B070921D3881C38103010800820204B0",
+  "conditionUri": "ni:sha-256;uwyxFzWor2ZaehHu0XYA7V3aHVY6bvPMd7Bwkh04gcM?fpt=threshold-sha-256&cost=67584&subtypes=preimage-sha-256,rsa-sha-256,threshold-sha-256"
+}
