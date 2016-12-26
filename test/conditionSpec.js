@@ -45,7 +45,7 @@ describe('Condition', function () {
     })
 
     it('rejects a condition with base64 padding', function () {
-      assert.throws(() => Condition.fromUri('cc:9:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU=:0'))
+      assert.throws(() => Condition.fromUri('cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU=:0'))
     })
 
     // Input MUST be base64url, so this should fail
