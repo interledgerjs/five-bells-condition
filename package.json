@@ -33,7 +33,7 @@
     "eslint-config-standard": "^6.0.0",
     "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-standard": "^2.0.0",
-    "ghooks": "^1.0.3",
+    "husky": "^0.12.0",
     "interledger-jsdoc-template": "^2.0.0",
     "jsdoc": "^3.4.0",
     "json-loader": "^0.5.4",
@@ -64,7 +64,8 @@
     "test": "npm run test:readme && npm run test:specs && npm run test:phantom",
     "docs:jsdoc": "jsdoc -R README.md -c jsdoc.json src/*",
     "docs:toc": "md-toc-filter docs/README.template.md > README.md",
-    "docs": "npm run docs:toc"
+    "docs": "npm run docs:toc",
+    "commitmsg": "validate-commit-msg"
   },
   "repository": {
     "type": "git",
@@ -86,9 +87,6 @@
   },
   "homepage": "https://github.com/interledgerjs/five-bells-condition",
   "config": {
-    "ghooks": {
-      "commit-msg": "validate-commit-msg"
-    },
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
