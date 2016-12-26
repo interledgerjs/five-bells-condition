@@ -1,7 +1,7 @@
 {
   "name": "five-bells-condition",
   "version": "3.3.1",
-  "description": "Implementation of Interledger condition validation and fulfillment",
+  "description": "Implementation of crypto-conditions in JavaScript",
   "main": "index.js",
   "browser": "./dist/index.js",
   "directories": {

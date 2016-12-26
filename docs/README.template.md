@@ -9,7 +9,7 @@
 [codecov-image]: https://codecov.io/gh/interledgerjs/five-bells-condition/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/interledgerjs/five-bells-condition
 
-> Implementation of crypto-conditions
+> Implementation of crypto-conditions in JavaScript for Node.js and the browser
 
 ## Specification
 
