@@ -229,7 +229,7 @@ class ThresholdSha256 extends BaseSha256 {
     }
 
     return subconditionCosts
-      .sort((a, b) => a > b)
+      .sort((a, b) => a - b)
       .slice(-threshold)
       .reduce((total, size) => total + size, 0)
   }
