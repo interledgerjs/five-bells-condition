@@ -138,6 +138,21 @@ class ThresholdSha256 extends BaseSha256 {
   }
 
   /**
+   * Comparison function used to pre-sort conditions due to lack of sorting
+   * support in our current DER encoder of choice.
+   *
+   * See: https://github.com/indutny/asn1.js/issues/80
+   *
+   * @param {Condition} a First condition to compare
+   * @param {Condition} b Second condition to compare
+   *
+   * @private
+   */
+  static compareConditions (a, b) {
+    return Buffer.compare(a.serializeBinary(), b.serializeBinary())
+  }
+
+  /**
    * Produce the contents of the condition hash.
    *
    * This function is called internally by the `getCondition` method.
@@ -152,10 +167,11 @@ class ThresholdSha256 extends BaseSha256 {
       subconditions: this.subconditions
         .map(x => (
           x.body instanceof Condition
-          ? x.body.getAsn1Json()
-          : x.body.getCondition().getAsn1Json()
+          ? x.body
+          : x.body.getCondition()
         ))
-        .sort((a, b) => Buffer.compare(a.value.fingerprint, b.value.fingerprint))
+        .sort(ThresholdSha256.compareConditions)
+        .map(x => x.getAsn1Json())
     })
   }
 
@@ -267,8 +283,13 @@ class ThresholdSha256 extends BaseSha256 {
       )
 
     return {
-      subfulfillments: minimalFulfillments.map(x => x.body.getAsn1Json()),
-      subconditions: remainingConditions.map(x => x.getAsn1Json())
+      subfulfillments: minimalFulfillments
+        .map(x => x.body)
+        .sort(ThresholdSha256.compareConditions)
+        .map(x => x.getAsn1Json()),
+      subconditions: remainingConditions
+        .sort(ThresholdSha256.compareConditions)
+        .map(x => x.getAsn1Json())
     }
   }
 
