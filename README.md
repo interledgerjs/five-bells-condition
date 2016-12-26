@@ -176,7 +176,7 @@ thresholdFulfillment.addSubconditionUri('ni:sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj
 thresholdFulfillment.addSubfulfillmentUri('oAKAAA')
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getConditionUri())
-// prints 'ni:sha-256;VTP5omKYz0g5vWR8_jN9Q3bZrmVWL0E0cDnTFYMKVx8?fpt=threshold-sha-256&cost=133120&subtypes=ed25519-sha-256,preimage-sha-256'
+// prints 'ni:sha-256;l-wuy18t5Ic2GfCbVb9yAiTJ_gJbN2x34fk3eHOz5kY?fpt=threshold-sha-256&cost=133120&subtypes=ed25519-sha-256,preimage-sha-256'
 ```
 
 ### Create a THRESHOLD-SHA-256 Fulfillment
@@ -189,7 +189,7 @@ thresholdFulfillment.addSubfulfillmentUri('pGSAIOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZ
 thresholdFulfillment.addSubfulfillmentUri('oAKAAA')
 thresholdFulfillment.setThreshold(1) // defaults to subconditions.length
 console.log(thresholdFulfillment.getConditionUri())
-// prints 'ni:sha-256;VTP5omKYz0g5vWR8_jN9Q3bZrmVWL0E0cDnTFYMKVx8?fpt=threshold-sha-256&cost=133120&subtypes=ed25519-sha-256,preimage-sha-256'
+// prints 'ni:sha-256;l-wuy18t5Ic2GfCbVb9yAiTJ_gJbN2x34fk3eHOz5kY?fpt=threshold-sha-256&cost=133120&subtypes=ed25519-sha-256,preimage-sha-256'
 const thresholdFulfillmentUri = thresholdFulfillment.serializeUri()
 // Note: If there are more than enough fulfilled subconditions, shorter
 // fulfillments will be chosen over longer ones.
