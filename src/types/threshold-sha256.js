@@ -8,7 +8,7 @@ const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
-const isInteger = require('core-js/library/fn/number/is-integer')
+const isInteger = require('../util/is-integer')
 
 const Asn1ThresholdFingerprintContents = require('../schemas/fingerprint').ThresholdFingerprintContents
 

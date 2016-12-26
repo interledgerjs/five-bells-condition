@@ -12,7 +12,7 @@ const ParseError = require('../errors/parse-error')
 const MissingDataError = require('../errors/missing-data-error')
 
 const base64url = require('../util/base64url')
-const isInteger = require('core-js/library/fn/number/is-integer')
+const isInteger = require('../util/is-integer')
 
 const Asn1Condition = require('../schemas/condition').Condition
 
