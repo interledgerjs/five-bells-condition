@@ -14,7 +14,6 @@
     "schemas"
   ],
   "dependencies": {
-    "asn1": "^0.2.3",
     "asn1.js": "^4.9.0",
     "core-js": "^2.4.1",
     "tweetnacl": "^0.14.1"
