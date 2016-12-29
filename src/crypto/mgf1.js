@@ -1,14 +1,13 @@
 'use strict'
 
 const crypto = require('crypto')
-const Hasher = require('../lib/hasher')
 
 class Mgf1 {
   constructor (opts) {
     opts = opts || {}
 
     this.hashAlgorithm = opts.hashAlgorithm || 'sha256'
-    this.hashLength = Hasher.getLength(this.hashAlgorithm)
+    this.hashLength = crypto.createHash(this.hashAlgorithm).digest().length
     this.saltLength = this.hashLength
   }
 

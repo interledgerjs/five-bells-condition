@@ -7,9 +7,9 @@
 const Rsa = require('../crypto/rsa')
 const pem = require('../util/pem')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('oer-utils/predictor')
 const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
+const Asn1RsaFingerprintContents = require('../schemas/fingerprint').RsaFingerprintContents
 
 // Instantiate RSA signer with standard settings
 const rsa = new Rsa()
@@ -33,25 +33,35 @@ class RsaSha256 extends BaseSha256 {
     this.signature = null
   }
 
+  parseJson (json) {
+    this.modulus = Buffer.from(json.modulus, 'base64')
+    this.signature = Buffer.from(json.signature, 'base64')
+  }
+
   /**
-   * Write static header fields.
+   * Produce the contents of the condition hash.
    *
-   * Some fields are common between the hash and the fulfillment payload. This
-   * method writes those field to anything implementing the Writer interface.
-   * It is used internally when generating the hash of the condition, when
-   * generating the fulfillment payload and when calculating the maximum
-   * fulfillment size.
+   * This function is called internally by the `getCondition` method.
    *
-   * @param {Writer|Hasher|Predictor} Target for outputting the header.
+   * @return {Buffer} Encoded contents of fingerprint hash.
    *
    * @private
    */
-  writeCommonHeader (writer) {
+  getFingerprintContents () {
     if (!this.modulus) {
-      throw new MissingDataError('Requires a public modulus')
+      throw new MissingDataError('Requires modulus')
     }
 
-    writer.writeVarOctetString(this.modulus)
+    return Asn1RsaFingerprintContents.encode({
+      modulus: this.modulus
+    })
+  }
+
+  getAsn1JsonPayload () {
+    return {
+      modulus: this.modulus,
+      signature: this.signature
+    }
   }
 
   /**
@@ -116,76 +126,20 @@ class RsaSha256 extends BaseSha256 {
   }
 
   /**
-   * Generate the contents of the condition hash.
+   * Calculate the cost of fulfilling this condition.
    *
-   * Writes the contents of the condition hash to a Hasher. Used internally by
-   * `getCondition`.
+   * The cost of the RSA condition is the size of the modulus squared, divided
+   * by 64.
    *
-   * @param {Hasher} hasher Destination where the hash payload will be written.
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  writeHashPayload (hasher) {
-    this.writeCommonHeader(hasher)
-  }
-
-  /**
-   * Parse the payload of an RSA fulfillment.
-   *
-   * Read a fulfillment payload from a Reader and populate this object with that
-   * fulfillment.
-   *
-   * @param {Reader} reader Source to read the fulfillment payload from.
-   *
-   * @private
-   */
-  parsePayload (reader) {
-    this.setPublicModulus(reader.readVarOctetString())
-    this.setSignature(reader.readVarOctetString())
-  }
-
-  /**
-   * Generate the fulfillment payload.
-   *
-   * This writes the fulfillment payload to a Writer.
-   *
-   * @param {Writer} writer Subject for writing the fulfillment payload.
-   *
-   * @private
-   */
-  writePayload (writer) {
-    if (!this.signature) {
-      throw new MissingDataError('Requires a signature')
-    }
-
-    this.writeCommonHeader(writer)
-    writer.writeVarOctetString(this.signature)
-  }
-
-  /**
-   * Calculates the longest possible fulfillment length.
-   *
-   * The longest fulfillment for an RSA condition is the length of a fulfillment
-   * where the dynamic message length equals its maximum length.
-   *
-   * @return {Number} Maximum length of the fulfillment payload
-   *
-   * @private
-   */
-  calculateMaxFulfillmentLength () {
-    const predictor = new Predictor()
-
+  calculateCost () {
     if (!this.modulus) {
       throw new MissingDataError('Requires a public modulus')
     }
 
-    // Calculate the length that the common header would have
-    this.writeCommonHeader(predictor)
-
-    // Signature
-    predictor.writeVarOctetString(this.modulus)
-
-    return predictor.getSize()
+    return Math.pow(rsa.getModulusBitLength(this.modulus), 2) >>> RsaSha256.COST_RIGHT_SHIFT
   }
 
   /**
@@ -213,6 +167,11 @@ class RsaSha256 extends BaseSha256 {
 }
 
 RsaSha256.TYPE_ID = 3
-RsaSha256.FEATURE_BITMASK = 0x11
+RsaSha256.TYPE_NAME = 'rsa-sha-256'
+RsaSha256.TYPE_ASN1_CONDITION = 'rsaSha256Condition'
+RsaSha256.TYPE_ASN1_FULFILLMENT = 'rsaSha256Fulfillment'
+RsaSha256.TYPE_CATEGORY = 'simple'
+
+RsaSha256.COST_RIGHT_SHIFT = 6 // 2^6 = 64
 
 module.exports = RsaSha256

@@ -7,8 +7,9 @@
 const Condition = require('../lib/condition')
 const Fulfillment = require('../lib/fulfillment')
 const BaseSha256 = require('./base-sha256')
-const Predictor = require('oer-utils/predictor')
 const MissingDataError = require('../errors/missing-data-error')
+const isInteger = require('../util/is-integer')
+const Asn1PrefixFingerprintContents = require('../schemas/fingerprint').PrefixFingerprintContents
 
 /**
  * PREFIX-SHA-256: Prefix condition using SHA-256.
@@ -32,7 +33,9 @@ class PrefixSha256 extends BaseSha256 {
   constructor () {
     super()
 
+    this.prefix = new Buffer(0)
     this.subcondition = null
+    this.maxMessageLength = 16384
   }
 
   /**
@@ -93,17 +96,42 @@ class PrefixSha256 extends BaseSha256 {
   }
 
   /**
-   * Get full bitmask.
+   * Set the threshold.
+   *
+   * Determines the threshold that is used to consider this condition fulfilled.
+   * If the number of valid subfulfillments is greater or equal to this number,
+   * the threshold condition is considered to be fulfilled.
+   *
+   * @param {Number} maxMessageLength Integer threshold
+   */
+  setMaxMessageLength (maxMessageLength) {
+    if (!isInteger(maxMessageLength) || maxMessageLength < 0) {
+      throw new TypeError('Max message length must be an integer greater than or equal to zero, was: ' +
+        maxMessageLength)
+    }
+
+    this.maxMessageLength = maxMessageLength
+  }
+
+  /**
+   * Get types used in this condition.
    *
    * This is a type of condition that contains a subcondition. A complete
-   * bitmask must contain the set of types that must be supported in order to
-   * validate this fulfillment. Therefore, we need to calculate the bitwise OR
-   * of this condition's TYPE_BIT and the subcondition's bitmask.
+   * set of subtypes must contain the set of types that must be supported in
+   * order to validate this fulfillment. Therefore, we need to join the type of
+   * this condition to the types used in the subcondition.
    *
-   * @return {Number} Complete bitmask for this fulfillment.
+   * @return {Set<String>} Complete type names for this fulfillment.
    */
-  getBitmask () {
-    return super.getBitmask() | this.subcondition.getBitmask()
+  getSubtypes () {
+    const subtypes = new Set([...this.subcondition.getSubtypes(), this.subcondition.getTypeName()])
+
+    // Never include our own type as a subtype. The reason is that we already
+    // know that the validating implementation knows how to interpret this type,
+    // otherwise it wouldn't be able to verify this fulfillment to begin with.
+    subtypes.delete(this.constructor.TYPE_NAME)
+
+    return subtypes
   }
 
   /**
@@ -111,84 +139,67 @@ class PrefixSha256 extends BaseSha256 {
    *
    * This function is called internally by the `getCondition` method.
    *
-   * @param {Hasher} hasher Hash generator
+   * @return {Buffer} Encoded contents of fingerprint hash.
    *
    * @private
    */
-  writeHashPayload (hasher) {
+  getFingerprintContents () {
     if (!this.subcondition) {
       throw new MissingDataError('Requires subcondition')
     }
 
-    hasher.writeVarOctetString(this.prefix)
-    hasher.write(
-      this.subcondition instanceof Condition
-      ? this.subcondition.serializeBinary()
-      : this.subcondition.getConditionBinary()
-    )
+    return Asn1PrefixFingerprintContents.encode({
+      prefix: this.prefix,
+      maxMessageLength: this.maxMessageLength,
+      subcondition: this.subcondition instanceof Condition
+        ? this.subcondition.getAsn1Json()
+        : this.subcondition.getCondition().getAsn1Json()
+    })
+  }
+
+  getAsn1JsonPayload () {
+    return {
+      prefix: this.prefix,
+      maxMessageLength: this.maxMessageLength,
+      subfulfillment: this.subcondition.getAsn1Json()
+    }
+  }
+
+  parseJson (json) {
+    this.setPrefix(Buffer.from(json.prefix, 'base64'))
+    this.setMaxMessageLength(json.maxMessageLength)
+    this.setSubfulfillment(Fulfillment.fromJson(json.subfulfillment))
+  }
+
+  parseAsn1JsonPayload (json) {
+    this.setPrefix(Buffer.from(json.prefix, 'base64'))
+    this.setMaxMessageLength(json.maxMessageLength.toNumber())
+    this.setSubfulfillment(Fulfillment.fromAsn1Json(json.subfulfillment))
   }
 
   /**
-   * Calculates the maximum size of any fulfillment for this condition.
+   * Calculate the cost of fulfilling this condition.
    *
-   * In a threshold condition, the maximum length of the fulfillment depends on
-   * the maximum lengths of the fulfillments of the subconditions. However,
-   * usually not all subconditions must be fulfilled in order to meet the
-   * threshold.
+   * The cost of the prefix condition equals (1 + l/256) * (16384 + s) where l
+   * is the prefix length in bytes and s is the subcondition cost.
    *
-   * Consequently, this method relies on an algorithm to determine which
-   * combination of fulfillments, where no fulfillment can be left out, results
-   * in the largest total fulfillment size.
-   *
-   * @return {Number} Maximum length of the fulfillment payload
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  calculateMaxFulfillmentLength () {
-    // Calculate length of subfulfillment
-    const subfulfillmentLength = this.subcondition instanceof Condition
-      ? this.subcondition.getMaxFulfillmentLength()
-      : this.subcondition.getCondition().getMaxFulfillmentLength()
-
-    // Calculate resulting total maximum fulfillment size
-    const predictor = new Predictor()
-    predictor.writeVarOctetString(this.prefix)
-    predictor.skip(subfulfillmentLength)
-
-    return predictor.getSize()
-  }
-
-  /**
-   * Parse a fulfillment payload.
-   *
-   * Read a fulfillment payload from a Reader and populate this object with that
-   * fulfillment.
-   *
-   * @param {Reader} reader Source to read the fulfillment payload from.
-   *
-   * @private
-   */
-  parsePayload (reader) {
-    this.setPrefix(reader.readVarOctetString())
-    this.setSubfulfillment(Fulfillment.fromBinary(reader))
-  }
-
-  /**
-   * Generate the fulfillment payload.
-   *
-   * This writes the fulfillment payload to a Writer.
-   *
-   * @param {Writer} writer Subject for writing the fulfillment payload.
-   *
-   * @private
-   */
-  writePayload (writer) {
-    if (!(this.subcondition instanceof Fulfillment)) {
-      throw new Error('Subcondition must be fulfilled')
+  calculateCost () {
+    if (!this.prefix) {
+      throw new MissingDataError('Prefix must be specified')
     }
 
-    writer.writeVarOctetString(this.prefix)
-    writer.write(this.subcondition.serializeBinary())
+    if (!this.subcondition) {
+      throw new MissingDataError('Subcondition must be specified')
+    }
+
+    const subconditionCost = this.subcondition instanceof Condition
+      ? this.subcondition.getCost()
+      : this.subcondition.getCondition().getCost()
+
+    return Number(this.prefix.length) + this.maxMessageLength + subconditionCost + 1024
   }
 
   /**
@@ -214,7 +225,13 @@ class PrefixSha256 extends BaseSha256 {
 }
 
 PrefixSha256.TYPE_ID = 1
-PrefixSha256.FEATURE_BITMASK = 0x05
+PrefixSha256.TYPE_NAME = 'prefix-sha-256'
+PrefixSha256.TYPE_ASN1_CONDITION = 'prefixSha256Condition'
+PrefixSha256.TYPE_ASN1_FULFILLMENT = 'prefixSha256Fulfillment'
+PrefixSha256.TYPE_CATEGORY = 'compound'
+
+PrefixSha256.CONSTANT_BASE_COST = 16384
+PrefixSha256.CONSTANT_COST_DIVISOR = 256
 
 // DEPRECATED
 PrefixSha256.prototype.setSubconditionUri =

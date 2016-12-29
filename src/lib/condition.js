@@ -4,15 +4,17 @@
  * @module types
  */
 
+const querystring = require('querystring')
+
 const TypeRegistry = require('./type-registry')
 const PrefixError = require('../errors/prefix-error')
 const ParseError = require('../errors/parse-error')
 const MissingDataError = require('../errors/missing-data-error')
 
 const base64url = require('../util/base64url')
-const Reader = require('oer-utils/reader')
-const Writer = require('oer-utils/writer')
-const isInteger = require('core-js/library/fn/number/is-integer')
+const isInteger = require('../util/is-integer')
+
+const Asn1Condition = require('../schemas/condition').Condition
 
 // Regex for validating conditions
 //
@@ -22,7 +24,9 @@ const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,15}:[a
 
 // This is a stricter version based on limitations of the current
 // implementation. Specifically, we can't handle bitmasks greater than 32 bits.
-const CONDITION_REGEX_STRICT = /^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,7}:[a-zA-Z0-9_-]{0,86}:([1-9][0-9]{0,17}|0)$/
+const CONDITION_REGEX_STRICT = /^ni:sha-256;([a-zA-Z0-9_-]{0,86})\?(.+)$/
+
+const INTEGER_REGEX = /^0|[1-9]\d*$/
 
 /**
  * Crypto-condition.
@@ -59,19 +63,34 @@ class Condition {
     }
 
     const pieces = serializedCondition.split(':')
-    if (pieces[0] !== 'cc') {
-      throw new PrefixError('Serialized condition must start with "cc:"')
+    if (pieces[0] !== 'ni') {
+      throw new PrefixError('Serialized condition must start with "ni:"')
     }
 
-    if (!Condition.REGEX_STRICT.exec(serializedCondition)) {
+    const parsed = Condition.REGEX_STRICT.exec(serializedCondition)
+    if (!parsed) {
       throw new ParseError('Invalid condition format')
     }
 
+    const query = querystring.parse(parsed[2])
+
+    const type = TypeRegistry.findByName(query.fpt)
+
+    const cost = INTEGER_REGEX.exec(query.cost)
+
+    if (!cost) {
+      throw new ParseError('No or invalid cost provided')
+    }
+
     const condition = new Condition()
-    condition.setTypeId(parseInt(pieces[1], 16))
-    condition.setBitmask(parseInt(pieces[2], 16))
-    condition.setHash(base64url.decode(pieces[3]))
-    condition.setMaxFulfillmentLength(parseInt(pieces[4], 10))
+    condition.setTypeId(type.typeId)
+    if (type.Class.TYPE_CATEGORY === 'compound') {
+      condition.setSubtypes(new Set(query.subtypes.split(',')))
+    } else {
+      condition.setSubtypes(new Set())
+    }
+    condition.setHash(base64url.decode(parsed[1]))
+    condition.setCost(Number(query.cost))
 
     return condition
   }
@@ -82,15 +101,41 @@ class Condition {
    * This method will parse a stream of binary data and construct a
    * corresponding Condition object.
    *
-   * @param {Reader} reader Binary stream implementing the Reader interface
+   * @param {Buffer} data Condition in binary format
    * @return {Condition} Resulting object
    */
-  static fromBinary (reader) {
-    reader = Reader.from(reader)
+  static fromBinary (data) {
+    const conditionJson = Asn1Condition.decode(data)
 
-    // Instantiate condition
+    return Condition.fromAsn1Json(conditionJson)
+  }
+
+  static fromAsn1Json (json) {
+    const type = TypeRegistry.findByAsn1ConditionType(json.type)
+
     const condition = new Condition()
-    condition.parseBinary(reader)
+    condition.setTypeId(type.typeId)
+    condition.setHash(json.value.fingerprint)
+    condition.setCost(json.value.cost.toNumber())
+
+    if (type.Class.TYPE_CATEGORY === 'compound') {
+      const subtypesBuffer = json.value.subtypes.data
+      const subtypes = new Set()
+      let byteIndex = 0
+      while (byteIndex < subtypesBuffer.length) {
+        for (let i = 0; i < 8; i++) {
+          if ((1 << (7 - i)) & subtypesBuffer[byteIndex]) {
+            const typeId = byteIndex * 8 + i
+            const typeName = TypeRegistry.findByTypeId(typeId).name
+            subtypes.add(typeName)
+          }
+        }
+        byteIndex++
+      }
+      condition.setSubtypes(subtypes)
+    } else {
+      condition.setSubtypes(new Set())
+    }
 
     return condition
   }
@@ -117,8 +162,12 @@ class Condition {
     this.type = type
   }
 
+  getTypeName () {
+    return TypeRegistry.findByTypeId(this.type).name
+  }
+
   /**
-   * Return the bitmask of this condition.
+   * Return the subtypes of this condition.
    *
    * For simple condition types this is simply the set of bits representing the
    * features required by the condition type.
@@ -128,19 +177,19 @@ class Condition {
    *
    * @return {Number} Bitmask required to verify this condition.
    */
-  getBitmask () {
-    return this.bitmask
+  getSubtypes () {
+    return this.subtypes
   }
 
   /**
-   * Set the bitmask.
+   * Set the subtypes.
    *
-   * Sets the required bitmask to validate a fulfillment for this condition.
+   * Sets the required subtypes to validate a fulfillment for this condition.
    *
-   * @param {Number} bitmask Integer representation of bitmask.
+   * @param {Number} subtypes Integer representation of subtypes.
    */
-  setBitmask (bitmask) {
-    this.bitmask = bitmask
+  setSubtypes (subtypes) {
+    this.subtypes = subtypes
   }
 
   /**
@@ -198,12 +247,12 @@ class Condition {
    * @return {Number} Maximum length (in bytes) of any fulfillment payload that
    *   fulfills this condition..
    */
-  getMaxFulfillmentLength () {
-    if (typeof this.maxFulfillmentLength !== 'number') {
-      throw new MissingDataError('Maximum fulfillment length not set')
+  getCost () {
+    if (typeof this.cost !== 'number') {
+      throw new MissingDataError('Cost not set')
     }
 
-    return this.maxFulfillmentLength
+    return this.cost
   }
 
   /**
@@ -214,14 +263,14 @@ class Condition {
    *
    * @param {Number} Maximum fulfillment payload length in bytes.
    */
-  setMaxFulfillmentLength (maxFulfillmentLength) {
-    if (!isInteger(maxFulfillmentLength)) {
-      throw new TypeError('Fulfillment length must be an integer')
-    } else if (maxFulfillmentLength < 0) {
-      throw new TypeError('Fulfillment length must be positive or zero')
+  setCost (cost) {
+    if (!isInteger(cost)) {
+      throw new TypeError('Cost must be an integer')
+    } else if (cost < 0) {
+      throw new TypeError('Cost must be positive or zero')
     }
 
-    this.maxFulfillmentLength = maxFulfillmentLength
+    this.cost = cost
   }
 
   /**
@@ -234,11 +283,13 @@ class Condition {
    * @return {String} Condition as a URI
    */
   serializeUri () {
-    return 'cc' +
-      ':' + this.getTypeId().toString(16) +
-      ':' + this.getBitmask().toString(16) +
-      ':' + base64url.encode(this.getHash()) +
-      ':' + this.getMaxFulfillmentLength()
+    const ConditionClass = TypeRegistry.findByTypeId(this.type).Class
+    const includeSubtypes = ConditionClass.TYPE_CATEGORY === 'compound'
+    return 'ni:sha-256;' +
+      base64url.encode(this.getHash()) +
+      '?fpt=' + this.getTypeName() +
+      '&cost=' + this.getCost() +
+      (includeSubtypes ? '&subtypes=' + Array.from(this.getSubtypes()).sort().join(',') : '')
   }
 
   /**
@@ -251,12 +302,41 @@ class Condition {
    * @return {Buffer} Serialized condition
    */
   serializeBinary () {
-    const writer = new Writer()
-    writer.writeUInt16(this.getTypeId())                // type
-    writer.writeVarUInt(this.getBitmask())              // requiredSuites
-    writer.writeVarOctetString(this.getHash())          // fingerprint
-    writer.writeVarUInt(this.getMaxFulfillmentLength()) // maxFulfillmentLength
-    return writer.getBuffer()
+    const asn1Json = this.getAsn1Json()
+    return Asn1Condition.encode(asn1Json)
+  }
+
+  getAsn1Json () {
+    const ConditionClass = TypeRegistry.findByTypeId(this.type).Class
+
+    const asn1Json = {
+      type: ConditionClass.TYPE_ASN1_CONDITION,
+      value: {
+        fingerprint: this.getHash(),
+        cost: this.getCost()
+      }
+    }
+
+    if (ConditionClass.TYPE_CATEGORY === 'compound') {
+      // Convert the subtypes set of type names to an array of type IDs
+      const subtypeIds = Array.from(this.getSubtypes())
+        .map(TypeRegistry.findByName)
+        .map(x => x.typeId)
+
+      // Allocate a large enough buffer for the subtypes bitarray
+      const maxId = subtypeIds.reduce((a, b) => Math.max(a, b), 0)
+      const subtypesBuffer = Buffer.alloc(1 + (maxId >>> 3))
+      for (let id of subtypeIds) {
+        subtypesBuffer[id >>> 3] |= 1 << (7 - id % 8)
+      }
+
+      // Determine the number of unused bits at the end
+      const trailingZeroBits = 7 - maxId % 8
+
+      asn1Json.value.subtypes = { unused: trailingZeroBits, data: subtypesBuffer }
+    }
+
+    return asn1Json
   }
 
   /**
@@ -271,36 +351,36 @@ class Condition {
    */
   parseBinary (reader) {
     this.setTypeId(reader.readUInt16())
-    this.setBitmask(reader.readVarUInt())
-    // TODO Ensure bitmask is supported?
+    this.setSubtypes(reader.readVarUInt())
+    // TODO Ensure subtypes is supported?
     this.setHash(reader.readVarOctetString())
-    this.setMaxFulfillmentLength(reader.readVarUInt())
+    this.setCost(reader.readVarUInt())
   }
 
   /**
    * Ensure the condition is valid according the local rules.
    *
-   * Checks the condition against the local bitmask (supported condition types)
+   * Checks the condition against the local subtypes (supported condition types)
    * and the local maximum fulfillment size.
    *
    * @return {Boolean} Whether the condition is valid according to local rules.
    */
   validate () {
-    // Get class for type ID, throws on error
-    TypeRegistry.getClassFromTypeId(this.getTypeId())
+    // Get info for type ID, throws on error
+    TypeRegistry.findByTypeId(this.getTypeId())
 
     // Bitmask can have at most 32 bits with current implementation
-    if (this.getBitmask() > Condition.MAX_SAFE_BITMASK) {
+    if (this.getSubtypes() > Condition.MAX_SAFE_SUBTYPES) {
       throw new Error('Bitmask too large to be safely represented')
     }
 
     // Assert all requested features are supported by this implementation
-    if (this.getBitmask() & ~Condition.SUPPORTED_BITMASK) {
+    if (this.getSubtypes() & ~Condition.SUPPORTED_SUBTYPES) {
       throw new Error('Condition requested unsupported feature suites')
     }
 
     // Assert the requested fulfillment size is supported by this implementation
-    if (this.getMaxFulfillmentLength() > Condition.MAX_FULFILLMENT_LENGTH) {
+    if (this.getCost() > Condition.MAX_COST) {
       throw new Error('Condition requested too large of a max fulfillment size')
     }
 
@@ -308,14 +388,14 @@ class Condition {
   }
 }
 
-// Our current implementation can only represent up to 32 bits for our bitmask
-Condition.MAX_SAFE_BITMASK = 0xffffffff
+// Our current implementation can only represent up to 32 bits for our subtypes
+Condition.MAX_SAFE_SUBTYPES = 0xffffffff
 
 // Feature suites supported by this implementation
-Condition.SUPPORTED_BITMASK = 0x3f
+Condition.SUPPORTED_SUBTYPES = 0x3f
 
 // Max fulfillment size supported by this implementation
-Condition.MAX_FULFILLMENT_LENGTH = 65535
+Condition.MAX_COST = 2097152
 
 // Expose regular expressions
 Condition.REGEX = CONDITION_REGEX

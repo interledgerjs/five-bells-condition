@@ -25,19 +25,16 @@ class PreimageSha256 extends BaseSha256 {
   /**
    * Generate the contents of the condition hash.
    *
-   * Writes the contents of the condition hash to a Hasher. Used internally by
-   * `getCondition`.
-   *
-   * @param {Hasher} hasher Destination where the hash payload will be written.
+   * @return {Buffer} Hash payload.
    *
    * @private
    */
-  writeHashPayload (hasher) {
+  getFingerprintContents () {
     if (!this.preimage) {
       throw new MissingDataError('Could not calculate hash, no preimage provided')
     }
 
-    hasher.write(this.preimage)
+    return this.preimage
   }
 
   /**
@@ -60,36 +57,31 @@ class PreimageSha256 extends BaseSha256 {
     this.preimage = preimage
   }
 
-  /**
-   * Parse the payload of a SHA256 hashlock fulfillment.
-   *
-   * Read a fulfillment payload from a Reader and populate this object with that
-   * fulfillment.
-   *
-   * @param {Reader} reader Source to read the fulfillment payload from.
-   * @param {Number} payloadSize Total size of the fulfillment payload.
-   *
-   * @private
-   */
-  parsePayload (reader, payloadSize) {
-    this.setPreimage(reader.read(payloadSize))
+  parseJson (json) {
+    this.preimage = Buffer.from(json.preimage, 'base64')
+  }
+
+  getAsn1JsonPayload () {
+    return {
+      preimage: this.preimage
+    }
   }
 
   /**
-   * Generate the fulfillment payload.
+   * Calculate the cost of fulfilling this condition.
    *
-   * This writes the fulfillment payload to a Writer.
+   * The cost of the preimage condition equals the size of the preimage in
+   * bytes.
    *
-   * @param {Writer} writer Subject for writing the fulfillment payload.
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  writePayload (writer) {
+  calculateCost () {
     if (!this.preimage) {
       throw new MissingDataError('Preimage must be specified')
     }
 
-    writer.write(this.preimage)
+    return this.preimage.length
   }
 
   /**
@@ -107,6 +99,9 @@ class PreimageSha256 extends BaseSha256 {
 }
 
 PreimageSha256.TYPE_ID = 0
-PreimageSha256.FEATURE_BITMASK = 0x03
+PreimageSha256.TYPE_NAME = 'preimage-sha-256'
+PreimageSha256.TYPE_ASN1_CONDITION = 'preimageSha256Condition'
+PreimageSha256.TYPE_ASN1_FULFILLMENT = 'preimageSha256Fulfillment'
+PreimageSha256.TYPE_CATEGORY = 'simple'
 
 module.exports = PreimageSha256

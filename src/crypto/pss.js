@@ -4,14 +4,12 @@ const crypto = require('crypto')
 const Mgf1 = require('./mgf1')
 const xor = require('../util/xor')
 
-const Hasher = require('../lib/hasher')
-
 class Pss {
   constructor (opts) {
     opts = opts || {}
 
     this.hashAlgorithm = opts.hashAlgorithm || 'sha256'
-    this.hashLength = Hasher.getLength(this.hashAlgorithm)
+    this.hashLength = crypto.createHash(this.hashAlgorithm).digest().length
     this.saltLength = this.hashLength
   }
 

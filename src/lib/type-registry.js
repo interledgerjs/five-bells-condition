@@ -12,17 +12,41 @@ class TypeRegistry {
    * @param {Number} type Type ID.
    * @return {Class} Class implementing the given fulfillment type ID.
    */
-  static getClassFromTypeId (typeId) {
+  static findByTypeId (typeId) {
     // Determine type of condition
     if (typeId > Number.MAX_SAFE_INTEGER) {
       throw new UnsupportedTypeError('Type ' + typeId + ' is not supported')
     }
 
     for (let type of TypeRegistry.registeredTypes) {
-      if (typeId === type.typeId) return type.Class
+      if (typeId === type.typeId) return type
     }
 
     throw new UnsupportedTypeError('Type ' + typeId + ' is not supported')
+  }
+
+  static findByName (name) {
+    for (let type of TypeRegistry.registeredTypes) {
+      if (name === type.name) return type
+    }
+
+    throw new UnsupportedTypeError('Type ' + name + ' is not supported')
+  }
+
+  static findByAsn1ConditionType (asn1Type) {
+    for (let type of TypeRegistry.registeredTypes) {
+      if (asn1Type === type.asn1Condition) return type
+    }
+
+    throw new UnsupportedTypeError('Type ' + asn1Type + ' is not supported')
+  }
+
+  static findByAsn1FulfillmentType (asn1Type) {
+    for (let type of TypeRegistry.registeredTypes) {
+      if (asn1Type === type.asn1Fulfillment) return type
+    }
+
+    throw new UnsupportedTypeError('Type ' + asn1Type + ' is not supported')
   }
 
   /**
@@ -42,6 +66,9 @@ class TypeRegistry {
 
     TypeRegistry.registeredTypes.push({
       typeId: Class.TYPE_ID,
+      name: Class.TYPE_NAME,
+      asn1Condition: Class.TYPE_ASN1_CONDITION,
+      asn1Fulfillment: Class.TYPE_ASN1_FULFILLMENT,
       Class
     })
   }

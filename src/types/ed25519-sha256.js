@@ -5,9 +5,10 @@
  */
 
 const nacl = require('tweetnacl')
-const Fulfillment = require('../lib/fulfillment')
+const BaseSha256 = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
+const Asn1Ed25519FingerprintContents = require('../schemas/fingerprint').Ed25519FingerprintContents
 
 let ed25519
 try {
@@ -22,7 +23,7 @@ try {
  * ED25519 is assigned the type ID 4. It relies only on the ED25519 feature
  * suite which corresponds to a bitmask of 0x20.
  */
-class Ed25519 extends Fulfillment {
+class Ed25519Sha256 extends BaseSha256 {
   constructor () {
     super()
     this.publicKey = null
@@ -107,63 +108,47 @@ class Ed25519 extends Fulfillment {
     }
   }
 
+  parseJson (json) {
+    this.setPublicKey(Buffer.from(json.publicKey, 'base64'))
+    this.setSignature(Buffer.from(json.signature, 'base64'))
+  }
+
   /**
-   * Generate the condition hash.
+   * Produce the contents of the condition hash.
    *
-   * Since the public key is the same size as the hash we'd be putting out here,
-   * we just return the public key.
+   * This function is called internally by the `getCondition` method.
    *
-   * @param {Hasher} hasher Destination where the hash payload will be written.
+   * @return {Buffer} Encoded contents of fingerprint hash.
+   *
+   * @private
    */
-  generateHash () {
+  getFingerprintContents () {
     if (!this.publicKey) {
-      throw new MissingDataError('Requires a public key')
+      throw new MissingDataError('Requires public key')
     }
 
-    return this.publicKey
+    return Asn1Ed25519FingerprintContents.encode({
+      publicKey: this.publicKey
+    })
+  }
+
+  getAsn1JsonPayload () {
+    return {
+      publicKey: this.publicKey,
+      signature: this.signature
+    }
   }
 
   /**
-   * Parse the payload of an Ed25519 fulfillment.
+   * Calculate the cost of fulfilling this condition.
    *
-   * Read a fulfillment payload from a Reader and populate this object with that
-   * fulfillment.
+   * The cost of the Ed25519 condition is 2^17 = 131072.
    *
-   * @param {Reader} reader Source to read the fulfillment payload from.
-   *
+   * @return {Number} Expected maximum cost to fulfill this condition
    * @private
    */
-  parsePayload (reader) {
-    this.setPublicKey(reader.readOctetString(Ed25519.PUBKEY_LENGTH))
-    this.setSignature(reader.readOctetString(Ed25519.SIGNATURE_LENGTH))
-  }
-
-  /**
-   * Generate the fulfillment payload.
-   *
-   * This writes the fulfillment payload to a Writer.
-   *
-   * @param {Writer} writer Subject for writing the fulfillment payload.
-   *
-   * @private
-   */
-  writePayload (writer) {
-    writer.writeOctetString(this.publicKey, Ed25519.PUBKEY_LENGTH)
-    writer.writeOctetString(this.signature, Ed25519.SIGNATURE_LENGTH)
-  }
-
-  /**
-   * Calculates the fulfillment length.
-   *
-   * Ed25519 signatures are constant size. Consequently fulfillments for this
-   * type of condition are also constant size.
-   *
-   * @return {Number} Length of the fulfillment payload.
-   *
-   * @private
-   */
-  calculateMaxFulfillmentLength () {
-    return Ed25519.FULFILLMENT_LENGTH
+  calculateCost () {
+    return Ed25519Sha256.CONSTANT_COST
   }
 
   /**
@@ -196,12 +181,12 @@ class Ed25519 extends Fulfillment {
   }
 }
 
-Ed25519.TYPE_ID = 4
-Ed25519.FEATURE_BITMASK = 0x20
-Ed25519.PUBKEY_LENGTH = 32
-Ed25519.SIGNATURE_LENGTH = 64
-Ed25519.FULFILLMENT_LENGTH =
-  Ed25519.PUBKEY_LENGTH +
-  Ed25519.SIGNATURE_LENGTH
+Ed25519Sha256.TYPE_ID = 4
+Ed25519Sha256.TYPE_NAME = 'ed25519-sha-256'
+Ed25519Sha256.TYPE_ASN1_CONDITION = 'ed25519Sha256Condition'
+Ed25519Sha256.TYPE_ASN1_FULFILLMENT = 'ed25519Sha256Fulfillment'
+Ed25519Sha256.TYPE_CATEGORY = 'simple'
 
-module.exports = Ed25519
+Ed25519Sha256.CONSTANT_COST = 131072
+
+module.exports = Ed25519Sha256
