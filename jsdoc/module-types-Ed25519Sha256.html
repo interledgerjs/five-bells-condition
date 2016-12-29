@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>PreimageSha256 - Documentation</title>
+    <title>Ed25519Sha256 - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -67,7 +67,7 @@
 
 <div id="main" class="col-sm-8 col-xs-12">
     
-    <h1 class="page-title">PreimageSha256</h1>
+    <h1 class="page-title">Ed25519Sha256</h1>
     
 
     
@@ -82,19 +82,13 @@
         <h2>
             <span class="ancestors"><a href="module-types.html">types</a>~</span>
         
-        PreimageSha256
+        Ed25519Sha256
         </h2>
         
-            <div class="class-description"><p>PREIMAGE-SHA-256: Hashlock condition using SHA-256.</p>
-<p>This type of condition is also called a hashlock. By creating a hash
-of a difficult-to-guess 256-bit random or pseudo-random integer it
-is possible to create a condition which the creator can trivially
-fulfill by publishing the random value. However, for anyone else,
-the condition is cryptgraphically hard to fulfill, because they
-would have to find a preimage for the given condition hash.</p>
-<p>PREIMAGE-SHA-256 is assigned the type ID 0. It relies on the SHA-256
-and PREIMAGE feature suites which corresponds to a feature bitmask
-of 0x03.</p></div>
+            <div class="class-description"><p>ED25519: Ed25519 signature condition.</p>
+<p>This condition implements Ed25519 signatures.</p>
+<p>ED25519 is assigned the type ID 4. It relies only on the ED25519 feature
+suite which corresponds to a bitmask of 0x20.</p></div>
         
     
 </header>
@@ -108,7 +102,7 @@ of 0x03.</p></div>
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="PreimageSha256"><span class="type-signature"></span>new PreimageSha256<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Ed25519Sha256"><span class="type-signature"></span>new Ed25519Sha256<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -155,7 +149,7 @@ of 0x03.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_preimage-sha256.js.html">types/preimage-sha256.js</a>, <a href="types_preimage-sha256.js.html#line24">line 24</a>
+        <a href="types_ed25519-sha256.js.html">types/ed25519-sha256.js</a>, <a href="types_ed25519-sha256.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -204,19 +198,15 @@ of 0x03.</p></div>
 
     
 
-    <h4 class="name" id="setPreimage"><span class="type-signature"></span>setPreimage<span class="signature">(preimage)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setPublicKey"><span class="type-signature"></span>setPublicKey<span class="signature">(publicKey)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Provide a preimage.</p>
-<p>The preimage is the only input to a SHA256 hashlock condition.</p>
-<p>Note that the preimage should contain enough (pseudo-random) data in order
-to be difficult to guess. A sufficiently large secret seed and a
-cryptographically secure pseudo-random number generator (CSPRNG) can be
-used to avoid having to store each individual preimage.</p>
+    <p>Set the public publicKey.</p>
+<p>This is the Ed25519 public key. It has to be provided as a buffer.</p>
 </div>
 
 
@@ -252,7 +242,7 @@ used to avoid having to store each individual preimage.</p>
 
         <tr>
             
-                <td class="name"><code>preimage</code></td>
+                <td class="name"><code>publicKey</code></td>
             
 
             <td class="type">
@@ -268,7 +258,7 @@ used to avoid having to store each individual preimage.</p>
 
             
 
-            <td class="description last"><p>Secret data that will be hashed to form the condition.</p></td>
+            <td class="description last"><p>Public Ed25519 publicKey</p></td>
         </tr>
 
     
@@ -309,7 +299,7 @@ used to avoid having to store each individual preimage.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_preimage-sha256.js.html">types/preimage-sha256.js</a>, <a href="types_preimage-sha256.js.html#line52">line 52</a>
+        <a href="types_ed25519-sha256.js.html">types/ed25519-sha256.js</a>, <a href="types_ed25519-sha256.js.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -340,16 +330,16 @@ used to avoid having to store each individual preimage.</p>
 
     
 
-    <h4 class="name" id="validate"><span class="type-signature"></span>validate<span class="signature">(Message)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    <h4 class="name" id="setSignature"><span class="type-signature"></span>setSignature<span class="signature">(signature)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Validate this fulfillment.</p>
-<p>For a SHA256 hashlock fulfillment, successful parsing implies that the
-fulfillment is valid, so this method is a no-op.</p>
+    <p>Set the signature.</p>
+<p>Instead of using the private key to sign using the sign() method, we can
+also generate the signature elsewhere and pass it in.</p>
 </div>
 
 
@@ -385,7 +375,7 @@ fulfillment is valid, so this method is a no-op.</p>
 
         <tr>
             
-                <td class="name"><code>Message</code></td>
+                <td class="name"><code>signature</code></td>
             
 
             <td class="type">
@@ -401,7 +391,7 @@ fulfillment is valid, so this method is a no-op.</p>
 
             
 
-            <td class="description last"><p>(ignored in this condition type)</p></td>
+            <td class="description last"><p>64-byte signature.</p></td>
         </tr>
 
     
@@ -442,7 +432,296 @@ fulfillment is valid, so this method is a no-op.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_preimage-sha256.js.html">types/preimage-sha256.js</a>, <a href="types_preimage-sha256.js.html#line96">line 96</a>
+        <a href="types_ed25519-sha256.js.html">types/ed25519-sha256.js</a>, <a href="types_ed25519-sha256.js.html#line62">line 62</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sign"><span class="type-signature"></span>sign<span class="signature">(message, privateKey)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Sign a message.</p>
+<p>This method will take a message and an Ed25519 private key and store a
+corresponding signature in this fulfillment.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Buffer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Message to sign.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>privateKey</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Ed25519 private key.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types_ed25519-sha256.js.html">types/ed25519-sha256.js</a>, <a href="types_ed25519-sha256.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="validate"><span class="type-signature"></span>validate<span class="signature">(message)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Verify the signature of this Ed25519 fulfillment.</p>
+<p>The signature of this Ed25519 fulfillment is verified against the provided
+message and public key.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Buffer</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Message to validate against.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="types_ed25519-sha256.js.html">types/ed25519-sha256.js</a>, <a href="types_ed25519-sha256.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -469,7 +748,7 @@ fulfillment is valid, so this method is a no-op.</p>
 
         
 <div class="param-desc">
-    <p>Validation result</p>
+    <p>Whether this fulfillment is valid.</p>
 </div>
 
 

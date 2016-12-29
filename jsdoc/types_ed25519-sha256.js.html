@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>PreimageSha256 - Documentation</title>
+    <title>types/ed25519-sha256.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -67,438 +67,211 @@
 
 <div id="main" class="col-sm-8 col-xs-12">
     
-    <h1 class="page-title">PreimageSha256</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-            <span class="ancestors"><a href="module-types.html">types</a>~</span>
-        
-        PreimageSha256
-        </h2>
-        
-            <div class="class-description"><p>PREIMAGE-SHA-256: Hashlock condition using SHA-256.</p>
-<p>This type of condition is also called a hashlock. By creating a hash
-of a difficult-to-guess 256-bit random or pseudo-random integer it
-is possible to create a condition which the creator can trivially
-fulfill by publishing the random value. However, for anyone else,
-the condition is cryptgraphically hard to fulfill, because they
-would have to find a preimage for the given condition hash.</p>
-<p>PREIMAGE-SHA-256 is assigned the type ID 0. It relies on the SHA-256
-and PREIMAGE feature suites which corresponds to a feature bitmask
-of 0x03.</p></div>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-    <h2>Constructor</h2>
-    
-
-    <h4 class="name" id="PreimageSha256"><span class="type-signature"></span>new PreimageSha256<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_preimage-sha256.js.html">types/preimage-sha256.js</a>, <a href="types_preimage-sha256.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id="setPreimage"><span class="type-signature"></span>setPreimage<span class="signature">(preimage)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Provide a preimage.</p>
-<p>The preimage is the only input to a SHA256 hashlock condition.</p>
-<p>Note that the preimage should contain enough (pseudo-random) data in order
-to be difficult to guess. A sufficiently large secret seed and a
-cryptographically secure pseudo-random number generator (CSPRNG) can be
-used to avoid having to store each individual preimage.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>preimage</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Buffer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Secret data that will be hashed to form the condition.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_preimage-sha256.js.html">types/preimage-sha256.js</a>, <a href="types_preimage-sha256.js.html#line52">line 52</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validate"><span class="type-signature"></span>validate<span class="signature">(Message)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Validate this fulfillment.</p>
-<p>For a SHA256 hashlock fulfillment, successful parsing implies that the
-fulfillment is valid, so this method is a no-op.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>Message</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Buffer</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>(ignored in this condition type)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="types_preimage-sha256.js.html">types/preimage-sha256.js</a>, <a href="types_preimage-sha256.js.html#line96">line 96</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Validation result</p>
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">types/ed25519-sha256.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * @module types
+ */
+
+const nacl = require('tweetnacl')
+const BaseSha256 = require('./base-sha256')
+const MissingDataError = require('../errors/missing-data-error')
+const ValidationError = require('../errors/validation-error')
+const Asn1Ed25519FingerprintContents = require('../schemas/fingerprint').Ed25519FingerprintContents
+
+let ed25519
+try {
+  ed25519 = require('ed25519')
+} catch (err) { }
+
+/**
+ * ED25519: Ed25519 signature condition.
+ *
+ * This condition implements Ed25519 signatures.
+ *
+ * ED25519 is assigned the type ID 4. It relies only on the ED25519 feature
+ * suite which corresponds to a bitmask of 0x20.
+ */
+class Ed25519Sha256 extends BaseSha256 {
+  constructor () {
+    super()
+    this.publicKey = null
+    this.signature = null
+  }
+
+  /**
+   * Set the public publicKey.
+   *
+   * This is the Ed25519 public key. It has to be provided as a buffer.
+   *
+   * @param {Buffer} publicKey Public Ed25519 publicKey
+   */
+  setPublicKey (publicKey) {
+    if (!Buffer.isBuffer(publicKey)) {
+      throw new TypeError('Public key must be a Buffer, was: ' + publicKey)
+    }
+
+    if (publicKey.length !== 32) {
+      throw new Error('Public key must be 32 bytes, was: ' + publicKey.length)
+    }
+
+    // TODO Validate public key
+
+    this.publicKey = publicKey
+  }
+
+  /**
+   * Set the signature.
+   *
+   * Instead of using the private key to sign using the sign() method, we can
+   * also generate the signature elsewhere and pass it in.
+   *
+   * @param {Buffer} signature 64-byte signature.
+   */
+  setSignature (signature) {
+    if (!Buffer.isBuffer(signature)) {
+      throw new TypeError('Signature must be a Buffer, was: ' + signature)
+    }
+
+    if (signature.length !== 64) {
+      throw new Error('Signature must be 64 bytes, was: ' + signature.length)
+    }
+
+    this.signature = signature
+  }
+
+  /**
+   * Sign a message.
+   *
+   * This method will take a message and an Ed25519 private key and store a
+   * corresponding signature in this fulfillment.
+   *
+   * @param {Buffer} message Message to sign.
+   * @param {String} privateKey Ed25519 private key.
+   */
+  sign (message, privateKey) {
+    if (!Buffer.isBuffer(message)) {
+      throw new MissingDataError('Message must be a Buffer')
+    }
+    if (!Buffer.isBuffer(privateKey)) {
+      throw new TypeError('Private key must be a Buffer, was: ' + privateKey)
+    }
+    if (privateKey.length !== 32) {
+      throw new Error('Private key must be 32 bytes, was: ' + privateKey.length)
+    }
+
+    // This would be the Ed25519ph version:
+    // message = crypto.createHash('sha512')
+    //   .update(message)
+    //   .digest()
+
+    // Use native library if available (~65x faster)
+    if (ed25519) {
+      const keyPair = ed25519.MakeKeypair(privateKey)
+      this.setPublicKey(keyPair.publicKey)
+      this.signature = ed25519.Sign(message, keyPair)
+    } else {
+      const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
+      this.setPublicKey(new Buffer(keyPair.publicKey))
+      this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
+    }
+  }
+
+  parseJson (json) {
+    this.setPublicKey(Buffer.from(json.publicKey, 'base64'))
+    this.setSignature(Buffer.from(json.signature, 'base64'))
+  }
+
+  /**
+   * Produce the contents of the condition hash.
+   *
+   * This function is called internally by the `getCondition` method.
+   *
+   * @return {Buffer} Encoded contents of fingerprint hash.
+   *
+   * @private
+   */
+  getFingerprintContents () {
+    if (!this.publicKey) {
+      throw new MissingDataError('Requires public key')
+    }
+
+    return Asn1Ed25519FingerprintContents.encode({
+      publicKey: this.publicKey
+    })
+  }
+
+  getAsn1JsonPayload () {
+    return {
+      publicKey: this.publicKey,
+      signature: this.signature
+    }
+  }
+
+  /**
+   * Calculate the cost of fulfilling this condition.
+   *
+   * The cost of the Ed25519 condition is 2^17 = 131072.
+   *
+   * @return {Number} Expected maximum cost to fulfill this condition
+   * @private
+   */
+  calculateCost () {
+    return Ed25519Sha256.CONSTANT_COST
+  }
+
+  /**
+   * Verify the signature of this Ed25519 fulfillment.
+   *
+   * The signature of this Ed25519 fulfillment is verified against the provided
+   * message and public key.
+   *
+   * @param {Buffer} message Message to validate against.
+   * @return {Boolean} Whether this fulfillment is valid.
+   */
+  validate (message) {
+    if (!Buffer.isBuffer(message)) {
+      throw new TypeError('Message must be a Buffer')
+    }
+
+    // Use native library if available (~60x faster)
+    let result
+    if (ed25519) {
+      result = ed25519.Verify(message, this.signature, this.publicKey)
+    } else {
+      result = nacl.sign.detached.verify(message, this.signature, this.publicKey)
+    }
+
+    if (result !== true) {
+      throw new ValidationError('Invalid ed25519 signature')
+    }
+
+    return true
+  }
+}
+
+Ed25519Sha256.TYPE_ID = 4
+Ed25519Sha256.TYPE_NAME = 'ed25519-sha-256'
+Ed25519Sha256.TYPE_ASN1_CONDITION = 'ed25519Sha256Condition'
+Ed25519Sha256.TYPE_ASN1_FULFILLMENT = 'ed25519Sha256Fulfillment'
+Ed25519Sha256.TYPE_CATEGORY = 'simple'
+
+Ed25519Sha256.CONSTANT_COST = 131072
+
+module.exports = Ed25519Sha256
+</code></pre>
+        </article>
+    </section>
 
 
 
