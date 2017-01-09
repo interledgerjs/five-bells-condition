@@ -1,6 +1,6 @@
 {
   "name": "five-bells-condition",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Implementation of crypto-conditions in JavaScript",
   "main": "index.js",
   "browser": "./dist/index.js",
