@@ -7,7 +7,7 @@ const Condition = require('..').Condition
 describe('Condition', function () {
   describe('fromUri', function () {
     it('should parse a preimage-sha-256 condition', function () {
-      const cond = Condition.fromUri('ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      const cond = Condition.fromUri('ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
 
       assert.instanceOf(cond, Condition)
       assert.equal(cond.getTypeId(), 0)
@@ -16,7 +16,7 @@ describe('Condition', function () {
     })
 
     it('should parse a prefix-sha-256 condition', function () {
-      const cond = Condition.fromUri('ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=prefix-sha-256&cost=0&subtypes=preimage-sha-256,prefix-sha-256')
+      const cond = Condition.fromUri('ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=prefix-sha-256&cost=0&subtypes=preimage-sha-256,prefix-sha-256')
 
       assert.instanceOf(cond, Condition)
       assert.equal(cond.getTypeId(), 1)
