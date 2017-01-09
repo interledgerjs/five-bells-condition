@@ -24,7 +24,7 @@ const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,15}:[a
 
 // This is a stricter version based on limitations of the current
 // implementation. Specifically, we can't handle bitmasks greater than 32 bits.
-const CONDITION_REGEX_STRICT = /^ni:sha-256;([a-zA-Z0-9_-]{0,86})\?(.+)$/
+const CONDITION_REGEX_STRICT = /^ni:\/\/\/sha-256;([a-zA-Z0-9_-]{0,86})\?(.+)$/
 
 const INTEGER_REGEX = /^0|[1-9]\d*$/
 
@@ -285,7 +285,7 @@ class Condition {
   serializeUri () {
     const ConditionClass = TypeRegistry.findByTypeId(this.type).Class
     const includeSubtypes = ConditionClass.TYPE_CATEGORY === 'compound'
-    return 'ni:sha-256;' +
+    return 'ni:///sha-256;' +
       base64url.encode(this.getHash()) +
       '?fpt=' + this.getTypeName() +
       '&cost=' + this.getCost() +

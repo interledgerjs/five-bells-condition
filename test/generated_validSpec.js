@@ -6,10 +6,10 @@ const cc = require('..')
 describe('valid', function () {
   describe('0000_test-minimal-preimage.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      assert.equal(generatedCondition, 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -20,17 +20,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      assert.equal(generatedCondition, 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -43,14 +43,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"preimage-sha-256","preimage":""}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      assert.equal(generatedCondition, 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
+      assert.equal(generatedCondition, 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -62,10 +62,10 @@ describe('valid', function () {
   })
   describe('0001_test-minimal-prefix.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -76,17 +76,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A12A8020BB1AC5260C0141B7E54B26EC2330637C5597BF811951AC09E744AD20FF77E2878102040082020780')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -99,14 +99,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"","subfulfillment":{"type":"preimage-sha-256","preimage":""}}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A12A8020BB1AC5260C0141B7E54B26EC2330637C5597BF811951AC09E744AD20FF77E2878102040082020780', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -118,10 +118,10 @@ describe('valid', function () {
   })
   describe('0002_test-minimal-threshold.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -132,17 +132,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22A8020B4B84136DF48A71D73F4985C04C6767A778ECB65BA7023B4506823BEEE7631B98102040082020780')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -155,14 +155,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":1,"subfulfillments":[{"type":"preimage-sha-256","preimage":""}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22A8020B4B84136DF48A71D73F4985C04C6767A778ECB65BA7023B4506823BEEE7631B98102040082020780', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tLhBNt9Ipx1z9JhcBMZ2eneOy2W6cCO0UGgjvu52Mbk?fpt=threshold-sha-256&cost=1024&subtypes=preimage-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -174,10 +174,10 @@ describe('valid', function () {
   })
   describe('0003_test-minimal-rsa.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -188,17 +188,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A3278020B31FA8206E4EA7E515337B3B33082B877651801085ED84FB4DAEB247BF698D7F8103010000')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -211,14 +211,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"rsa-sha-256","modulus":"4e-LJNb3awnIHtd1KqJi8ETwSodNQ4CdMc6mEvmbDJeotDdBU-Pu89ZmFoQ-DkHCkyZLcbYXPbHPDWzVWMWGV3Bvzwl_cExIPlnL_f1bPue8gNdAxeDwR_PoX8DXWBV3am8_I8XcXnlxOaaILjgzakpfs2E3Yg_zZj264yhHKAGGL3Ly-HsgK5yJrdfNWwoHb3xT41A59n7RfsgV5bQwXMYxlwaNXm5Xm6beX04-V99eTgcv8s5MZutFIzlzh1J1ljnwJXv1fb1cRD-1FYzOCj02rce6AfM6C7bbsr-YnWBxEvI0TZk-d-VjwdNh3t9X2pbvLPxoXwArY4JGpbMJuQ","signature":"vULWVp9lma7UVflrwO0I7RSAvzbNnhRn-cb3RGHJ46dJM0svZASqX59rr-dsNH0GklCzXRyXDHkwWe5zOoGT8w-nj-x8rkWePd_XYzgF1HaUDQy1PX-zidza6vboz0jEtWNUMOTyvN_lBcLA_Be0DZPH7bfCYev0OJWnBeAkqgVJpmD3CjIVBkdSLb5rY1IEl8_4-NXXR2iifFuG5YC-P83Jbxl2KTy6DVjfxgtRi2MqbcHpUMQ-Ix_ho3mqbdzFLHDt-FHGwBI6lkJhz9s4V81s1a3DfY2izJJO2uHYTPYSRYfydMH6NpfaKQHwJp8DskPAO2FOA4Xhlh-sUAD5uw"}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A3278020B31FA8206E4EA7E515337B3B33082B877651801085ED84FB4DAEB247BF698D7F8103010000', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -230,10 +230,10 @@ describe('valid', function () {
   })
   describe('0004_test-minimal-ed25519.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -244,17 +244,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A4278020799239ABA8FC4FF7EABFBC4C44E69E8BDFED993324E12ED64792ABE289CF1D5F8103020000')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -267,14 +267,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"5VZDAMNgrHKQhuLMgG6CioSHfx645dl02HPgZSJJAVVfuIIVkKM7rMYeOXAc-bRr0lv18FlbviRlUUFDjnoQCw"}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A4278020799239ABA8FC4FF7EABFBC4C44E69E8BDFED993324E12ED64792ABE289CF1D5F8103020000', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -286,10 +286,10 @@ describe('valid', function () {
   })
   describe('0005_test-basic-preimage.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      assert.equal(generatedCondition, 'ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -300,17 +300,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A02580209834876DCFB05CB167A5C24953EBA58C4AC89B1ADF57F28F2F9D09AF107EE8F0810103')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      assert.equal(generatedCondition, 'ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -323,14 +323,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"preimage-sha-256","preimage":"YWFh"}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      assert.equal(generatedCondition, 'ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A02580209834876DCFB05CB167A5C24953EBA58C4AC89B1ADF57F28F2F9D09AF107EE8F0810103', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
+      assert.equal(generatedCondition, 'ni:///sha-256;mDSHbc-wXLFnpcJJU-uljErImxrfV_KPL50JrxB-6PA?fpt=preimage-sha-256&cost=3')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -342,10 +342,10 @@ describe('valid', function () {
   })
   describe('0006_test-basic-prefix.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -356,17 +356,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A12B8020451FE15F16299D495993FE692DB989E56A5230A90476F77392A3CD3213C0733F810302040382020308')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -379,14 +379,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A12B8020451FE15F16299D495993FE692DB989E56A5230A90476F77392A3CD3213C0733F810302040382020308', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;RR_hXxYpnUlZk_5pLbmJ5WpSMKkEdvdzkqPNMhPAcz8?fpt=prefix-sha-256&cost=132099&subtypes=ed25519-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -398,10 +398,10 @@ describe('valid', function () {
   })
   describe('0007_test-basic-prefix-two-levels-deep.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -412,17 +412,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A12B8020177350AD8566C528B92D9B5382DF2C68D9BA9F9FA41D43DBDD8E40B118DD9641810302080F82020308')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -435,14 +435,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"prefix-sha-256","maxMessageLength":3,"prefix":"YmJi","subfulfillment":{"type":"prefix-sha-256","maxMessageLength":6,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"pCNg9H99uG218DfIECQiNyB9et1uPlMX4hKyB-Jb7SrLSFrQvLtXdVcmDsu71ncY1sq630W61lXRuM6EYJ6XAQ"}}}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A12B8020177350AD8566C528B92D9B5382DF2C68D9BA9F9FA41D43DBDD8E40B118DD9641810302080F82020308', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;F3NQrYVmxSi5LZtTgt8saNm6n5-kHUPb3Y5AsRjdlkE?fpt=prefix-sha-256&cost=133135&subtypes=ed25519-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -454,10 +454,10 @@ describe('valid', function () {
   })
   describe('0008_test-basic-threshold.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -468,17 +468,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22B8020B6ACF4083E438BE4356F25FF92C295E9C8E1BAB141B4607BA48511EBA35AEFCC810306100382020358')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -491,14 +491,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":2,"subfulfillments":[{"type":"rsa-sha-256","modulus":"u7ChoxT_ai_HmuBvYQ3I1EIckz7QxDVOaurZHvlH6k-PYysuL3i4oHp4wzJIlcfLCRbrM0wQCQ5e254Cle0v8d6v0fSfVEEuQ-3iywbP_DlTAzCaTOPqwjQdmvMYgzfuur09Skr49D4VfW8C-dHySkJ3cEnJMKojP-1cY7B_clzea7JEBPy_wLhyR-rLfbBEeFumbt6OeSESRwFQQB4KhHG9428tXsuWD1cboX2vOB2DeN7CHhAS5LN2yebEa7Z9aO7xK6mhWWf0hti8kbPisG-l_KabdSQmrwKcsUnqWG3thR66Fgh2rNhfBiJx-tc9FfXw8CLiYTCSJr7jVnrQUvl0bKi_rPDU9BcwCFwJegICgwHZKgxUXAOXRywu7lthIiAl1jRw7mgc4yUnR86coj8Z5m8vY4bmrRORHXrazTjOXKj_LC2Zq7D1w7qEdQlhPmYyoSzm73jaTIIOkINAUwA9EZf2pXsBAP7hUshMixszu5ZXGYh4D6-9aXz4NwqZ2o-q91aH2VHMZTPHi44c4uHVzrmhFikgGvQ3R1yUAn-lJhS0MAt33PGArEnKo0AWjzJi_R7osTgCzqNXVLQjuDP6FMXdDEdt3l1ee_c3TWHySMO6uRywVQvRy-9wUH7o2xzzmTB-Io1PRZKmbFhXPP7MY5ZoBvr4gQnMsJkj6ls","signature":"QSAOQpYe6kYMgnbyOatmt2-PKGnqzMX56ZRcCrxjsUMGVvPaLSF6QzJ-6M4RJ9FKhddK9BL-k3A0W6a0QAPXca7dK6D8JQYn_fYWMa_WTpvucUsbr7afkBvutvlZsWpUsyippnTIg8r8T8L3sEdtvKqNm_1H9zTjRza_ZulzsxXCq_RyewYso8QCk261CEnhgV3RYEpgTe-maM_oI7AIv4979XzrG0HlGP9TrpEe-YgFcbPRdCNB1g48sr65PrXxePjve6DG8ikLmVXYPWD5Q9ZEVx7I1fBk2V8doedZ1pINhKVMvEl4NkCnsM89Ao5ifsetJakV9tjCSy4JkVKKAsW-8BBsGLPznFmZVut6J7M3MT3Pk-dYZ2BqSsWhq2-btETcHa0fVG-u3mrpNIhASQF2kTcdUe4dZQ785YGzDGhDCH5wFBkPRGAmfYlNUlgU3aNDuaBIncCMajQzR0LOowtJJRLSlXRSF91l7P7LnKGNIS-EpQbXACbtMyiWvSSmMFoMve6d_Yq7hQf4QOuUz6jpKOaRDCdfe2jRH5ZGPBAqWWYTR4aVvHZx-ycwkTnGzS8Vyn4kBS5H9ONO-LhE7DZKhb3JvoQlz_cqd76Y2QFphqZnEJgl8e8Y4IFwqHtDaOfBQsGdrRBgXE80HVIJmHrzGrqOLklj8-B5TdEfC3I"},{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"NEydEqAqV7Nf2WYZPO6V1du7xndVP86_QUwY2nUAKd05xuU63Yks7-RCNYMf-OXzaGiO93zPb5l_1BGmp-v5Ag"}},{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22B8020B6ACF4083E438BE4356F25FF92C295E9C8E1BAB141B4607BA48511EBA35AEFCC810306100382020358', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;tqz0CD5Di-Q1byX_ksKV6cjhurFBtGB7pIUR66Na78w?fpt=threshold-sha-256&cost=397315&subtypes=ed25519-sha-256,prefix-sha-256,rsa-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -510,10 +510,10 @@ describe('valid', function () {
   })
   describe('0009_test-basic-threshold-same-condition-twice.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -524,17 +524,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22B80209A0B2C63DF80686E6020D0CA21CBFE668CCEC3D1AF82713FEAE9B8DD4A0F9BB78103041400820203D8')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -547,14 +547,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":1,"subfulfillments":[{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}},{"type":"rsa-sha-256","modulus":"u7ChoxT_ai_HmuBvYQ3I1EIckz7QxDVOaurZHvlH6k-PYysuL3i4oHp4wzJIlcfLCRbrM0wQCQ5e254Cle0v8d6v0fSfVEEuQ-3iywbP_DlTAzCaTOPqwjQdmvMYgzfuur09Skr49D4VfW8C-dHySkJ3cEnJMKojP-1cY7B_clzea7JEBPy_wLhyR-rLfbBEeFumbt6OeSESRwFQQB4KhHG9428tXsuWD1cboX2vOB2DeN7CHhAS5LN2yebEa7Z9aO7xK6mhWWf0hti8kbPisG-l_KabdSQmrwKcsUnqWG3thR66Fgh2rNhfBiJx-tc9FfXw8CLiYTCSJr7jVnrQUvl0bKi_rPDU9BcwCFwJegICgwHZKgxUXAOXRywu7lthIiAl1jRw7mgc4yUnR86coj8Z5m8vY4bmrRORHXrazTjOXKj_LC2Zq7D1w7qEdQlhPmYyoSzm73jaTIIOkINAUwA9EZf2pXsBAP7hUshMixszu5ZXGYh4D6-9aXz4NwqZ2o-q91aH2VHMZTPHi44c4uHVzrmhFikgGvQ3R1yUAn-lJhS0MAt33PGArEnKo0AWjzJi_R7osTgCzqNXVLQjuDP6FMXdDEdt3l1ee_c3TWHySMO6uRywVQvRy-9wUH7o2xzzmTB-Io1PRZKmbFhXPP7MY5ZoBvr4gQnMsJkj6ls","signature":"fss4we3Ml_SM2IUwwkbFSRKGf1EbxN3QjFc8ogg6yf2qNFwXdo2t6YNCSBjbUqNy4oD7pWgvZSFalz-3KGdJO2T4-zQVM5felzo2xzxSuR4DQBtvpWP3d4T6r4ggQFvukx6jX3qNlCUUrlhsH8yo7e-biQTRuOEcnNjdu38VG3cX4STnLVejyjP0TkrXvDvYf9wge6rqrbax8XVPx48bQmbd84bl1STBo4cGUjqoIPEYsFN3Law-SoZ700WkvDWSCe9sHIPPVDKcJUjRrwUd_tr1PoBA9_OwYThrJ7UMj98w-k_X1fPfTbB0RMW4Z9V_P9L5r0AXRyHlYEJILwy4oEx4b74N47mHskntvTC32yuSic9E0OfLLmvewIpukErdNo5AwKf5LoSGWAaLDdbF7989xvK3YBB8AfWqr6jjf3ZmKIb8XS2yXduOP9T6ixFPj-pjn0VfAugCY_a85IO6LiChBeliMO84t5OO-qUKmdnj1qMd5Piy_H28FnXN_57X6tSUmOfo1oNTvMKBCWBg5azgw5dZNCYu18OxfmpxsXPgWF8Th7omsxSFqCCOOBoFPoFdVu3Lj_2pa9pLgJF5FzWZKKNEBnwBjPf6MD_PkybcjX9atigIbUvTgEbwKVNZrgENagDTgT984cfm7baOB4eYWTuaV6ycCgpMLSgk-gA"},{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}},{"type":"rsa-sha-256","modulus":"u7ChoxT_ai_HmuBvYQ3I1EIckz7QxDVOaurZHvlH6k-PYysuL3i4oHp4wzJIlcfLCRbrM0wQCQ5e254Cle0v8d6v0fSfVEEuQ-3iywbP_DlTAzCaTOPqwjQdmvMYgzfuur09Skr49D4VfW8C-dHySkJ3cEnJMKojP-1cY7B_clzea7JEBPy_wLhyR-rLfbBEeFumbt6OeSESRwFQQB4KhHG9428tXsuWD1cboX2vOB2DeN7CHhAS5LN2yebEa7Z9aO7xK6mhWWf0hti8kbPisG-l_KabdSQmrwKcsUnqWG3thR66Fgh2rNhfBiJx-tc9FfXw8CLiYTCSJr7jVnrQUvl0bKi_rPDU9BcwCFwJegICgwHZKgxUXAOXRywu7lthIiAl1jRw7mgc4yUnR86coj8Z5m8vY4bmrRORHXrazTjOXKj_LC2Zq7D1w7qEdQlhPmYyoSzm73jaTIIOkINAUwA9EZf2pXsBAP7hUshMixszu5ZXGYh4D6-9aXz4NwqZ2o-q91aH2VHMZTPHi44c4uHVzrmhFikgGvQ3R1yUAn-lJhS0MAt33PGArEnKo0AWjzJi_R7osTgCzqNXVLQjuDP6FMXdDEdt3l1ee_c3TWHySMO6uRywVQvRy-9wUH7o2xzzmTB-Io1PRZKmbFhXPP7MY5ZoBvr4gQnMsJkj6ls","signature":"fss4we3Ml_SM2IUwwkbFSRKGf1EbxN3QjFc8ogg6yf2qNFwXdo2t6YNCSBjbUqNy4oD7pWgvZSFalz-3KGdJO2T4-zQVM5felzo2xzxSuR4DQBtvpWP3d4T6r4ggQFvukx6jX3qNlCUUrlhsH8yo7e-biQTRuOEcnNjdu38VG3cX4STnLVejyjP0TkrXvDvYf9wge6rqrbax8XVPx48bQmbd84bl1STBo4cGUjqoIPEYsFN3Law-SoZ700WkvDWSCe9sHIPPVDKcJUjRrwUd_tr1PoBA9_OwYThrJ7UMj98w-k_X1fPfTbB0RMW4Z9V_P9L5r0AXRyHlYEJILwy4oEx4b74N47mHskntvTC32yuSic9E0OfLLmvewIpukErdNo5AwKf5LoSGWAaLDdbF7989xvK3YBB8AfWqr6jjf3ZmKIb8XS2yXduOP9T6ixFPj-pjn0VfAugCY_a85IO6LiChBeliMO84t5OO-qUKmdnj1qMd5Piy_H28FnXN_57X6tSUmOfo1oNTvMKBCWBg5azgw5dZNCYu18OxfmpxsXPgWF8Th7omsxSFqCCOOBoFPoFdVu3Lj_2pa9pLgJF5FzWZKKNEBnwBjPf6MD_PkybcjX9atigIbUvTgEbwKVNZrgENagDTgT984cfm7baOB4eYWTuaV6ycCgpMLSgk-gA"},{"type":"preimage-sha-256","preimage":"YWFh"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22B80209A0B2C63DF80686E6020D0CA21CBFE668CCEC3D1AF82713FEAE9B8DD4A0F9BB78103041400820203D8', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;mgssY9-AaG5gINDKIcv-ZozOw9GvgnE_6um43UoPm7c?fpt=threshold-sha-256&cost=267264&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -566,10 +566,10 @@ describe('valid', function () {
   })
   describe('0010_test-basic-threshold-same-fulfillment-twice.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -580,17 +580,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22B80208E433EF5D3EAA00A2B34A05CA7C22DD392973A19F1A243268CB53111BDF1C844810308180682020348')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -603,14 +603,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":4,"subfulfillments":[{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}},{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"5VZDAMNgrHKQhuLMgG6CioSHfx645dl02HPgZSJJAVVfuIIVkKM7rMYeOXAc-bRr0lv18FlbviRlUUFDjnoQCw"},{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}},{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"5VZDAMNgrHKQhuLMgG6CioSHfx645dl02HPgZSJJAVVfuIIVkKM7rMYeOXAc-bRr0lv18FlbviRlUUFDjnoQCw"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22B80208E433EF5D3EAA00A2B34A05CA7C22DD392973A19F1A243268CB53111BDF1C844810308180682020348', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;jkM-9dPqoAorNKBcp8It05KXOhnxokMmjLUxEb3xyEQ?fpt=threshold-sha-256&cost=530438&subtypes=ed25519-sha-256,prefix-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -622,10 +622,10 @@ describe('valid', function () {
   })
   describe('0011_test-basic-threshold-two-levels-deep.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -636,17 +636,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22B80200C99630A201A99B0748D2BADB205E5CA939692C687D1C4A697E39BA8BA1EBE718103061806820203D8')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -659,14 +659,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":2,"subfulfillments":[{"type":"threshold-sha-256","threshold":2,"subfulfillments":[{"type":"rsa-sha-256","modulus":"u7ChoxT_ai_HmuBvYQ3I1EIckz7QxDVOaurZHvlH6k-PYysuL3i4oHp4wzJIlcfLCRbrM0wQCQ5e254Cle0v8d6v0fSfVEEuQ-3iywbP_DlTAzCaTOPqwjQdmvMYgzfuur09Skr49D4VfW8C-dHySkJ3cEnJMKojP-1cY7B_clzea7JEBPy_wLhyR-rLfbBEeFumbt6OeSESRwFQQB4KhHG9428tXsuWD1cboX2vOB2DeN7CHhAS5LN2yebEa7Z9aO7xK6mhWWf0hti8kbPisG-l_KabdSQmrwKcsUnqWG3thR66Fgh2rNhfBiJx-tc9FfXw8CLiYTCSJr7jVnrQUvl0bKi_rPDU9BcwCFwJegICgwHZKgxUXAOXRywu7lthIiAl1jRw7mgc4yUnR86coj8Z5m8vY4bmrRORHXrazTjOXKj_LC2Zq7D1w7qEdQlhPmYyoSzm73jaTIIOkINAUwA9EZf2pXsBAP7hUshMixszu5ZXGYh4D6-9aXz4NwqZ2o-q91aH2VHMZTPHi44c4uHVzrmhFikgGvQ3R1yUAn-lJhS0MAt33PGArEnKo0AWjzJi_R7osTgCzqNXVLQjuDP6FMXdDEdt3l1ee_c3TWHySMO6uRywVQvRy-9wUH7o2xzzmTB-Io1PRZKmbFhXPP7MY5ZoBvr4gQnMsJkj6ls","signature":"fss4we3Ml_SM2IUwwkbFSRKGf1EbxN3QjFc8ogg6yf2qNFwXdo2t6YNCSBjbUqNy4oD7pWgvZSFalz-3KGdJO2T4-zQVM5felzo2xzxSuR4DQBtvpWP3d4T6r4ggQFvukx6jX3qNlCUUrlhsH8yo7e-biQTRuOEcnNjdu38VG3cX4STnLVejyjP0TkrXvDvYf9wge6rqrbax8XVPx48bQmbd84bl1STBo4cGUjqoIPEYsFN3Law-SoZ700WkvDWSCe9sHIPPVDKcJUjRrwUd_tr1PoBA9_OwYThrJ7UMj98w-k_X1fPfTbB0RMW4Z9V_P9L5r0AXRyHlYEJILwy4oEx4b74N47mHskntvTC32yuSic9E0OfLLmvewIpukErdNo5AwKf5LoSGWAaLDdbF7989xvK3YBB8AfWqr6jjf3ZmKIb8XS2yXduOP9T6ixFPj-pjn0VfAugCY_a85IO6LiChBeliMO84t5OO-qUKmdnj1qMd5Piy_H28FnXN_57X6tSUmOfo1oNTvMKBCWBg5azgw5dZNCYu18OxfmpxsXPgWF8Th7omsxSFqCCOOBoFPoFdVu3Lj_2pa9pLgJF5FzWZKKNEBnwBjPf6MD_PkybcjX9atigIbUvTgEbwKVNZrgENagDTgT984cfm7baOB4eYWTuaV6ycCgpMLSgk-gA"},{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"YWFh","subfulfillment":{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}},{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"5VZDAMNgrHKQhuLMgG6CioSHfx645dl02HPgZSJJAVVfuIIVkKM7rMYeOXAc-bRr0lv18FlbviRlUUFDjnoQCw"}]},{"type":"preimage-sha-256","preimage":"YWFh"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22B80200C99630A201A99B0748D2BADB205E5CA939692C687D1C4A697E39BA8BA1EBE718103061806820203D8', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;DJljCiAambB0jSutsgXlypOWksaH0cSml-ObqLoevnE?fpt=threshold-sha-256&cost=399366&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256,rsa-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -678,10 +678,10 @@ describe('valid', function () {
   })
   describe('0012_test-basic-threshold-schroedinger.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -692,17 +692,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22A8020E4FDB4652C6F17A38B2ABE9AA00640B1E184FE7A8D0C971B5D24F7EDA6FC68BF8102080382020780')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -715,14 +715,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":1,"subfulfillments":[{"type":"preimage-sha-256","preimage":"YWFh"},{"type":"preimage-sha-256","preimage":"YWFh"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22A8020E4FDB4652C6F17A38B2ABE9AA00640B1E184FE7A8D0C971B5D24F7EDA6FC68BF8102080382020780', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;5P20ZSxvF6OLKr6aoAZAseGE_nqNDJcbXST37ab8aL8?fpt=threshold-sha-256&cost=2051&subtypes=preimage-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -734,10 +734,10 @@ describe('valid', function () {
   })
   describe('0013_test-basic-rsa.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -748,17 +748,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A3278020B31FA8206E4EA7E515337B3B33082B877651801085ED84FB4DAEB247BF698D7F8103010000')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -771,14 +771,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"rsa-sha-256","modulus":"4e-LJNb3awnIHtd1KqJi8ETwSodNQ4CdMc6mEvmbDJeotDdBU-Pu89ZmFoQ-DkHCkyZLcbYXPbHPDWzVWMWGV3Bvzwl_cExIPlnL_f1bPue8gNdAxeDwR_PoX8DXWBV3am8_I8XcXnlxOaaILjgzakpfs2E3Yg_zZj264yhHKAGGL3Ly-HsgK5yJrdfNWwoHb3xT41A59n7RfsgV5bQwXMYxlwaNXm5Xm6beX04-V99eTgcv8s5MZutFIzlzh1J1ljnwJXv1fb1cRD-1FYzOCj02rce6AfM6C7bbsr-YnWBxEvI0TZk-d-VjwdNh3t9X2pbvLPxoXwArY4JGpbMJuQ","signature":"SOiUXv4AdVbVv01fJJ5ICPcwfilRHTJi2u9h2ICY-apKi8BiOoyXVzj2XWv0WdVD8onXPLx69Oo6M_vz7ERARHkR1yKUCR5WGDNijkmncu1gjebERZWpHj4X1s9ew7JSjWPSrdZGOYmxLuxXffZHCWDfaDKp2Ew2DRwhetZMhiW9tZT7CtoIbN7LveWA1CS_l0bS8MMSgm27sArWi1LEy31HFWujXjqYHJc4Y3ksyA0EoYAhClJBWGW2Szphd0sdOXXXipiwgh7lXKD4YwXUJSnhDrAVzv1AL7WbKruN7uUqbyRH0ihGA9IZzU6M-c_91UmIicN4C1ndalfvfXMmIA"}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A3278020B31FA8206E4EA7E515337B3B33082B877651801085ED84FB4DAEB247BF698D7F8103010000', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
+      assert.equal(generatedCondition, 'ni:///sha-256;sx-oIG5Op-UVM3s7Mwgrh3ZRgBCF7YT7Ta6yR79pjX8?fpt=rsa-sha-256&cost=65536')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -790,10 +790,10 @@ describe('valid', function () {
   })
   describe('0014_test-basic-rsa4096.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      assert.equal(generatedCondition, 'ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -804,17 +804,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A32780204DD2EA7F85B3EACB8F19058E8360955C32E74C124392A1F44660739709C539C38103040000')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      assert.equal(generatedCondition, 'ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -827,14 +827,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"rsa-sha-256","modulus":"u7ChoxT_ai_HmuBvYQ3I1EIckz7QxDVOaurZHvlH6k-PYysuL3i4oHp4wzJIlcfLCRbrM0wQCQ5e254Cle0v8d6v0fSfVEEuQ-3iywbP_DlTAzCaTOPqwjQdmvMYgzfuur09Skr49D4VfW8C-dHySkJ3cEnJMKojP-1cY7B_clzea7JEBPy_wLhyR-rLfbBEeFumbt6OeSESRwFQQB4KhHG9428tXsuWD1cboX2vOB2DeN7CHhAS5LN2yebEa7Z9aO7xK6mhWWf0hti8kbPisG-l_KabdSQmrwKcsUnqWG3thR66Fgh2rNhfBiJx-tc9FfXw8CLiYTCSJr7jVnrQUvl0bKi_rPDU9BcwCFwJegICgwHZKgxUXAOXRywu7lthIiAl1jRw7mgc4yUnR86coj8Z5m8vY4bmrRORHXrazTjOXKj_LC2Zq7D1w7qEdQlhPmYyoSzm73jaTIIOkINAUwA9EZf2pXsBAP7hUshMixszu5ZXGYh4D6-9aXz4NwqZ2o-q91aH2VHMZTPHi44c4uHVzrmhFikgGvQ3R1yUAn-lJhS0MAt33PGArEnKo0AWjzJi_R7osTgCzqNXVLQjuDP6FMXdDEdt3l1ee_c3TWHySMO6uRywVQvRy-9wUH7o2xzzmTB-Io1PRZKmbFhXPP7MY5ZoBvr4gQnMsJkj6ls","signature":"QSAOQpYe6kYMgnbyOatmt2-PKGnqzMX56ZRcCrxjsUMGVvPaLSF6QzJ-6M4RJ9FKhddK9BL-k3A0W6a0QAPXca7dK6D8JQYn_fYWMa_WTpvucUsbr7afkBvutvlZsWpUsyippnTIg8r8T8L3sEdtvKqNm_1H9zTjRza_ZulzsxXCq_RyewYso8QCk261CEnhgV3RYEpgTe-maM_oI7AIv4979XzrG0HlGP9TrpEe-YgFcbPRdCNB1g48sr65PrXxePjve6DG8ikLmVXYPWD5Q9ZEVx7I1fBk2V8doedZ1pINhKVMvEl4NkCnsM89Ao5ifsetJakV9tjCSy4JkVKKAsW-8BBsGLPznFmZVut6J7M3MT3Pk-dYZ2BqSsWhq2-btETcHa0fVG-u3mrpNIhASQF2kTcdUe4dZQ785YGzDGhDCH5wFBkPRGAmfYlNUlgU3aNDuaBIncCMajQzR0LOowtJJRLSlXRSF91l7P7LnKGNIS-EpQbXACbtMyiWvSSmMFoMve6d_Yq7hQf4QOuUz6jpKOaRDCdfe2jRH5ZGPBAqWWYTR4aVvHZx-ycwkTnGzS8Vyn4kBS5H9ONO-LhE7DZKhb3JvoQlz_cqd76Y2QFphqZnEJgl8e8Y4IFwqHtDaOfBQsGdrRBgXE80HVIJmHrzGrqOLklj8-B5TdEfC3I"}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      assert.equal(generatedCondition, 'ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A32780204DD2EA7F85B3EACB8F19058E8360955C32E74C124392A1F44660739709C539C38103040000', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
+      assert.equal(generatedCondition, 'ni:///sha-256;TdLqf4Wz6suPGQWOg2CVXDLnTBJDkqH0RmBzlwnFOcM?fpt=rsa-sha-256&cost=262144')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -846,10 +846,10 @@ describe('valid', function () {
   })
   describe('0015_test-basic-ed25519.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -860,17 +860,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A4278020799239ABA8FC4FF7EABFBC4C44E69E8BDFED993324E12ED64792ABE289CF1D5F8103020000')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -883,14 +883,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"ed25519-sha-256","publicKey":"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo","signature":"UGoepoMY5i1AY12tBD4Zh-vCbltcRAb3vfhacziPv-XCRaxJ9HcOvHh3CCcKpqh2n-_okw_Q6h7mSzFAfXaVCQ"}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A4278020799239ABA8FC4FF7EABFBC4C44E69E8BDFED993324E12ED64792ABE289CF1D5F8103020000', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
+      assert.equal(generatedCondition, 'ni:///sha-256;eZI5q6j8T_fqv7xMROaei9_tmTMk4S7WR5Kr4onPHV8?fpt=ed25519-sha-256&cost=131072')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -902,10 +902,10 @@ describe('valid', function () {
   })
   describe('0016_test-advanced-notarized-receipt.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -916,17 +916,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22B802009E391004628725E88F8557E954FB2A0EAE2B7C151C47DF3C4AF22F8C16988F98103020CA0820203C8')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -939,14 +939,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":2,"subfulfillments":[{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"aHR0cHM6Ly9ub3RhcnkuZXhhbXBsZS9jYXNlcy82NTdjMTJkYS04ZGNhLTQzYjAtOTdjYS04ZWU4YzM4YWI5Zjcvc3RhdGUvZXhlY3V0ZWQ","subfulfillment":{"type":"ed25519-sha-256","publicKey":"LlMeiL_oxBn5Ya2ckB3ivdjnoOcUhFUFnonreZhrJSQ","signature":"5f3bvsLo21m8tqaA5KcFb91GUAtOmaNxnyVzUDahSSg-KHzt7c2eWlDNl2q0EfhP9Wmqveb24M5qC90MSoJGCA"}},{"type":"preimage-sha-256","preimage":"aHR0cHM6Ly9ub3RhcnkuZXhhbXBsZS9jYXNlcy82NTdjMTJkYS04ZGNhLTQzYjAtOTdjYS04ZWU4YzM4YWI5Zjcvc3RhdGUvZXhlY3V0ZWQ"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22B802009E391004628725E88F8557E954FB2A0EAE2B7C151C47DF3C4AF22F8C16988F98103020CA0820203C8', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;CeORAEYocl6I-FV-lU-yoOrit8FRxH3zxK8i-MFpiPk?fpt=threshold-sha-256&cost=134304&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
@@ -958,10 +958,10 @@ describe('valid', function () {
   })
   describe('0017_test-advanced-notarized-receipt-multiple-notaries.json', function () {
     it('should correctly parse and reserialize the condition', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly generate the fingerprint contents', function () {
@@ -972,17 +972,17 @@ describe('valid', function () {
     })
 
     it('should correctly serialize the condition to binary', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
       const generatedCondition = parsedCondition.serializeBinary()
 
       assert.equal(generatedCondition.toString('hex').toUpperCase(), 'A22B8020424A704949529267B621B3D79119D729B2382CED8B296C3C028FA97D350F6D0781030634D2820203C8')
     })
 
     it('should correctly serialize the condition from a URI', function () {
-      const parsedCondition = cc.fromConditionUri('ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      const parsedCondition = cc.fromConditionUri('ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
       const generatedCondition = parsedCondition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly serialize the fulfillment from json', function () {
@@ -995,14 +995,14 @@ describe('valid', function () {
     it('should correctly serialize the condition URI from json', function () {
       const generatedCondition = cc.fromJson(JSON.parse('{"type":"threshold-sha-256","threshold":2,"subfulfillments":[{"type":"prefix-sha-256","maxMessageLength":0,"prefix":"Y2FzZXMvNjU3YzEyZGEtOGRjYS00M2IwLTk3Y2EtOGVlOGMzOGFiOWY3L3N0YXRlL2V4ZWN1dGVk","subfulfillment":{"type":"threshold-sha-256","threshold":3,"subfulfillments":[{"type":"prefix-sha-256","maxMessageLength":1025,"prefix":"aHR0cHM6Ly9ub3Rhcnk0LmV4YW1wbGUv","subfulfillment":{"type":"ed25519-sha-256","publicKey":"Rkvo5cq-MB4FMv5iIUjPy8zxG_MXop9cyHg5xpUf6pg","signature":"rlayC5_mc7O1szd9hCV8kIVronrH_IYj89BwVubxNmV2CacPp9ASs8UqqLrQPtxIKp7kA-aA5IPjr1mlxK05BA"}},{"type":"prefix-sha-256","maxMessageLength":1024,"prefix":"aHR0cHM6Ly9ub3RhcnkxLmV4YW1wbGUv","subfulfillment":{"type":"ed25519-sha-256","publicKey":"LlMeiL_oxBn5Ya2ckB3ivdjnoOcUhFUFnonreZhrJSQ","signature":"hzAaGAj3PCA_DpyBBvEwcQiB2s2sgHwQ00m3mCDcs0B8d7nSPbQoJ2QL3EE4P9xOynYZwXA36HA3pcfPM4F6Dg"}},{"type":"prefix-sha-256","maxMessageLength":1024,"prefix":"aHR0cHM6Ly9ub3RhcnkyLmV4YW1wbGUv","subfulfillment":{"type":"ed25519-sha-256","publicKey":"WQI-doqchYdsYeuqo07BjmSFf6dmksVamWNfm4jlr5A","signature":"rPnug4hbpY9ixCtImejOqRWpGS90iMFZLOlZVgtS-Ho3kOA208aVS4dVQUjRMcy682nGimajE3_o-kNooWWgCg"}},{"type":"prefix-sha-256","maxMessageLength":1024,"prefix":"aHR0cHM6Ly9ub3RhcnkzLmV4YW1wbGUv","subfulfillment":{"type":"ed25519-sha-256","publicKey":"mpisbb_wkOluONgfBUd9-Gs7uw7_wxG8e0LNrJnWvdk","signature":"l6MrDGHOFRA2ytNZacn5XrVEZepdYpupZav4pqkX8Q3RSr5V0zBUQ45oyRWmtnwd34oMFtLYAfjQuoXv7pu_Dw"}}]}},{"type":"preimage-sha-256","preimage":"aHR0cHM6Ly9ub3RhcnkuZXhhbXBsZS9jYXNlcy82NTdjMTJkYS04ZGNhLTQzYjAtOTdjYS04ZWU4YzM4YWI5Zjcvc3RhdGUvZXhlY3V0ZWQ"}]}')).getConditionUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly parse the condition binary', function () {
       const condition = cc.fromConditionBinary(Buffer.from('A22B8020424A704949529267B621B3D79119D729B2382CED8B296C3C028FA97D350F6D0781030634D2820203C8', 'hex'))
       const generatedCondition = condition.serializeUri()
 
-      assert.equal(generatedCondition, 'ni:sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
+      assert.equal(generatedCondition, 'ni:///sha-256;QkpwSUlSkme2IbPXkRnXKbI4LO2LKWw8Ao-pfTUPbQc?fpt=threshold-sha-256&cost=406738&subtypes=ed25519-sha-256,prefix-sha-256,preimage-sha-256')
     })
 
     it('should correctly parse and reencode the fulfillment binary', function () {
