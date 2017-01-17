@@ -5,11 +5,11 @@
     "subfulfillments": [
       {
         "type": "preimage-sha-256",
-        "preimage": "YWFh"
+        "preimage": "aaa"
       },
       {
         "type": "preimage-sha-256",
-        "preimage": "YWFh"
+        "preimage": "aaa"
       }
     ]
   },
