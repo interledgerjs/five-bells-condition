@@ -13,7 +13,7 @@
 
 ## Specification
 
-Editor's Draft: [**draft-thomas-crypto-conditions-00**](https://tools.ietf.org/html/draft-thomas-crypto-conditions-00)
+Editor's Draft: [**draft-thomas-crypto-conditions-02**](https://tools.ietf.org/html/draft-thomas-crypto-conditions-02)
 
 This specification is only a draft at this stage and has not been submitted.
 
