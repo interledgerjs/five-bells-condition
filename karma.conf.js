@@ -7,6 +7,7 @@ module.exports = function (karma) {
     },
 
     webpack: {
+      entry: ['babel-polyfill', './index.js'],
       devtool: 'inline-source-map',
       module: {
         loaders: [
