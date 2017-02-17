@@ -19,7 +19,7 @@ describe('five-bells-condition', function () {
     })
 
     it('should throw when validating an invalid condition', function () {
-      assert.throws(() => cc.validateCondition('cc:0:abc'))
+      assert.throws(() => cc.validateCondition('ni:///sha-256;47DEQHBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'))
     })
   })
 
@@ -41,8 +41,8 @@ describe('five-bells-condition', function () {
     })
 
     it('should throw when message is not a buffer', function () {
-      const condition = 'cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0'
-      const fulfillment = 'cf:0:'
+      const condition = 'ni:///sha-256;uxrFJgwBQbflSybsIzBjfFWXv4EZUawJ50StIP934oc?fpt=prefix-sha-256&cost=1024&subtypes=prefix-sha-256,preimage-sha-256'
+      const fulfillment = 'oAKAAA'
 
       assert.throws(() => cc.validateFulfillment(fulfillment, condition, 'test'),
         'Message must be provided as a Buffer')

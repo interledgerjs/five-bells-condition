@@ -20,11 +20,11 @@ const Asn1Condition = require('../schemas/condition').Condition
 //
 // This is a generic, future-proof version of the crypto-condition regular
 // expression.
-const CONDITION_REGEX = /^cc:([1-9a-f][0-9a-f]{0,3}|0):[1-9a-f][0-9a-f]{0,15}:[a-zA-Z0-9_-]{0,86}:([1-9][0-9]{0,17}|0)$/
+const CONDITION_REGEX = /^ni:\/\/\/sha-256;([a-zA-Z0-9_-]{0,86})\?(.+)$/
 
 // This is a stricter version based on limitations of the current
 // implementation. Specifically, we can't handle bitmasks greater than 32 bits.
-const CONDITION_REGEX_STRICT = /^ni:\/\/\/sha-256;([a-zA-Z0-9_-]{0,86})\?(.+)$/
+const CONDITION_REGEX_STRICT = CONDITION_REGEX
 
 const INTEGER_REGEX = /^0|[1-9]\d*$/
 
@@ -223,6 +223,10 @@ class Condition {
   setHash (hash) {
     if (!Buffer.isBuffer(hash)) {
       throw new TypeError('Hash must be a Buffer')
+    }
+
+    if (hash.length !== 32) {
+      throw new Error('Hash is of invalid length ' + hash.length + ', should be 32')
     }
 
     this.hash = hash

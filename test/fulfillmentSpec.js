@@ -13,76 +13,46 @@ describe('Fulfillment', function () {
       assert.equal(fulfillment.preimage.toString('hex'), '')
     })
 
-    it.skip('successfully parses a basic fulfillment', function () {
-      const fulfillment = Fulfillment.fromUri('cf:0:UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw')
+    it('successfully parses a basic fulfillment', function () {
+      const fulfillment = Fulfillment.fromUri('oCKAIFDYWOCYXsx_YEGKrwzFq1h_QsJXCohAlanozKzQ9lRc')
 
       const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 
-    it.skip('successfully parses a fulfillment with base64url characters', function () {
-      const fulfillment = Fulfillment.fromUri('cf:0:-u_6')
+    it('successfully parses a fulfillment with base64 padding', function () {
+      const fulfillment = Fulfillment.fromUri('oAKAAA==')
 
-      const expectedPreimage = new Buffer('+u/6', 'base64')
+      assert.equal(fulfillment.constructor, cc.PreimageSha256)
+      assert.equal(fulfillment.preimage.toString('hex'), '')
+    })
+
+    it('successfully parses a fulfillment with regular base64 characters', function () {
+      const fulfillment = Fulfillment.fromUri('oCKAIFDYWOCYXsx/YEGKrwzFq1h/QsJXCohAlanozKzQ9lRc')
+
+      const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 
-    it('rejects a fulfillment with invalid prefix af:', function () {
-      assert.throws(() => Fulfillment.fromUri('af:0:'))
+    it.skip('rejects a fulfillment with invalid characters', function () {
+      assert.throws(() => Fulfillment.fromUri('oAKAAA.'))
     })
 
-    it('rejects a fulfillment with invalid prefix ce:', function () {
-      assert.throws(() => Fulfillment.fromUri('ce:0:'))
+    it.skip('rejects a fulfillment containing a space 1', function () {
+      assert.throws(() => Fulfillment.fromUri('oAK AAA'))
     })
 
-    it('rejects a fulfillment with invalid prefix cf;', function () {
-      assert.throws(() => Fulfillment.fromUri('cf;0:'))
+    it.skip('rejects a fulfillment containing a space 2', function () {
+      assert.throws(() => Fulfillment.fromUri('oAKAAA '))
     })
 
-    it('rejects a fulfillment with invalid prefix cc:', function () {
-      assert.throws(() => Fulfillment.fromUri('cc:0:'))
+    it.skip('rejects a fulfillment containing a space 3', function () {
+      assert.throws(() => Fulfillment.fromUri(' oAKAAA'))
     })
 
-    it('rejects a fulfillment with too many segments', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0::'))
-    })
-
-    it('rejects a fulfillment with too few segments', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0'))
-    })
-
-    it('rejects a fulfillment with an invalid version', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:9:'))
-    })
-
-    it('rejects a fulfillment with base64 padding', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0:AAA='))
-    })
-
-    // Input MUST be base64url, so this should fail
-    it('rejects a fulfillment with regular base64 characters', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0:+u/6'))
-    })
-
-    it('rejects a fulfillment with invalid characters', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0:Abc.'))
-    })
-
-    it('rejects a fulfillment containing a space 1', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0: AAAA'))
-    })
-
-    it('rejects a fulfillment containing a space 2', function () {
-      assert.throws(() => Fulfillment.fromUri('cf:0:AAAA '))
-    })
-
-    it('rejects a fulfillment containing a space 3', function () {
-      assert.throws(() => Fulfillment.fromUri(' cf:0:AAAA'))
-    })
-
-    it.skip('returns anything that is already a fulfillment object', function () {
+    it('returns anything that is already a fulfillment object', function () {
       const fulfillment = new Fulfillment()
 
       const parsed = Fulfillment.fromUri(fulfillment)
@@ -90,7 +60,7 @@ describe('Fulfillment', function () {
       assert.equal(fulfillment, parsed)
     })
 
-    it.skip('rejects a buffer', function () {
+    it('rejects a buffer', function () {
       assert.throws(() => Fulfillment.fromUri(new Buffer(3)), 'Serialized fulfillment must be a string')
     })
   })
