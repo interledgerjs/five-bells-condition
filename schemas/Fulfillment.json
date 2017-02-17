@@ -3,5 +3,5 @@
   "title": "ConditionFulfillment",
   "description": "Proof of condition completion",
   "type": "string",
-  "pattern": "^cf:([1-9a-f][0-9a-f]{0,3}|0):[a-zA-Z0-9_-]*$"
+  "pattern": "^[a-zA-Z0-9_-]*$"
 }
