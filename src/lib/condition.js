@@ -344,24 +344,6 @@ class Condition {
   }
 
   /**
-   * Parse any condition in binary format.
-   *
-   * Will populate the condition object with data from the provided binary
-   * stream.
-   *
-   * @param {Reader} reader Binary stream containing the condition.
-   *
-   * @private
-   */
-  parseBinary (reader) {
-    this.setTypeId(reader.readUInt16())
-    this.setSubtypes(reader.readVarUInt())
-    // TODO Ensure subtypes is supported?
-    this.setHash(reader.readVarOctetString())
-    this.setCost(reader.readVarUInt())
-  }
-
-  /**
    * Ensure the condition is valid according the local rules.
    *
    * Checks the condition against the local subtypes (supported condition types)
