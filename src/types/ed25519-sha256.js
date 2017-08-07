@@ -10,10 +10,7 @@ const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
 const Asn1Ed25519FingerprintContents = require('../schemas/fingerprint').Ed25519FingerprintContents
 
-let ed25519
-try {
-  ed25519 = require('ed25519')
-} catch (err) { }
+const sodium = require('chloride')
 
 /**
  * ED25519: Ed25519 signature condition.
@@ -96,16 +93,9 @@ class Ed25519Sha256 extends BaseSha256 {
     //   .update(message)
     //   .digest()
 
-    // Use native library if available (~65x faster)
-    if (ed25519) {
-      const keyPair = ed25519.MakeKeypair(privateKey)
-      this.setPublicKey(keyPair.publicKey)
-      this.signature = ed25519.Sign(message, keyPair)
-    } else {
-      const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
-      this.setPublicKey(new Buffer(keyPair.publicKey))
-      this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
-    }
+    const keyPair = sodium.crypto_sign_seed_keypair(privateKey)
+    this.setPublicKey(keyPair.publicKey)
+    this.signature = sodium.crypto_sign_detached(message, keyPair.secretKey)
   }
 
   parseJson (json) {
@@ -165,13 +155,7 @@ class Ed25519Sha256 extends BaseSha256 {
       throw new TypeError('Message must be a Buffer')
     }
 
-    // Use native library if available (~60x faster)
-    let result
-    if (ed25519) {
-      result = ed25519.Verify(message, this.signature, this.publicKey)
-    } else {
-      result = nacl.sign.detached.verify(message, this.signature, this.publicKey)
-    }
+    const result = sodium.crypto_sign_verify_detached(this.signature, message, this.publicKey)
 
     if (result !== true) {
       throw new ValidationError('Invalid ed25519 signature')
