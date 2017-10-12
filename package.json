@@ -1,6 +1,6 @@
 {
-  "name": "five-bells-condition",
-  "version": "5.0.1",
+  "name": "js-crypto-conditions",
+  "version": "0.0.0",
   "description": "Implementation of crypto-conditions in JavaScript",
   "main": "index.js",
   "browser": "./dist/index.js",
@@ -49,8 +49,8 @@
     "nyc": "^10.0.0",
     "phantomjs-prebuilt": "^2.1.5",
     "readme-to-test": "justmoon/readme-to-test#feature/st-improvements",
+    "release-it": "^3.0.2",
     "sinon": "^1.17.4",
-    "validate-commit-msg": "^2.1.0",
     "watchify": "^3.7.0",
     "webpack": "^2.1.0-beta.25"
   },
@@ -66,11 +66,14 @@
     "docs:jsdoc": "jsdoc -R README.md -c jsdoc.json src/*",
     "docs:toc": "md-toc-filter docs/README.template.md > README.md",
     "docs": "npm run docs:toc",
-    "commitmsg": "validate-commit-msg"
+    "prepublishOnly": "npm update && npm run build",
+    "release": "./node_modules/release-it/bin/release.js --src.tagName='v%s' --github.release --npm.publish --non-interactive",
+    "release-minor": "./node_modules/release-it/bin/release.js minor --src.tagName='v%s' --github.release --npm.publish --non-interactive",
+    "release-major": "./node_modules/release-it/bin/release.js major --src.tagName='v%s' --github.release --npm.publish --non-interactive"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:interledgerjs/five-bells-condition.git"
+    "url": "git@github.com:bigchaindb/js-crypto-conditions"
   },
   "keywords": [
     "cryptographic",
@@ -84,9 +87,9 @@
   "author": "Ripple <info@ripple.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/interledgerjs/five-bells-condition/issues"
+    "url": "https://github.com/bigchaindb/js-crypto-conditions/issues"
   },
-  "homepage": "https://github.com/interledgerjs/five-bells-condition",
+  "homepage": "https://github.com/bigchaindb/js-crypto-conditions",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
