@@ -1,6 +1,6 @@
 {
   "name": "js-crypto-conditions",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Implementation of crypto-conditions in JavaScript",
   "main": "index.js",
   "browser": "./dist/index.js",
@@ -67,9 +67,9 @@
     "docs:toc": "md-toc-filter docs/README.template.md > README.md",
     "docs": "npm run docs:toc",
     "prepublishOnly": "npm update && npm run build",
-    "release": "./node_modules/release-it/bin/release.js --src.tagName='v%s' --github.release --npm.publish --non-interactive",
-    "release-minor": "./node_modules/release-it/bin/release.js minor --src.tagName='v%s' --github.release --npm.publish --non-interactive",
-    "release-major": "./node_modules/release-it/bin/release.js major --src.tagName='v%s' --github.release --npm.publish --non-interactive"
+    "release": "./node_modules/release-it/bin/release-it.js --src.tagName='v%s' --github.release --npm.publish --non-interactive",
+    "release-minor": "./node_modules/release-it/bin/release-it.js minor --src.tagName='v%s' --github.release --npm.publish --non-interactive",
+    "release-major": "./node_modules/release-it/bin/release-it.js major --src.tagName='v%s' --github.release --npm.publish --non-interactive"
   },
   "repository": {
     "type": "git",
