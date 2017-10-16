@@ -9,3 +9,5 @@ docs/build/
 /jsdoc-out/
 /dist/
 /.nyc_output/
+.DS_Store
+package-lock.json
