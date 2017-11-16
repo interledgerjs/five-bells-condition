@@ -10,7 +10,7 @@ describe('Mgf1', function () {
     })
 
     it('generates the correct padding', function () {
-      const seed = new Buffer('f39b0bb49750b5a7e6bddad09a52bea021c490b6', 'hex')
+      const seed = Buffer.from('f39b0bb49750b5a7e6bddad09a52bea021c490b6', 'hex')
 
       const padding = this.mgf1.generate(seed, 120)
 

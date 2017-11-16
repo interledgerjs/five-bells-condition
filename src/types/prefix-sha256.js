@@ -33,7 +33,7 @@ class PrefixSha256 extends BaseSha256 {
   constructor () {
     super()
 
-    this.prefix = new Buffer(0)
+    this.prefix = Buffer.alloc(0)
     this.subcondition = null
     this.maxMessageLength = 16384
   }

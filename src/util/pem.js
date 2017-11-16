@@ -103,7 +103,7 @@ class Pem {
 
     // If the high bit is set, we need to prefix a zero
     if (modulus[0] & 0x80) {
-      modulus = Buffer.concat([new Buffer([0]), modulus])
+      modulus = Buffer.concat([Buffer.from([0]), modulus])
     }
 
     const derPublicKey = RsaPublicKey.encode({
@@ -129,7 +129,7 @@ class Pem {
       .replace('-----BEGIN RSA PRIVATE KEY-----', '')
       .replace('-----END RSA PRIVATE KEY-----', '')
       .replace(/\s+|\n\r|\n|\r$/gm, '')
-    const buffer = new Buffer(pem, 'base64')
+    const buffer = Buffer.from(pem, 'base64')
 
     const decodedPrivateKey = RsaPrivateKey.decode(buffer)
     const modulus = decodedPrivateKey.modulus.toArrayLike(Buffer)

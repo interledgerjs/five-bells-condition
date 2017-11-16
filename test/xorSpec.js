@@ -6,8 +6,8 @@ const xor = require('../src/util/xor')
 
 describe('xor', function () {
   it('should return an xored buffer', function () {
-    const buffer1 = new Buffer('2989ab24b9e79f729d27649f39b4109a30226b1a', 'hex')
-    const buffer2 = new Buffer('2a96fb974403f406d57857424ee7c62a1c6d4723', 'hex')
+    const buffer1 = Buffer.from('2989ab24b9e79f729d27649f39b4109a30226b1a', 'hex')
+    const buffer2 = Buffer.from('2a96fb974403f406d57857424ee7c62a1c6d4723', 'hex')
 
     const xored = xor(buffer1, buffer2)
 
@@ -15,10 +15,10 @@ describe('xor', function () {
   })
 
   it('should throw if the first parameter is a string', function () {
-    assert.throws(() => xor('test', new Buffer(4)), 'Arguments must be buffers')
+    assert.throws(() => xor('test', Buffer.alloc(4)), 'Arguments must be buffers')
   })
 
   it('should throw if the buffers are different lengths first parameter is a string', function () {
-    assert.throws(() => xor(new Buffer(3), new Buffer(4)), 'Buffers must be the same length')
+    assert.throws(() => xor(Buffer.alloc(3), Buffer.alloc(4)), 'Buffers must be the same length')
   })
 })

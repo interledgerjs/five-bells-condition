@@ -21,11 +21,11 @@ class Mgf1 {
    * @return {Buffer} Mask
    */
   generate (seed, maskLength) {
-    const result = new Buffer(maskLength)
+    const result = Buffer.alloc(maskLength)
 
     const len = Math.ceil(maskLength / this.hashLength)
     for (let i = 0; i < len; i++) {
-      const counter = new Buffer(4)
+      const counter = Buffer.alloc(4)
       counter.writeInt32BE(i, 0)
 
       const hash = crypto.createHash(this.hashAlgorithm)

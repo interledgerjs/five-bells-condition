@@ -16,7 +16,7 @@ describe('Fulfillment', function () {
     it('successfully parses a basic fulfillment', function () {
       const fulfillment = Fulfillment.fromUri('oCKAIFDYWOCYXsx_YEGKrwzFq1h_QsJXCohAlanozKzQ9lRc')
 
-      const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
+      const expectedPreimage = Buffer.from('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
@@ -31,7 +31,7 @@ describe('Fulfillment', function () {
     it('successfully parses a fulfillment with regular base64 characters', function () {
       const fulfillment = Fulfillment.fromUri('oCKAIFDYWOCYXsx/YEGKrwzFq1h/QsJXCohAlanozKzQ9lRc')
 
-      const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
+      const expectedPreimage = Buffer.from('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
@@ -61,31 +61,31 @@ describe('Fulfillment', function () {
     })
 
     it('rejects a buffer', function () {
-      assert.throws(() => Fulfillment.fromUri(new Buffer(3)), 'Serialized fulfillment must be a string')
+      assert.throws(() => Fulfillment.fromUri(Buffer.alloc(3)), 'Serialized fulfillment must be a string')
     })
   })
 
   describe('fromBinary', function () {
     it('successfully parses the minimal fulfillment', function () {
-      const fulfillment = Fulfillment.fromBinary(new Buffer('oAKAAA', 'base64'))
+      const fulfillment = Fulfillment.fromBinary(Buffer.from('oAKAAA', 'base64'))
 
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), '')
     })
 
     it.skip('successfully parses a basic fulfillment', function () {
-      const fulfillmentBinary = new Buffer('00002050d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c', 'hex')
+      const fulfillmentBinary = Buffer.from('00002050d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c', 'hex')
       const fulfillment = Fulfillment.fromBinary(fulfillmentBinary)
 
-      const expectedPreimage = new Buffer('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
+      const expectedPreimage = Buffer.from('UNhY4JhezH9gQYqvDMWrWH9CwlcKiECVqejMrND2VFw=', 'base64')
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
 
     it.skip('successfully parses a fulfillment with base64url characters', function () {
-      const fulfillment = Fulfillment.fromBinary(new Buffer('000003faeffa', 'hex'))
+      const fulfillment = Fulfillment.fromBinary(Buffer.from('000003faeffa', 'hex'))
 
-      const expectedPreimage = new Buffer('+u/6', 'base64')
+      const expectedPreimage = Buffer.from('+u/6', 'base64')
       assert.equal(fulfillment.constructor, cc.PreimageSha256)
       assert.equal(fulfillment.preimage.toString('hex'), expectedPreimage.toString('hex'))
     })
