@@ -1,4 +1,10 @@
 {
-  "presets": ["es2015"],
-  "plugins": ["babel-plugin-add-module-exports"]
+  "presets": ["env"],
+  "plugins": [
+    ["transform-runtime", {
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ]
 }

@@ -4,7 +4,7 @@ const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
 
 module.exports = {
   devtool: 'inline-source-map',
-  entry: ['babel-polyfill', './index.js'],
+  entry: ['./index.js'],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',

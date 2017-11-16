@@ -1,13 +1,13 @@
 module.exports = function (karma) {
   karma.set({
     frameworks: [ 'mocha' ],
-    files: ['test/index.js'],
+    files: ['node_modules/babel-polyfill/dist/polyfill.js', 'test/index.js'],
     preprocessors: {
       'test/index.js': [ 'webpack', 'sourcemap' ]
     },
 
     webpack: {
-      entry: ['babel-polyfill', './index.js'],
+      entry: ['./index.js'],
       devtool: 'inline-source-map',
       module: {
         loaders: [

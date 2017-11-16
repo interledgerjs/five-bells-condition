@@ -132,7 +132,7 @@ class Pem {
     const buffer = new Buffer(pem, 'base64')
 
     const decodedPrivateKey = RsaPrivateKey.decode(buffer)
-    const modulus = decodedPrivateKey.modulus.toBuffer()
+    const modulus = decodedPrivateKey.modulus.toArrayLike(Buffer)
     return modulus
   }
 }
