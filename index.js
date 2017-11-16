@@ -10,7 +10,7 @@ const RsaSha256 = require('./src/types/rsa-sha256')
 const Ed25519Sha256 = require('./src/types/ed25519-sha256')
 const base64url = require('./src/util/base64url')
 
-const EMPTY_BUFFER = new Buffer(0)
+const EMPTY_BUFFER = Buffer.alloc(0)
 
 const validateCondition = (serializedCondition) => {
   // Parse condition, throw on error

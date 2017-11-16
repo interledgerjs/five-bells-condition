@@ -32,16 +32,16 @@ describe('Rsa', function () {
 
 function testExample (specs) {
   specs.forEach(function (spec, i) {
-    const modulus = new Buffer(spec.modulus, 'hex')
+    const modulus = Buffer.from(spec.modulus, 'hex')
 
     spec.cases.forEach(function (caseSpec, j) {
       describe('Example ' + (i + 1) + '.' + (j + 1), function () {
         beforeEach(function () {
-          this.modulus = new Buffer(modulus.length)
+          this.modulus = Buffer.alloc(modulus.length)
           modulus.copy(this.modulus)
-          this.message = new Buffer(caseSpec.message, 'hex')
-          this.salt = new Buffer(caseSpec.salt, 'hex')
-          this.signature = new Buffer(caseSpec.signature, 'hex')
+          this.message = Buffer.from(caseSpec.message, 'hex')
+          this.salt = Buffer.from(caseSpec.salt, 'hex')
+          this.signature = Buffer.from(caseSpec.signature, 'hex')
         })
 
         it('signs correctly', function () {
