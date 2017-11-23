@@ -55,7 +55,7 @@
     "readme-to-test": "justmoon/readme-to-test#feature/st-improvements",
     "sinon": "^4.1.2",
     "watchify": "^3.9.0",
-    "webpack": "^3.8.1"
+    "webpack": "^3.8.1",
     "release-it": "^5.0.0"
   },
   "scripts": {
