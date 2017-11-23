@@ -52,11 +52,11 @@
     "mustache": "^2.3.0",
     "nyc": "^11.3.0",
     "phantomjs-prebuilt": "^2.1.16",
-    "readme-to-test": "justmoon/readme-to-test#feature/st-improvements",
+    "readme-to-test": "github:justmoon/readme-to-test#feature/st-improvements",
+    "release-it": "^5.0.0",
     "sinon": "^4.1.2",
     "watchify": "^3.9.0",
-    "webpack": "^3.8.1",
-    "release-it": "^5.0.0"
+    "webpack": "^3.8.1"
   },
   "scripts": {
     "lint": "eslint .",
@@ -70,7 +70,7 @@
     "docs:jsdoc": "jsdoc -R README.md -c jsdoc.json src/*",
     "docs:toc": "md-toc-filter docs/README.template.md > README.md",
     "docs": "npm run docs:toc",
-    "prepublishOnly": "npm update && npm run build",
+    "prepublishOnly": "npm run build",
     "release": "./node_modules/release-it/bin/release-it.js --src.tagName='v%s' --github.release --npm.publish --non-interactive",
     "release-minor": "./node_modules/release-it/bin/release-it.js minor --src.tagName='v%s' --github.release --npm.publish --non-interactive",
     "release-major": "./node_modules/release-it/bin/release-it.js major --src.tagName='v%s' --github.release --npm.publish --non-interactive"
