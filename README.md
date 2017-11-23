@@ -1,7 +1,5 @@
 # Crypto Conditions
 
-[![npm][npm-image]][npm-url] [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url]
-
 [npm-url]: https://npmjs.org/package/js-crypto-conditions
 
 > Implementation of crypto-conditions in JavaScript for Node.js and the browser
