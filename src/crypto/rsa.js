@@ -5,7 +5,7 @@
  */
 
 const crypto = require('crypto')
-const constants = require('constants')
+const constants = crypto.constants
 const Pss = require('../crypto/pss')
 const pem = require('../util/pem')
 
@@ -103,6 +103,6 @@ class Rsa {
 }
 
 // Used to add a zero for padding
-Rsa.ZERO_BYTE = new Buffer([0])
+Rsa.ZERO_BYTE = Buffer.from([0])
 
 module.exports = Rsa

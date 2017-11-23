@@ -167,8 +167,8 @@ class ThresholdSha256 extends BaseSha256 {
       subconditions: this.subconditions
         .map(x => (
           x.body instanceof Condition
-          ? x.body
-          : x.body.getCondition()
+            ? x.body
+            : x.body.getCondition()
         ))
         .sort(ThresholdSha256.compareConditions)
         .map(x => x.getAsn1Json())

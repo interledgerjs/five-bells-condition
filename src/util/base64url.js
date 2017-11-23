@@ -18,7 +18,7 @@ class Base64Url {
     const base64String = base64urlString
       .replace(/-/g, '+')
       .replace(/_/g, '/')
-    return new Buffer(base64String, 'base64')
+    return Buffer.from(base64String, 'base64')
   }
 
   /**
