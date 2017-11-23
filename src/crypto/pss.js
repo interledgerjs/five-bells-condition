@@ -38,7 +38,7 @@ class Pss {
     // Step 5. M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 6. H = Hash(M')
     const hash = crypto.createHash(this.hashAlgorithm)
-      .update(new Buffer(8).fill(0))
+      .update(Buffer.alloc(8).fill(0))
       .update(messageHash)
       .update(salt)
       .digest()
@@ -47,8 +47,8 @@ class Pss {
     //         zero octets.
     // Step 8. Let DB = PS || 0x01 || salt
     const dataBlock = Buffer.concat([
-      new Buffer(encodedMessageBytes - this.saltLength - this.hashLength - 2).fill(0),
-      new Buffer([1]),
+      Buffer.alloc(encodedMessageBytes - this.saltLength - this.hashLength - 2).fill(0),
+      Buffer.from([1]),
       salt
     ])
 
@@ -68,7 +68,7 @@ class Pss {
     return Buffer.concat([
       maskedDataBlock,
       hash,
-      new Buffer([0xbc])
+      Buffer.from([0xbc])
     ])
   }
 
@@ -137,7 +137,7 @@ class Pss {
     // Step 12. Let M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 13. Let H' = Hash(M'), an octet string of length hLen.
     const reconstructedHash = crypto.createHash(this.hashAlgorithm)
-      .update(new Buffer(8).fill(0))
+      .update(Buffer.alloc(8).fill(0))
       .update(messageHash)
       .update(salt)
       .digest()
@@ -146,6 +146,6 @@ class Pss {
   }
 }
 
-Pss.EMPTY_BUFFER = new Buffer(0)
+Pss.EMPTY_BUFFER = Buffer.alloc(0)
 
 module.exports = Pss

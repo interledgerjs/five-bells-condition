@@ -6,7 +6,7 @@ const sinon = require('sinon')
 if (process.browser) {
   // In the browser tests
   exports.getSaltHelper = function (salt) {
-    const stub = sinon.stub(global.crypto, 'getRandomValues', (arr) => {
+    const stub = sinon.stub(global.crypto, 'getRandomValues').callsFake((arr) => {
       if (arr.length !== salt.byteLength) {
         // throw new Error('Unexpected call to getRandomValues with length ' +
         //   arr.length + ', expected: ' + salt.byteLength)

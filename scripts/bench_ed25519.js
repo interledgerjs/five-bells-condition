@@ -5,7 +5,7 @@ const ed25519 = require('ed25519')
 const tweetnacl = require('tweetnacl')
 
 const seed = crypto.randomBytes(32)
-const message = new Buffer('Hello World!', 'utf8')
+const message = Buffer.from('Hello World!', 'utf8')
 const keypairEd25519 = ed25519.MakeKeypair(seed)
 const sigEd25519 = ed25519.Sign(message, keypairEd25519)
 

@@ -103,8 +103,8 @@ class Ed25519Sha256 extends BaseSha256 {
       this.signature = ed25519.Sign(message, keyPair)
     } else {
       const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
-      this.setPublicKey(new Buffer(keyPair.publicKey))
-      this.signature = new Buffer(nacl.sign.detached(message, keyPair.secretKey))
+      this.setPublicKey(Buffer.from(keyPair.publicKey))
+      this.signature = Buffer.from(nacl.sign.detached(message, keyPair.secretKey))
     }
   }
 

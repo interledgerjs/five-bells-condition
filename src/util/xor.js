@@ -7,7 +7,7 @@ function xor (a, b) {
   if (a.length !== b.length) {
     throw new Error('Buffers must be the same length')
   }
-  const result = new Buffer(a.length)
+  const result = Buffer.alloc(a.length)
   for (let i = 0; i < a.length; i++) {
     result[i] = a[i] ^ b[i]
   }
