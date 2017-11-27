@@ -124,7 +124,7 @@ class PrefixSha256 extends BaseSha256 {
    * @return {Set<String>} Complete type names for this fulfillment.
    */
   getSubtypes () {
-    const subtypes = new Set([...this.subcondition.getSubtypes(), this.subcondition.getTypeName()])
+    const subtypes = new Set((this.subcondition.getSubtypes() || []).slice().push(this.subcondition.getTypeName()));
 
     // Never include our own type as a subtype. The reason is that we already
     // know that the validating implementation knows how to interpret this type,
