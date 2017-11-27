@@ -1,6 +1,6 @@
 {
-  "name": "js-crypto-conditions",
-  "version": "1.0.3",
+  "name": "crypto-conditions",
+  "version": "2.0.0",
   "description": "Implementation of crypto-conditions in JavaScript",
   "main": "index.js",
   "browser": "./dist/index.js",
