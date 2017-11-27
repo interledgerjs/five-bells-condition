@@ -45,7 +45,7 @@ This specification is only a draft at this stage and has not been submitted.
 ### Validate a Condition
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 // Check a condition for validity
 const condition = 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
@@ -59,7 +59,7 @@ all accepted by the current implementation.
 ### Validate a Fulfillment (No Message)
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const condition = 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
 const fulfillment = 'oAKAAA'
@@ -72,7 +72,7 @@ This validates the fulfillment and ensures that it matches the given condition.
 ### Get Condition from Fulfillment And Validate
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const fulfillment = 'oAKAAA'
 const condition = cc.fulfillmentToCondition(fulfillment)
@@ -86,7 +86,7 @@ const validationResult = cc.validateFulfillment(fulfillment, condition)
 ### Create a PREIMAGE-SHA-256 Condition (Hashlock)
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const myFulfillment = new cc.PreimageSha256()
 myFulfillment.setPreimage(new Buffer(''))
@@ -97,7 +97,7 @@ console.log(myFulfillment.getConditionUri())
 ### Create a PREIMAGE-SHA-256 Fullfillment (Hashlock)
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const myFulfillment = new cc.PreimageSha256()
 myFulfillment.setPreimage(new Buffer(''))
@@ -108,7 +108,7 @@ console.log(myFulfillment.serializeUri())
 ### Parse a Fulfillment
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const parsedFulfillment = cc.fromFulfillmentUri('oAKAAA')
 // parsedFulfillment instanceof cc.PreimageSha256 === true
@@ -121,7 +121,7 @@ parsedFulfillment.validate()
 ### Create an ED25519 Condition
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const ed25519Fulfillment = new cc.Ed25519Sha256()
 ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
@@ -132,7 +132,7 @@ console.log(ed25519Fulfillment.getConditionUri())
 ### Fulfill an ED25519 Condition
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
 
@@ -150,7 +150,7 @@ console.log(ed25519Fulfillment.serializeUri())
 ### Verify a Fulfillment (with Message)
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const fulfillment = 'pGSAIOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_gUC2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK'
 const condition = 'ni:///sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj_-tB5P11yvfBaoE?fpt=ed25519-sha-256&cost=131072'
@@ -162,7 +162,7 @@ const result = cc.validateFulfillment(fulfillment, condition, message)
 
 ### Create a THRESHOLD-SHA-256 Condition
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const thresholdFulfillment = new cc.ThresholdSha256()
 thresholdFulfillment.addSubconditionUri('ni:///sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj_-tB5P11yvfBaoE?fpt=ed25519-sha-256&cost=131072')
@@ -175,7 +175,7 @@ console.log(thresholdFulfillment.getConditionUri())
 ### Create a THRESHOLD-SHA-256 Fulfillment
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const thresholdFulfillment = new cc.ThresholdSha256()
 thresholdFulfillment.addSubfulfillmentUri('pGSAIOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_gUC2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK')
@@ -194,7 +194,7 @@ console.log(thresholdFulfillmentUri)
 ### Create a PREFIX-SHA-256 Condition
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const prefix = new cc.PrefixSha256()
 prefix.setPrefix(new Buffer('2016:'))
@@ -207,7 +207,7 @@ console.log(prefix.getConditionUri())
 ### Create a PREFIX-SHA-256 Fulfillment
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const prefix = new cc.PrefixSha256()
 prefix.setPrefix(new Buffer('Hello World! '))
@@ -225,7 +225,7 @@ cc.validateFulfillment(fulfillmentUri, conditionUri, message)
 ### Create an RSA-SHA-256 Condition
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const rsaFulfillment = new cc.RsaSha256()
 rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
@@ -236,7 +236,7 @@ console.log(rsaFulfillment.getConditionUri())
 ### Create an RSA-SHA-256 Fulfillment
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const exampleMessage = new Buffer('Hello World! Conditions are here!')
 const privateKey =
@@ -272,7 +272,7 @@ cc.validateFulfillment(rsaFulfillmentUri, rsaConditionUri, exampleMessage)
 
 ### Advanced: Parse a Condition
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 // Parse a condition
 const condition = 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
@@ -287,7 +287,7 @@ console.log(parsedCondition.serializeUri())
 ### Advanced: Parse and Reserialize a THRESHOLD-SHA-256 Fulfillment
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const thresholdFulfillmentUri = 'oi-gBKACgAChJ6AlgCB_g7Flf_H8U7ktwYFIodZd_C1LH6PWdyhK3dIAEm2QaYEBDA'
 const reparsedFulfillment = cc.fromFulfillmentUri(thresholdFulfillmentUri)
@@ -300,7 +300,7 @@ console.log(reserializedFulfillment)
 ### Advanced: Manually Create a Condition
 
 ``` js
-const cc = require('js-crypto-conditions')
+const cc = require('crypto-conditions')
 
 const myCondition = new cc.Condition()
 myCondition.setTypeId(cc.PreimageSha256.TYPE_ID)
