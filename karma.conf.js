@@ -10,9 +10,8 @@ module.exports = function (karma) {
       entry: ['./index.js'],
       devtool: 'inline-source-map',
       module: {
-        loaders: [
+        rules: [
           { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel-loader' },
-          { test: /\.json$/, loader: 'json-loader' }
         ],
         noParse: [
           /sinon/

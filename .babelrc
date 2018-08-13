@@ -6,5 +6,6 @@
       "polyfill": false,
       "regenerator": true
     }]
-  ]
+  ],
+  "sourceMaps": true
 }
