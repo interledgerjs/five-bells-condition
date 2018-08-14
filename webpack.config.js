@@ -1,38 +1,33 @@
-const webpack = require('webpack')
-const path = require('path')
+/* eslint-disable strict, no-console, object-shorthand */
 
-module.exports = {
-  devtool: '#source-map',
-  entry: ['./index.js'],
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'index.js',
-    library: 'CryptoConditions',
-    libraryTarget: 'umd',
-    umdNamedDefine: true
-  },
-  module: {
-    loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-      { test: /\.json$/, loader: 'json-loader' }
-    ]
-  },
-  node: {
-    fs: 'empty'
-  },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      output: {
-        comments: false
-      },
-      sourceMap: true
-    }),
-    new webpack.LoaderOptionsPlugin({
-      debug: false,
-      minimize: true
-    })
-  ]
+'use strict'
+
+const PRODUCTION = process.env.NODE_ENV === 'production'
+
+const common = require('./webpack.common.js')
+
+const { outputs } = require('./webpack.parts.js')
+
+// '[libraryTarget]': [file extension]
+const OUTPUT_MAPPING = {
+    'amd': 'amd',
+    'commonjs': 'cjs',
+    'commonjs2': 'cjs2',
+    'umd': 'umd',
+    'window': 'window',
+}
+
+const OVERRIDES = {
+    // optimization: {
+    //     minimize: false
+    // }
+    node: {
+      fs: "empty"
+    }
+}
+
+if (PRODUCTION) {
+    module.exports = outputs(common, 'production', OUTPUT_MAPPING, OVERRIDES)
+} else {
+    module.exports = outputs(common, 'development', OUTPUT_MAPPING, OVERRIDES)
 }
