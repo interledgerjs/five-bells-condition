@@ -78,7 +78,7 @@ class Ed25519Sha256 extends BaseSha256 {
    * corresponding signature in this fulfillment.
    *
    * @param {Buffer} message Message to sign.
-   * @param {String} privateKey Ed25519 private key.
+   * @param {Buffer} privateKey Ed25519 private key.
    */
   sign (message, privateKey) {
     if (!Buffer.isBuffer(message)) {
