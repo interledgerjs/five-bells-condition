@@ -4,6 +4,7 @@
   "description": "Implementation of crypto-conditions in JavaScript",
   "main": "index.js",
   "browser": "./dist/index.js",
+  "types": "./types/index.d.ts",
   "directories": {
     "test": "test"
   },

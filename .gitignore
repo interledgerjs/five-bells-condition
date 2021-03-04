@@ -11,3 +11,4 @@ docs/build/
 /.nyc_output/
 .DS_Store
 package-lock.json
+.vscode
