@@ -13,9 +13,12 @@ export interface ConditionAsn1Json {
 }
 
 export default class Condition {
-  static readonly MAX_SAFE_SUBTYPES: number;
-  static readonly SUPPORTED_SUBTYPES: number;
-  static readonly MAX_COST: number;
+  // TODO: in which cases subtypes is number ?
+  private subtypes: Set<string> | number;
+
+  static readonly MAX_SAFE_SUBTYPES = 0xffffffff;
+  static readonly SUPPORTED_SUBTYPES = 0x3f;
+  static readonly MAX_COST = 2097152;
   static readonly REGEX: RegExp;
   static readonly REGEX_STRICT: RegExp;
 
@@ -25,7 +28,7 @@ export default class Condition {
 
   static fromAsn1Json(json: ConditionAsn1Json): Condition;
 
-  // TODO: Condition.fromJson is used in treshold but undefined 
+  // TODO: Condition.fromJson is used in treshold but undefined
   // static fromJson(json: Asn1Json): Condition;
 
   getTypeId(): number;
@@ -34,9 +37,10 @@ export default class Condition {
 
   getTypeName(): string;
 
-  getSubtypes(): number;
+  //? Should be Set<string>
+  getSubtypes(): Set<string> | number;
 
-  setSubtypes(subtypes: number): void;
+  setSubtypes(subtypes: Set<string> | number): void;
 
   getHash(): Buffer;
 

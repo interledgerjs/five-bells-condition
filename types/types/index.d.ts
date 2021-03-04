@@ -1,3 +1,6 @@
+import type { ConditionAsn1Json } from '../lib/condition';
+import type { FulfillmentAsn1Json } from '../lib/fulfillment';
+
 export enum Types {
   PreimageSha256 = 'PreimageSha256',
   PrefixSha256 = 'PrefixSha256',
@@ -6,7 +9,7 @@ export enum Types {
   Ed25519Sha256 = 'Ed25519Sha256',
 }
 
-export enum TypeIds {
+export enum TypeId {
   PreimageSha256 = 0,
   PrefixSha256 = 1,
   ThresholdSha256 = 2,
@@ -14,7 +17,7 @@ export enum TypeIds {
   Ed25519Sha256 = 4,
 }
 
-export enum TypeNames {
+export enum TypeName {
   PreimageSha256 = 'preimage-sha-256',
   PrefixSha256 = 'prefix-sha-256',
   ThresholdSha256 = 'threshold-sha-256',
@@ -46,45 +49,62 @@ export enum TypeCategory {
   Ed25519Sha256 = 'simple',
 }
 
-export interface Asn1Json {
-  type: TypeAsn1Condition;
-  value: {
-    fingerprint: string;
-    cost: string;
-    subtypes?: {
-      unused: number;
-      data: Buffer;
-    };
-  };
-}
-
-export interface PreImageJson {
+export interface PreimageSha256Json {
   type: Types.PreimageSha256;
-  preimage: string;
+  preimage: string | Buffer;
 }
 
-export interface PrefixJson {
+export interface PreimageSha256Asn1Json {
+  preimage: Buffer;
+}
+
+export interface PrefixSha256Json {
   type: Types.PrefixSha256;
-  prefix: string;
+  prefix: string | Buffer;
   maxMessageLength: number;
-  subfulfillment: any; // TODO: improve
+  subfulfillment: Record<string, any>; // TODO: improve with FulfillmentAsn1Json ?
 }
 
-export interface RsaJson {
+export interface PrefixSha256Asn1Json {
+  prefix: Buffer;
+  maxMessageLength: number;
+  subfulfillment: Record<string, any>; // TODO: improve with FulfillmentAsn1Json ?
+}
+
+export interface RsaSha256Json {
   type: Types.RsaSha256;
   modulus: string;
   signature: string;
 }
 
-export interface Ed25519Json {
+export interface RsaSha256Asn1Json {
+  modulus: Buffer;
+  signature: Buffer;
+}
+export interface Ed25519Sha256Json {
   type: Types.Ed25519Sha256;
-  publicKey: string;
-  signature: string;
+  publicKey: string | Buffer;
+  signature: string | Buffer;
 }
 
-export interface TresholdJson {
+export interface Ed25519Sha256Asn1Json {
+  publicKey: Buffer;
+  signature: Buffer;
+}
+
+export interface ThresholdSha256Json {
   type: Types.ThresholdSha256;
   threshold: number;
-  subfulfillments?: Record<string, any>[]; // improve type
-  subconditions?: Record<string, any>[]; // improve type
+  subfulfillments?: (
+    | PreimageSha256Json
+    | PrefixSha256Json
+    | ThresholdSha256Json
+    | RsaSha256Json
+    | Ed25519Sha256Json
+  )[];
+  subconditions?: ConditionAsn1Json[];
+}
+export interface ThresholdSha256Asn1Json {
+  subfulfillments?: FulfillmentAsn1Json[];
+  subconditions?: ConditionAsn1Json[];
 }

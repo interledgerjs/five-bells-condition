@@ -1,25 +1,34 @@
 import type {
   TypeAsn1Condition,
   TypeAsn1Fulfillment,
-  TypeIds,
-  TypeNames,
+  TypeId,
+  TypeName,
 } from '../types';
+import type PreimageSha256 from '../types/preimage-sha256';
+import type PrefixSha256 from '../types/prefix-sha256';
+import type ThresholdSha256 from '../types/threshold-sha256';
+import type RsaSha256 from '../types/rsa-sha256';
+import type Ed25519Sha256 from '../types/ed25519-sha256';
 
 export interface RegisteredType {
-  typeId: TypeIds;
-  name: TypeNames;
+  typeId: TypeId;
+  name: TypeName;
   asn1Condition: TypeAsn1Condition;
   asn1Fulfillment: TypeAsn1Fulfillment;
-  Class: any; // one of  PreimageSha256 | PrefixSha256 | ThresholdSha256 | RsaSha256 | Ed25519Sha256
+  Class:
+    | PreimageSha256
+    | PrefixSha256
+    | ThresholdSha256
+    | RsaSha256
+    | Ed25519Sha256;
 }
 
 export default class TypeRegistry {
   private registeredTypes: RegisteredType[] = [];
 
-  // returntype Fulfillement or RegisteredType['Class']
-  static findByTypeId(typeId: TypeIds): RegisteredType['Class'];
+  static findByTypeId(typeId: TypeId): RegisteredType['Class'];
 
-  static findByName(name: TypeNames): RegisteredType['Class'];
+  static findByName(name: TypeName): RegisteredType['Class'];
 
   static findByAsn1ConditionType(
     asn1Type: TypeAsn1Condition

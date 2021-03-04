@@ -1,0 +1,85 @@
+import type {
+  ThresholdSha256Asn1Json,
+  ThresholdSha256Json,
+  TypeAsn1Condition,
+  TypeAsn1Fulfillment,
+  TypeCategory,
+  TypeId,
+  TypeName,
+} from '.';
+import type Condition from '../lib/condition';
+import type Fulfillment from '../lib/fulfillment';
+import type BaseSha256 from './base-sha256';
+
+declare const CONDITION = 'condition';
+declare const FULFILLMENT = 'fulfillment';
+
+interface SubConditionBodyMap {
+  condition: Condition;
+  fulfillment: Fulfillment;
+}
+
+export type SubCondition<T = 'condition' | 'fulfillment'> = {
+  type: T;
+  body: SubConditionBodyMap[T];
+};
+
+export default class ThresholdSha256 extends BaseSha256 {
+  private threshold: number;
+  private subconditions: SubCondition[];
+
+  static TYPE_ID = TypeId.ThresholdSha256;
+  static TYPE_NAME = TypeName.ThresholdSha256;
+  static TYPE_ASN1_CONDITION = TypeAsn1Condition.ThresholdSha256;
+  static TYPE_ASN1_FULFILLMENT = TypeAsn1Fulfillment.ThresholdSha256;
+  static TYPE_CATEGORY = TypeCategory.ThresholdSha256;
+
+  constructor();
+
+  addSubcondition(subcondition: Condition | string): void;
+
+  addSubfulfillment(subfulfillment: Fulfillment | string): void;
+
+  setThreshold(threshold: number): void;
+
+  getSubtypes(): Set<string>;
+
+  private static compareConditions(a: Condition, b: Condition): number;
+
+  private getFingerprintContents(): Buffer;
+
+  private calculateCost(): number;
+
+  static getSubconditionCost(cond: SubCondition): number;
+
+  private static calculateWorstCaseLength(
+    threshold: number,
+    subconditionCosts: number[]
+  ): number;
+
+  parseJson(json: ThresholdSha256Json) {
+    this.setThreshold(json.threshold);
+    if (json.subfulfillments) {
+      for (let fulfillmentJson of json.subfulfillments) {
+        this.addSubfulfillment(Fulfillment.fromJson(fulfillmentJson));
+      }
+    }
+    if (json.subconditions) {
+      for (let conditionJson of json.subconditions) {
+        this.addSubcondition(Condition.fromJson(conditionJson));
+      }
+    }
+  }
+
+  parseAsn1JsonPayload(json: ThresholdSha256Asn1Json): void;
+
+  getAsn1JsonPayload(): ThresholdSha256Asn1Json;
+
+  // TODO: investigate what fulfillment is expected, where size property comes from ?
+  private static calculateSmallestValidFulfillmentSet(
+    threshold: number,
+    fulfillments: any[]
+  ): any[];
+
+  validate(message: Buffer): boolean;
+}
