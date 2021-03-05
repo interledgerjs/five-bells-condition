@@ -57,19 +57,7 @@ export default class ThresholdSha256 extends BaseSha256 {
     subconditionCosts: number[]
   ): number;
 
-  parseJson(json: ThresholdSha256Json) {
-    this.setThreshold(json.threshold);
-    if (json.subfulfillments) {
-      for (let fulfillmentJson of json.subfulfillments) {
-        this.addSubfulfillment(Fulfillment.fromJson(fulfillmentJson));
-      }
-    }
-    if (json.subconditions) {
-      for (let conditionJson of json.subconditions) {
-        this.addSubcondition(Condition.fromJson(conditionJson));
-      }
-    }
-  }
+  parseJson(json: ThresholdSha256Json): void;
 
   parseAsn1JsonPayload(json: ThresholdSha256Asn1Json): void;
 

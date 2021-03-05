@@ -51,7 +51,7 @@ export enum TypeCategory {
 
 export interface PreimageSha256Json {
   type: Types.PreimageSha256;
-  preimage: string | Buffer;
+  preimage: string;
 }
 
 export interface PreimageSha256Asn1Json {
@@ -60,15 +60,15 @@ export interface PreimageSha256Asn1Json {
 
 export interface PrefixSha256Json {
   type: Types.PrefixSha256;
-  prefix: string | Buffer;
+  prefix: string;
   maxMessageLength: number;
-  subfulfillment: Record<string, any>; // TODO: improve with FulfillmentAsn1Json ?
+  subfulfillment: FulfillmentAsn1Json;
 }
 
 export interface PrefixSha256Asn1Json {
   prefix: Buffer;
   maxMessageLength: number;
-  subfulfillment: Record<string, any>; // TODO: improve with FulfillmentAsn1Json ?
+  subfulfillment: FulfillmentAsn1Json;
 }
 
 export interface RsaSha256Json {
@@ -83,8 +83,8 @@ export interface RsaSha256Asn1Json {
 }
 export interface Ed25519Sha256Json {
   type: Types.Ed25519Sha256;
-  publicKey: string | Buffer;
-  signature: string | Buffer;
+  publicKey: string;
+  signature: string;
 }
 
 export interface Ed25519Sha256Asn1Json {
