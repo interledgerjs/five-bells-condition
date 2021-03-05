@@ -1,6 +1,14 @@
 # Crypto Conditions
 
-[npm-url]: https://npmjs.org/package/js-crypto-conditions
+[![npm][npm-image]][npm-url] 
+<!-- [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url] -->
+
+[npm-image]: https://img.shields.io/npm/v/crypto-conditions.svg?style=flat
+[npm-url]: https://npmjs.org/package/crypto-conditions
+<!-- [circle-image]: https://circleci.com/gh/interledgerjs/five-bells-condition.svg?style=shield -->
+<!-- [circle-url]: https://circleci.com/gh/interledgerjs/five-bells-condition -->
+<!-- [codecov-image]: https://codecov.io/gh/interledgerjs/five-bells-condition/branch/master/graph/badge.svg -->
+<!-- [codecov-url]: https://codecov.io/gh/interledgerjs/five-bells-condition -->
 
 > Implementation of crypto-conditions in JavaScript for Node.js and the browser
 
@@ -37,6 +45,8 @@ This specification is only a draft at this stage and has not been submitted.
         - [Advanced: Manually Create a Condition](#advanced-manually-create-a-condition)
 
 ## API Documentation
+
+TODO: Host doc on [https://www.bigchaindb.com/](https://www.bigchaindb.com/)
 
 **[API Docs](https://interledger.org/five-bells-condition/jsdoc/)**
 
