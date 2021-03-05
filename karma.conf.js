@@ -1,3 +1,6 @@
+const puppeteer = require('puppeteer')
+process.env.CHROME_BIN = puppeteer.executablePath()
+
 module.exports = function (karma) {
   karma.set({
     frameworks: [ 'mocha' ],
@@ -11,7 +14,7 @@ module.exports = function (karma) {
       devtool: 'inline-source-map',
       module: {
         rules: [
-          { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel-loader' },
+          { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel-loader' }
         ],
         noParse: [
           /sinon/
@@ -28,7 +31,7 @@ module.exports = function (karma) {
     webpackMiddleware: {
       stats: 'errors-only'
     },
-
-    browsers: [ 'PhantomJS' ]
+    
+    browsers: ['ChromeHeadless']
   })
 }
