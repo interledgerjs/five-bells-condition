@@ -1,4 +1,4 @@
-import { Asn1Json, TypeAsn1Condition } from '../types';
+import { TypeAsn1Condition } from '../types';
 
 export interface ConditionAsn1Json {
   type: TypeAsn1Condition;
@@ -54,7 +54,7 @@ export default class Condition {
 
   serializeBinary(): Buffer;
 
-  getAsn1Json(): Asn1Json;
+  getAsn1Json(): ConditionAsn1Json;
 
   validate(): boolean;
 }
