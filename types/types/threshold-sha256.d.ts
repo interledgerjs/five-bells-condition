@@ -11,8 +11,8 @@ import type Condition from '../lib/condition';
 import type Fulfillment from '../lib/fulfillment';
 import type BaseSha256 from './base-sha256';
 
-declare const CONDITION = 'condition';
-declare const FULFILLMENT = 'fulfillment';
+export const CONDITION = 'condition';
+export const FULFILLMENT = 'fulfillment';
 
 interface SubConditionBodyMap {
   condition: Condition;
@@ -24,15 +24,21 @@ export type SubCondition<T = 'condition' | 'fulfillment'> = {
   body: SubConditionBodyMap[T];
 };
 
+export const TYPE_ID = TypeId.ThresholdSha256;
+export const TYPE_NAME = TypeName.ThresholdSha256;
+export const TYPE_ASN1_CONDITION = TypeAsn1Condition.ThresholdSha256;
+export const TYPE_ASN1_FULFILLMENT = TypeAsn1Fulfillment.ThresholdSha256;
+export const TYPE_CATEGORY = TypeCategory.ThresholdSha256;
+
 export default class ThresholdSha256 extends BaseSha256 {
   private threshold: number;
   private subconditions: SubCondition[];
 
-  static TYPE_ID = TypeId.ThresholdSha256;
-  static TYPE_NAME = TypeName.ThresholdSha256;
-  static TYPE_ASN1_CONDITION = TypeAsn1Condition.ThresholdSha256;
-  static TYPE_ASN1_FULFILLMENT = TypeAsn1Fulfillment.ThresholdSha256;
-  static TYPE_CATEGORY = TypeCategory.ThresholdSha256;
+  static TYPE_ID: TypeId.ThresholdSha256;
+  static TYPE_NAME: TypeName.ThresholdSha256;
+  static TYPE_ASN1_CONDITION: TypeAsn1Condition.ThresholdSha256;
+  static TYPE_ASN1_FULFILLMENT: TypeAsn1Fulfillment.ThresholdSha256;
+  static TYPE_CATEGORY: TypeCategory.ThresholdSha256;
 
   constructor();
 

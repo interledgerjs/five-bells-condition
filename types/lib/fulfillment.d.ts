@@ -6,7 +6,9 @@ import {
   ThresholdSha256Json,
   TypeAsn1Fulfillment,
   TypeName,
+  TypeId,
 } from '../types';
+import Condition from './condition';
 
 interface FulfillmentAsn1JsonValueMap {
   [TypeAsn1Fulfillment.PreimageSha256]: PreimageSha256Json;
@@ -32,7 +34,7 @@ export default class Fulfillment {
     json: PreimageSha256Json | PrefixSha256Json | ThresholdSha256Json | RsaSha256Json | Ed25519Sha256Json
   ): Fulfillment;
 
-  getTypeId(): TypeIds;
+  getTypeId(): TypeId;
 
   getTypeName(): TypeName;
 
@@ -60,5 +62,5 @@ export default class Fulfillment {
 
   serializeBase64Url(): string;
 
-  validate(): boolean;
+  validate(message?: Buffer): boolean;
 }

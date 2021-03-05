@@ -11,19 +11,28 @@ import type Condition from '../lib/condition';
 import type Fulfillment from '../lib/fulfillment';
 import type BaseSha256 from './base-sha256';
 
+export const TYPE_ID = TypeId.PrefixSha256;
+export const TYPE_NAME: TypeName.PrefixSha256;
+export const TYPE_ASN1_CONDITION: TypeAsn1Condition.PrefixSha256;
+export const TYPE_ASN1_FULFILLMENT: TypeAsn1Fulfillment.PrefixSha256;
+export const TYPE_CATEGORY: TypeCategory.PrefixSha256;
+
+export const CONSTANT_BASE_COST = 16384;
+export const CONSTANT_COST_DIVISOR = 256;
+
 export default class PrefixSha256 extends BaseSha256 {
   private prefix: Buffer;
   private subcondition: Condition | Fulfillment;
   private maxMessageLength: number;
 
-  static TYPE_ID = TypeId.PrefixSha256;
-  static TYPE_NAME = TypeName.PrefixSha256;
-  static TYPE_ASN1_CONDITION = TypeAsn1Condition.PrefixSha256;
-  static TYPE_ASN1_FULFILLMENT = TypeAsn1Fulfillment.PrefixSha256;
-  static TYPE_CATEGORY = TypeCategory.PrefixSha256;
+  static TYPE_ID: TypeId.PrefixSha256;
+  static TYPE_NAME: TypeName.PrefixSha256;
+  static TYPE_ASN1_CONDITION: TypeAsn1Condition.PrefixSha256;
+  static TYPE_ASN1_FULFILLMENT: TypeAsn1Fulfillment.PrefixSha256;
+  static TYPE_CATEGORY: TypeCategory.PrefixSha256;
 
-  static CONSTANT_BASE_COST = 16384;
-  static CONSTANT_COST_DIVISOR = 256;
+  static CONSTANT_BASE_COST: number;
+  static CONSTANT_COST_DIVISOR: number;
 
   constructor();
 
