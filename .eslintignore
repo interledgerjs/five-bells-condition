@@ -1,3 +1,5 @@
 coverage/
+node_modules/
 scripts/*.template.js
-dist/index.js
+dist/*
+types/
