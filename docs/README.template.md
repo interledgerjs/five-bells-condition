@@ -74,7 +74,7 @@ const validationResult = cc.validateFulfillment(fulfillment, condition)
 const cc = require('five-bells-condition')
 
 const myFulfillment = new cc.PreimageSha256()
-myFulfillment.setPreimage(new Buffer(''))
+myFulfillment.setPreimage(Buffer.from(''))
 console.log(myFulfillment.getConditionUri())
 // prints 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
 ```
@@ -85,7 +85,7 @@ console.log(myFulfillment.getConditionUri())
 const cc = require('five-bells-condition')
 
 const myFulfillment = new cc.PreimageSha256()
-myFulfillment.setPreimage(new Buffer(''))
+myFulfillment.setPreimage(Buffer.from(''))
 console.log(myFulfillment.serializeUri())
 // prints 'oAKAAA'
 ```
@@ -109,7 +109,7 @@ parsedFulfillment.validate()
 const cc = require('five-bells-condition')
 
 const ed25519Fulfillment = new cc.Ed25519Sha256()
-ed25519Fulfillment.setPublicKey(new Buffer('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
+ed25519Fulfillment.setPublicKey(Buffer.from('ec172b93ad5e563bf4932c70e1245034c35467ef2efd4d64ebf819683467e2bf', 'hex'))
 console.log(ed25519Fulfillment.getConditionUri())
 // prints 'ni:///sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj_-tB5P11yvfBaoE?fpt=ed25519-sha-256&cost=131072'
 ```
@@ -119,13 +119,13 @@ console.log(ed25519Fulfillment.getConditionUri())
 ``` js
 const cc = require('five-bells-condition')
 
-const edPrivateKey = new Buffer('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
+const edPrivateKey = Buffer.from('833fe62409237b9d62ec77587520911e9a759cec1d19755b7da901b96dca3d42', 'hex')
 
 const ed25519Fulfillment = new cc.Ed25519Sha256()
-// ed25519Fulfillment.setPublicKey(new Buffer('...'))
-// ed25519Fulfillment.setSignature(new Buffer('...'))
+// ed25519Fulfillment.setPublicKey(Buffer.from('...'))
+// ed25519Fulfillment.setSignature(Buffer.from('...'))
 // -- or --
-ed25519Fulfillment.sign(new Buffer('Hello World! Conditions are here!'), edPrivateKey)
+ed25519Fulfillment.sign(Buffer.from('Hello World! Conditions are here!'), edPrivateKey)
 console.log(ed25519Fulfillment.getConditionUri())
 // prints 'ni:///sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj_-tB5P11yvfBaoE?fpt=ed25519-sha-256&cost=131072'
 console.log(ed25519Fulfillment.serializeUri())
@@ -139,7 +139,7 @@ const cc = require('five-bells-condition')
 
 const fulfillment = 'pGSAIOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_gUC2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK'
 const condition = 'ni:///sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj_-tB5P11yvfBaoE?fpt=ed25519-sha-256&cost=131072'
-const message = new Buffer('Hello World! Conditions are here!')
+const message = Buffer.from('Hello World! Conditions are here!')
 
 const result = cc.validateFulfillment(fulfillment, condition, message)
 // result === true
@@ -182,7 +182,7 @@ console.log(thresholdFulfillmentUri)
 const cc = require('five-bells-condition')
 
 const prefix = new cc.PrefixSha256()
-prefix.setPrefix(new Buffer('2016:'))
+prefix.setPrefix(Buffer.from('2016:'))
 prefix.setMaxMessageLength(65536)
 prefix.setSubconditionUri('ni:///sha-256;U1YhFdW0lOI-SVF3PbDP4t_lVefj_-tB5P11yvfBaoE?fpt=ed25519-sha-256&cost=131072')
 console.log(prefix.getConditionUri())
@@ -195,7 +195,7 @@ console.log(prefix.getConditionUri())
 const cc = require('five-bells-condition')
 
 const prefix = new cc.PrefixSha256()
-prefix.setPrefix(new Buffer('Hello World! '))
+prefix.setPrefix(Buffer.from('Hello World! '))
 prefix.setMaxMessageLength(16384)
 prefix.setSubfulfillmentUri('pGSAIOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z-K_gUC2IpH62UMvjymLnEpIldvik_b_2hpo2t8Mze9fR6DHISpf6jzal6P0wD6p8uisHOyGpR1FISer26CdG28zHAcK')
 const fulfillmentUri = prefix.serializeUri()
@@ -203,7 +203,7 @@ console.log(fulfillmentUri)
 // prints 'oXuADUhlbGxvIFdvcmxkISCBAkAAomakZIAg7Bcrk61eVjv0kyxw4SRQNMNUZ-8u_U1k6_gZaDRn4r-BQLYikfrZQy-PKYucSkiV2-KT9v_aGmja3wzN719HoMchKl_qPNqXo_TAPqny6Kwc7IalHUUhJ6vboJ0bbzMcBwo'
 
 const conditionUri = prefix.getConditionUri()
-const message = new Buffer('Conditions are here!')
+const message = Buffer.from('Conditions are here!')
 cc.validateFulfillment(fulfillmentUri, conditionUri, message)
 ```
 
@@ -213,7 +213,7 @@ cc.validateFulfillment(fulfillmentUri, conditionUri, message)
 const cc = require('five-bells-condition')
 
 const rsaFulfillment = new cc.RsaSha256()
-rsaFulfillment.setPublicModulus(new Buffer('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
+rsaFulfillment.setPublicModulus(Buffer.from('b30e7a938783babf836850ff49e14f87e3f92d5c46e33feca3e4f0b22358580b11765995f4b8eea7fb4712c2e1e316f7f775a953d232216a169d9a64ddc007120a400b37f2afc077b62fe304de74de6a119ec4076b529c4f6096b0baad4f533df0173b9b822fd85d65fa4befa92d8f524f69cbca0136bd80d095c169aec0e095', 'hex'))
 console.log(rsaFulfillment.getConditionUri())
 // prints 'ni:///sha-256;j2luKLUjz-Ilu0jdDQO-Eg5Srmu06lEs4dsZHHVxcdc?fpt=rsa-sha-256&cost=16384'
 ```
@@ -223,7 +223,7 @@ console.log(rsaFulfillment.getConditionUri())
 ``` js
 const cc = require('five-bells-condition')
 
-const exampleMessage = new Buffer('Hello World! Conditions are here!')
+const exampleMessage = Buffer.from('Hello World! Conditions are here!')
 const privateKey =
 '-----BEGIN RSA PRIVATE KEY-----\n' +
 'MIICXAIBAAKBgQCzDnqTh4O6v4NoUP9J4U+H4/ktXEbjP+yj5PCyI1hYCxF2WZX0\n' +
@@ -242,8 +242,8 @@ const privateKey =
 '-----END RSA PRIVATE KEY-----\n'
 
 const rsaFulfillment = new cc.RsaSha256()
-// rsaFulfillment.setPublicModulus(new Buffer('...'))
-// rsaFulfillment.setSignature(new Buffer('...'))
+// rsaFulfillment.setPublicModulus(Buffer.from('...'))
+// rsaFulfillment.setSignature(Buffer.from('...'))
 // -- or --
 rsaFulfillment.sign(exampleMessage, privateKey)
 console.log(rsaFulfillment.serializeUri().length)
@@ -290,7 +290,7 @@ const cc = require('five-bells-condition')
 const myCondition = new cc.Condition()
 myCondition.setTypeId(cc.PreimageSha256.TYPE_ID)
 myCondition.setSubtypes(new Set('preimage-sha-256'))
-myCondition.setHash(new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
+myCondition.setHash(Buffer.from('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex'))
 myCondition.setCost(0)
 console.log(myCondition.serializeUri())
 // prints 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'

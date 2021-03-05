@@ -119,45 +119,45 @@ describe('Condition', function () {
   //   })
   //
   //   it('should throw when given a Buffer', function () {
-  //     assert.throws(() => Condition.fromUri(new Buffer('cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0', 'utf8')),
+  //     assert.throws(() => Condition.fromUri(Buffer.from('cc:0:3:47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU:0', 'utf8')),
   //       'Serialized condition must be a string')
   //   })
   // })
   //
   // describe('fromBinary', function () {
   //   it('successfully parses the minimal condition', function () {
-  //     const condition = Condition.fromBinary(new Buffer('0000010320e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8550102', 'hex'))
+  //     const condition = Condition.fromBinary(Buffer.from('0000010320e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8550102', 'hex'))
   //
   //     assert.instanceOf(condition, Condition)
   //     assert.equal(condition.getHash().toString('hex'), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
   //   })
   //
   //   it('rejects a condition with less than two bytes', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('00', 'hex')))
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('00', 'hex')))
   //   })
   //
   //   it('rejects a condition containing no fingerprint', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('0000', 'hex')))
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('0000', 'hex')))
   //   })
   //
   //   it.skip('rejects a condition containing extra bytes', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('000000010000', 'hex')))
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('000000010000', 'hex')))
   //   })
   //
   //   it('rejects a condition with non-canonical zero byte length prefix', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('000080', 'hex')), 'Length prefix encoding is not canonical')
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('000080', 'hex')), 'Length prefix encoding is not canonical')
   //   })
   //
   //   it('rejects a condition with non-canonical single byte length prefix', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('0000810100', 'hex')), 'Length prefix encoding is not canonical')
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('0000810100', 'hex')), 'Length prefix encoding is not canonical')
   //   })
   //
   //   it('rejects a condition with non-canonical two byte length prefix', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('000082000100', 'hex')), 'Length prefix encoding is not canonical')
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('000082000100', 'hex')), 'Length prefix encoding is not canonical')
   //   })
   //
   //   it('rejects a condition with too large of a length prefix', function () {
-  //     assert.throws(() => Condition.fromBinary(new Buffer('00008700000000000000', 'hex')), 'Tried to read too large integer (requested: 7, max: 6)')
+  //     assert.throws(() => Condition.fromBinary(Buffer.from('00008700000000000000', 'hex')), 'Tried to read too large integer (requested: 7, max: 6)')
   //   })
   // })
   //
@@ -179,7 +179,7 @@ describe('Condition', function () {
   //
   // describe('setHash', function () {
   //   it('should set the hash', function () {
-  //     const hash = new Buffer('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex')
+  //     const hash = Buffer.from('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'hex')
   //     const condition = new Condition()
   //
   //     condition.setHash(hash)
