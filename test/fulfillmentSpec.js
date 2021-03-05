@@ -91,31 +91,31 @@ describe('Fulfillment', function () {
     })
 
     // it('rejects a fulfillment with less than two bytes', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('00', 'hex')))
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('00', 'hex')))
     // })
     //
     // it('rejects a fulfillment containing no payload', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('0000', 'hex')))
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('0000', 'hex')))
     // })
     //
     // it.skip('rejects a fulfillment containing extra bytes', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('00000000', 'hex')))
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('00000000', 'hex')))
     // })
     //
     // it('rejects a fulfillment with non-canonical zero byte length prefix', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('000080', 'hex')), 'Length prefix encoding is not canonical')
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('000080', 'hex')), 'Length prefix encoding is not canonical')
     // })
     //
     // it('rejects a fulfillment with non-canonical single byte length prefix', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('0000810100', 'hex')), 'Length prefix encoding is not canonical')
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('0000810100', 'hex')), 'Length prefix encoding is not canonical')
     // })
     //
     // it('rejects a fulfillment with non-canonical two byte length prefix', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('000082000100', 'hex')), 'Length prefix encoding is not canonical')
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('000082000100', 'hex')), 'Length prefix encoding is not canonical')
     // })
     //
     // it('rejects a fulfillment with too large of a length prefix', function () {
-    //   assert.throws(() => Fulfillment.fromBinary(new Buffer('00008700000000000000', 'hex')), 'Tried to read too large integer (requested: 7, max: 6)')
+    //   assert.throws(() => Fulfillment.fromBinary(Buffer.from('00008700000000000000', 'hex')), 'Tried to read too large integer (requested: 7, max: 6)')
     // })
   })
 
