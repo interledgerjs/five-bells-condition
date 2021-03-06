@@ -16,10 +16,12 @@ if (process.browser) {
       }
     })
 
-    return { verify: () => {
-      sinon.assert.called(stub)
-      stub.restore()
-    }}
+    return {
+      verify: () => {
+        sinon.assert.called(stub)
+        stub.restore()
+      }
+    }
   }
 } else {
   // In the Node.js tests
@@ -27,10 +29,12 @@ if (process.browser) {
     const stub = sinon.stub(crypto, 'randomBytes')
     stub.withArgs(salt.length).returns(salt)
 
-    return { verify: () => {
-      sinon.assert.calledOnce(stub)
-      sinon.assert.calledWith(stub, salt.length)
-      stub.restore()
-    }}
+    return {
+      verify: () => {
+        sinon.assert.calledOnce(stub)
+        sinon.assert.calledWith(stub, salt.length)
+        stub.restore()
+      }
+    }
   }
 }

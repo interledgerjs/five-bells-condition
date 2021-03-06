@@ -330,7 +330,7 @@ class Condition {
       // Allocate a large enough buffer for the subtypes bitarray
       const maxId = subtypeIds.reduce((a, b) => Math.max(a, b), 0)
       const subtypesBuffer = Buffer.alloc(1 + (maxId >>> 3))
-      for (let id of subtypeIds) {
+      for (const id of subtypeIds) {
         subtypesBuffer[id >>> 3] |= 1 << (7 - id % 8)
       }
 

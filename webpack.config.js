@@ -10,11 +10,11 @@ const { outputs } = require('./webpack.parts.js')
 
 // '[libraryTarget]': [file extension]
 const OUTPUT_MAPPING = {
-  'amd': 'amd',
-  'commonjs': 'cjs',
-  'commonjs2': 'cjs2',
-  'umd': 'umd',
-  'window': 'window'
+  amd: 'amd',
+  commonjs: 'cjs',
+  commonjs2: 'cjs2',
+  umd: 'umd',
+  window: 'window'
 }
 
 const OVERRIDES = {
