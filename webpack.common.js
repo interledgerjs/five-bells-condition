@@ -13,7 +13,21 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: [
+                    '> 0.25%, not dead',
+                    'not IE 11',
+                    'maintained node versions'
+                  ]
+                }
+              ]
+            ]
+          }
         }
       }
     ]

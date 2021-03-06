@@ -2,7 +2,7 @@
 
 const assert = require('chai').assert
 
-const cc = require('..')
+const cc = require('../src')
 
 describe('five-bells-condition', function () {
   it('is an object', function () {

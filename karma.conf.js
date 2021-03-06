@@ -3,22 +3,30 @@ process.env.CHROME_BIN = puppeteer.executablePath()
 
 module.exports = function (karma) {
   karma.set({
-    frameworks: [ 'mocha' ],
-    files: ['node_modules/babel-polyfill/dist/polyfill.js', 'test/index.js'],
+    frameworks: ['mocha'],
+    plugins: [
+      'karma-webpack',
+      'karma-mocha',
+      'karma-sourcemap-loader',
+      'karma-chrome-launcher'
+    ],
+    files: [
+      { pattern: 'test/*Spec.js', watched: false }
+    ],
     preprocessors: {
-      'test/index.js': [ 'webpack', 'sourcemap' ]
+      'test/*Spec.js': ['webpack', 'sourcemap']
     },
-
     webpack: {
-      entry: ['./index.js'],
       devtool: 'inline-source-map',
       module: {
         rules: [
-          { test: /\.js$/, exclude: /node_modules|dist/, loader: 'babel-loader' }
+          {
+            test: /\.js$/,
+            exclude: /node_modules|dist/,
+            loader: 'babel-loader'
+          }
         ],
-        noParse: [
-          /sinon/
-        ]
+        noParse: [/sinon/]
       },
       resolve: {
         alias: { sinon: 'sinon/pkg/sinon' }
@@ -31,7 +39,7 @@ module.exports = function (karma) {
     webpackMiddleware: {
       stats: 'errors-only'
     },
-    
+
     browsers: ['ChromeHeadless']
   })
 }

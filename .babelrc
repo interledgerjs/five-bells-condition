@@ -1,11 +1,15 @@
 {
-  "presets": ["env"],
-  "plugins": [
-    ["transform-runtime", {
-      "helpers": false,
-      "polyfill": false,
-      "regenerator": true
-    }]
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": [
+          "> 0.25%, not dead",
+          "not IE 11",
+          "maintained node versions"
+        ]
+      }
+    ]
   ],
   "sourceMaps": true
 }

@@ -2,19 +2,19 @@
 
 'use strict'
 
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   devtool: 'inline-source-map',
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
+      new TerserPlugin({
         test: /vendor/,
         sourceMap: false
       }),
-      new UglifyJsPlugin({
+      new TerserPlugin({
         test: /^((?!(vendor)).)*.js$/,
-        sourceMap: true
+        sourceMap: false
       })
     ],
     splitChunks: {

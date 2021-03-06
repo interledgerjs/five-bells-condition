@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('chai').assert
-const cc = require('..')
+const cc = require('../src')
 
 describe('Fulfillment', function () {
   const Fulfillment = cc.Fulfillment

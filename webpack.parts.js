@@ -3,7 +3,7 @@
 'use strict'
 
 const path = require('path')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 
 const development = require('./webpack.development.js')
 const production = require('./webpack.production.js')
@@ -11,7 +11,7 @@ const production = require('./webpack.production.js')
 const AddVendorsPlugin = require('./plugins/add-vendors-plugin')
 
 const paths = {
-  entry: path.resolve(__dirname, './index.js'),
+  entry: path.resolve(__dirname, './src/index.js'),
   bundle: path.resolve(__dirname, 'dist/browser')
 }
 
