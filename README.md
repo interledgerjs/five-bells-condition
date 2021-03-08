@@ -43,6 +43,7 @@ This specification is only a draft at this stage and has not been submitted.
         - [Advanced: Parse a Condition](#advanced-parse-a-condition)
         - [Advanced: Parse and Reserialize a THRESHOLD-SHA-256 Fulfillment](#advanced-parse-and-reserialize-a-threshold-sha-256-fulfillment)
         - [Advanced: Manually Create a Condition](#advanced-manually-create-a-condition)
+        - [In browser environment](#in-browser-environment)
 
 ## API Documentation
 
@@ -319,4 +320,26 @@ myCondition.setHash(Buffer.from('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934
 myCondition.setCost(0)
 console.log(myCondition.serializeUri())
 // prints 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
+```
+
+### In browser environment
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CryptoConditions</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/crypto-conditions@2.0.3/dist/browser/CryptoConditions.window.min.js"></script>
+    <script>
+      const conditionUri = 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
+      const validationResult = CryptoConditions.validateCondition(condition)
+      console.log(`Condition ${conditionUri} is valid ? ${validationResult}`)
+      alert(JSON.stringify(CryptoConditions.Condition.fromUri(conditionUri), null, 2))
+    </script>
+  </body>
+</html>
 ```
