@@ -18,7 +18,7 @@ class TypeRegistry {
       throw new UnsupportedTypeError('Type ' + typeId + ' is not supported')
     }
 
-    for (let type of TypeRegistry.registeredTypes) {
+    for (const type of TypeRegistry.registeredTypes) {
       if (typeId === type.typeId) return type
     }
 
@@ -26,7 +26,7 @@ class TypeRegistry {
   }
 
   static findByName (name) {
-    for (let type of TypeRegistry.registeredTypes) {
+    for (const type of TypeRegistry.registeredTypes) {
       if (name === type.name) return type
     }
 
@@ -34,7 +34,7 @@ class TypeRegistry {
   }
 
   static findByAsn1ConditionType (asn1Type) {
-    for (let type of TypeRegistry.registeredTypes) {
+    for (const type of TypeRegistry.registeredTypes) {
       if (asn1Type === type.asn1Condition) return type
     }
 
@@ -42,7 +42,7 @@ class TypeRegistry {
   }
 
   static findByAsn1FulfillmentType (asn1Type) {
-    for (let type of TypeRegistry.registeredTypes) {
+    for (const type of TypeRegistry.registeredTypes) {
       if (asn1Type === type.asn1Fulfillment) return type
     }
 

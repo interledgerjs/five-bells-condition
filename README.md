@@ -1,6 +1,14 @@
 # Crypto Conditions
 
-[npm-url]: https://npmjs.org/package/js-crypto-conditions
+[![npm][npm-image]][npm-url] 
+<!-- [![circle][circle-image]][circle-url] [![codecov][codecov-image]][codecov-url] -->
+
+[npm-image]: https://img.shields.io/npm/v/crypto-conditions.svg?style=flat
+[npm-url]: https://npmjs.org/package/crypto-conditions
+<!-- [circle-image]: https://circleci.com/gh/interledgerjs/five-bells-condition.svg?style=shield -->
+<!-- [circle-url]: https://circleci.com/gh/interledgerjs/five-bells-condition -->
+<!-- [codecov-image]: https://codecov.io/gh/interledgerjs/five-bells-condition/branch/master/graph/badge.svg -->
+<!-- [codecov-url]: https://codecov.io/gh/interledgerjs/five-bells-condition -->
 
 > Implementation of crypto-conditions in JavaScript for Node.js and the browser
 
@@ -35,8 +43,11 @@ This specification is only a draft at this stage and has not been submitted.
         - [Advanced: Parse a Condition](#advanced-parse-a-condition)
         - [Advanced: Parse and Reserialize a THRESHOLD-SHA-256 Fulfillment](#advanced-parse-and-reserialize-a-threshold-sha-256-fulfillment)
         - [Advanced: Manually Create a Condition](#advanced-manually-create-a-condition)
+        - [In browser environment](#in-browser-environment)
 
 ## API Documentation
+
+TODO: Host doc on [https://www.bigchaindb.com/](https://www.bigchaindb.com/)
 
 **[API Docs](https://interledger.org/five-bells-condition/jsdoc/)**
 
@@ -309,4 +320,26 @@ myCondition.setHash(Buffer.from('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934
 myCondition.setCost(0)
 console.log(myCondition.serializeUri())
 // prints 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
+```
+
+### In browser environment
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CryptoConditions</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/crypto-conditions@2.0.3/dist/browser/CryptoConditions.window.min.js"></script>
+    <script>
+      const conditionUri = 'ni:///sha-256;47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU?fpt=preimage-sha-256&cost=0'
+      const validationResult = CryptoConditions.validateCondition(condition)
+      console.log(`Condition ${conditionUri} is valid ? ${validationResult}`)
+      alert(JSON.stringify(CryptoConditions.Condition.fromUri(conditionUri), null, 2))
+    </script>
+  </body>
+</html>
 ```

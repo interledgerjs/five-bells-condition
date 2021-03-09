@@ -2,7 +2,7 @@
 
 const assert = require('chai').assert
 
-const Condition = require('..').Condition
+const Condition = require('../src').Condition
 
 describe('Condition', function () {
   describe('fromUri', function () {

@@ -1,14 +1,14 @@
 'use strict'
 
-const Condition = require('./src/lib/condition')
-const Fulfillment = require('./src/lib/fulfillment')
-const TypeRegistry = require('./src/lib/type-registry')
-const PreimageSha256 = require('./src/types/preimage-sha256')
-const PrefixSha256 = require('./src/types/prefix-sha256')
-const ThresholdSha256 = require('./src/types/threshold-sha256')
-const RsaSha256 = require('./src/types/rsa-sha256')
-const Ed25519Sha256 = require('./src/types/ed25519-sha256')
-const base64url = require('./src/util/base64url')
+const Condition = require('./lib/condition')
+const Fulfillment = require('./lib/fulfillment')
+const TypeRegistry = require('./lib/type-registry')
+const PreimageSha256 = require('./types/preimage-sha256')
+const PrefixSha256 = require('./types/prefix-sha256')
+const ThresholdSha256 = require('./types/threshold-sha256')
+const RsaSha256 = require('./types/rsa-sha256')
+const Ed25519Sha256 = require('./types/ed25519-sha256')
+const base64url = require('./util/base64url')
 
 const EMPTY_BUFFER = Buffer.alloc(0)
 

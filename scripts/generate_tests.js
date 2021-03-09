@@ -12,7 +12,7 @@ const mochaPath = path.resolve(__dirname, '../test')
 
 const testTemplate = fs.readFileSync(path.resolve(__dirname, 'test.template.js'), 'utf8')
 
-for (let suite of fs.readdirSync(testsuitePath)) {
+for (const suite of fs.readdirSync(testsuitePath)) {
   const suitePath = path.resolve(testsuitePath, suite)
 
   const cases = fs.readdirSync(suitePath).map((name) => {
