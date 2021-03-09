@@ -15,7 +15,6 @@ export const TYPE_ASN1_CONDITION: TypeAsn1Condition.Ed25519Sha256;
 export const TYPE_ASN1_FULFILLMENT: TypeAsn1Fulfillment.Ed25519Sha256;
 export const TYPE_CATEGORY: TypeCategory.Ed25519Sha256;
 
-export const TYPE_ID = TypeId.Ed25519Sha256;
 export const CONSTANT_COST = 131072;
 export default class Ed25519Sha256 extends BaseSha256 {
   private publicKey: Buffer;
@@ -42,8 +41,6 @@ export default class Ed25519Sha256 extends BaseSha256 {
   private getFingerprintContents(): Buffer;
 
   getAsn1JsonPayload(): Ed25519Sha256Asn1Json;
-
-  private calculateCost(): number;
 
   validate(message: Buffer): boolean;
 }

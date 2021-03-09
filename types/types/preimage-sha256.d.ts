@@ -32,7 +32,5 @@ export default class PreimageSha256 extends BaseSha256 {
 
   getAsn1JsonPayload(): PreimageSha256Asn1Json;
 
-  private calculateCost(): number;
-
   validate(message: Buffer): boolean;
 }

@@ -18,7 +18,9 @@ interface FulfillmentAsn1JsonValueMap {
   [TypeAsn1Fulfillment.Ed25519Sha256]: Ed25519Sha256Json;
 }
 
-export interface FulfillmentAsn1Json<T = TypeAsn1Fulfillment> {
+export interface FulfillmentAsn1Json<
+  T extends keyof FulfillmentAsn1JsonValueMap
+> {
   type: T;
   value: FulfillmentAsn1JsonValueMap[T];
 }
@@ -28,10 +30,21 @@ export default class Fulfillment {
 
   static fromBinary(data: Buffer): Fulfillment;
 
-  static fromAsn1Json(json: FulfillmentAsn1Json): Fulfillment;
+  static fromAsn1Json(
+    json: FulfillmentAsn1Json<keyof FulfillmentAsn1JsonValueMap>
+  ): Fulfillment;
+
+  static fromAsn1Json<T extends keyof FulfillmentAsn1JsonValueMap>(
+    json: FulfillmentAsn1Json<T>
+  ): Fulfillment;
 
   static fromJson(
-    json: PreimageSha256Json | PrefixSha256Json | ThresholdSha256Json | RsaSha256Json | Ed25519Sha256Json
+    json:
+      | PreimageSha256Json
+      | PrefixSha256Json
+      | ThresholdSha256Json
+      | RsaSha256Json
+      | Ed25519Sha256Json
   ): Fulfillment;
 
   getTypeId(): TypeId;
@@ -51,12 +64,20 @@ export default class Fulfillment {
   private calculateCost(): number;
 
   parseAsn1JsonPayload(
-    json: PreimageSha256Json | PrefixSha256Json | ThresholdSha256Json | RsaSha256Json | Ed25519Sha256Json
+    json: FulfillmentAsn1Json<keyof FulfillmentAsn1JsonValueMap>['value']
+  ): void;
+
+  parseAsn1JsonPayload<T extends keyof FulfillmentAsn1JsonValueMap>(
+    json: FulfillmentAsn1JsonValueMap[T]
   ): void;
 
   serializeUri(): string;
 
-  getAsn1Json(): FulfillmentAsn1Json;
+  getAsn1Json(): FulfillmentAsn1Json<keyof FulfillmentAsn1JsonValueMap>;
+
+  getAsn1Json<
+    T extends keyof FulfillmentAsn1JsonValueMap
+  >(): FulfillmentAsn1Json<T>;
 
   serializeBinary(): Buffer;
 

@@ -8,7 +8,7 @@ import type {
   TypeName,
 } from '.';
 import type Condition from '../lib/condition';
-import type Fulfillment from '../lib/fulfillment';
+import Fulfillment, { FulfillmentAsn1JsonValueMap } from '../lib/fulfillment';
 import type BaseSha256 from './base-sha256';
 
 export const TYPE_ID = TypeId.PrefixSha256;
@@ -52,9 +52,7 @@ export default class PrefixSha256 extends BaseSha256 {
 
   parseJson(json: PrefixSha256Json): void;
 
-  parseAsn1JsonPayload(json: PrefixSha256Asn1Json): void;
-
-  private calculateCost(): number;
+  parseAsn1JsonPayload(json: FulfillmentAsn1JsonValueMap[TypeAsn1Fulfillment.PrefixSha256]): void;
 
   validate(message: Buffer): boolean;
 }

@@ -24,7 +24,7 @@ export interface RegisteredType {
 }
 
 export default class TypeRegistry {
-  private registeredTypes: RegisteredType[] = [];
+  private registeredTypes: RegisteredType[];
 
   static findByTypeId(typeId: TypeId): RegisteredType['Class'];
 

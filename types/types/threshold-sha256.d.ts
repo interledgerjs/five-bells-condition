@@ -8,7 +8,7 @@ import type {
   TypeName,
 } from '.';
 import type Condition from '../lib/condition';
-import type Fulfillment from '../lib/fulfillment';
+import Fulfillment, { FulfillmentAsn1JsonValueMap } from '../lib/fulfillment';
 import type BaseSha256 from './base-sha256';
 
 export const CONDITION = 'condition';
@@ -19,7 +19,7 @@ interface SubConditionBodyMap {
   fulfillment: Fulfillment;
 }
 
-export type SubCondition<T = 'condition' | 'fulfillment'> = {
+export type SubCondition<T extends keyof SubConditionBodyMap> = {
   type: T;
   body: SubConditionBodyMap[T];
 };
@@ -32,7 +32,7 @@ export const TYPE_CATEGORY = TypeCategory.ThresholdSha256;
 
 export default class ThresholdSha256 extends BaseSha256 {
   private threshold: number;
-  private subconditions: SubCondition[];
+  private subconditions: SubCondition<keyof SubConditionBodyMap>[];
 
   static TYPE_ID: TypeId.ThresholdSha256;
   static TYPE_NAME: TypeName.ThresholdSha256;
@@ -54,9 +54,7 @@ export default class ThresholdSha256 extends BaseSha256 {
 
   private getFingerprintContents(): Buffer;
 
-  private calculateCost(): number;
-
-  static getSubconditionCost(cond: SubCondition): number;
+  static getSubconditionCost<T extends keyof SubConditionBodyMap>(cond: SubCondition<T>): number;
 
   private static calculateWorstCaseLength(
     threshold: number,
@@ -65,7 +63,7 @@ export default class ThresholdSha256 extends BaseSha256 {
 
   parseJson(json: ThresholdSha256Json): void;
 
-  parseAsn1JsonPayload(json: ThresholdSha256Asn1Json): void;
+  parseAsn1JsonPayload(json: FulfillmentAsn1JsonValueMap[TypeAsn1Fulfillment.ThresholdSha256]): void;
 
   getAsn1JsonPayload(): ThresholdSha256Asn1Json;
 
