@@ -77,9 +77,9 @@
     "docs:toc": "md-toc-filter docs/README.template.md > README.md",
     "docs": "npm run docs:toc",
     "prepublishOnly": "npm run build",
-    "release": "release-it --src.tagName='v%s' --github.release --npm.publish --non-interactive",
-    "release-minor": "release-it minor --src.tagName='v%s' --github.release --npm.publish --non-interactive",
-    "release-major": "release-it major --src.tagName='v%s' --github.release --npm.publish --non-interactive"
+    "release": "read -p 'GITHUB_TOKEN: ' GITHUB_TOKEN && export GITHUB_TOKEN=$GITHUB_TOKEN && release-it --src.tagName='v%s'",
+    "release-minor": "release-it minor --src.tagName='v%s' --non-interactive",
+    "release-major": "release-it major --src.tagName='v%s' --non-interactive"
   },
   "repository": {
     "type": "git",
@@ -104,6 +104,22 @@
     "*.js": [
       "eslint"
     ]
+  },
+  "release-it": {
+    "github": {
+      "release": true
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "hooks": {
+      "before:init": [
+        "npm run test"
+      ]
+    },
+    "npm": {
+      "publish": true
+    }
   },
   "config": {
     "commitizen": {
