@@ -1,4 +1,5 @@
 import type {
+  RsaSha256Asn1Json,
   RsaSha256Json,
   TypeAsn1Condition,
   TypeAsn1Fulfillment,
@@ -41,8 +42,6 @@ export default class RsaSha256 extends BaseSha256 {
   setSignature(signature: Buffer): void;
 
   sign(message: Buffer, privateKey: string): void;
-
-  private calculateCost(): number;
 
   validate(message: Buffer): boolean;
 }

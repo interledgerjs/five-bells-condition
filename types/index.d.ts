@@ -1,19 +1,19 @@
-import type Condition from './lib/condition';
-import type Fulfillment from './lib/fulfillment';
-import type TypeRegistry from './lib/type-registry';
-import type {
+import Condition from './lib/condition';
+import Fulfillment from './lib/fulfillment';
+import TypeRegistry from './lib/type-registry';
+import {
   Ed25519Sha256Json,
   PrefixSha256Json,
   PreimageSha256Json,
   RsaSha256Json,
   ThresholdSha256Json,
 } from './types';
-import type PreimageSha256 from './types/preimage-sha256';
-import type PrefixSha256 from './types/prefix-sha256';
-import type ThresholdSha256 from './types/threshold-sha256';
-import type RsaSha256 from './types/rsa-sha256';
-import type Ed25519Sha256 from './types/ed25519-sha256';
-import type base64url from './util/base64url';
+import PreimageSha256 from './types/preimage-sha256';
+import PrefixSha256 from './types/prefix-sha256';
+import ThresholdSha256 from './types/threshold-sha256';
+import RsaSha256 from './types/rsa-sha256';
+import Ed25519Sha256 from './types/ed25519-sha256';
+import base64url from './util/base64url';
 
 export { base64url, Condition, Fulfillment, TypeRegistry };
 

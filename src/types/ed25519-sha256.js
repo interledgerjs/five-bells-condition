@@ -4,10 +4,11 @@
  * @module types
  */
 
-const nacl = require('tweetnacl')
+const { sign } = require('tweetnacl')
 const BaseSha256 = require('./base-sha256')
 const MissingDataError = require('../errors/missing-data-error')
 const ValidationError = require('../errors/validation-error')
+const bufferToUint8Array = require('../util/buffer-to-uint-array')
 const Asn1Ed25519FingerprintContents = require('../schemas/fingerprint').Ed25519FingerprintContents
 
 let ed25519
@@ -102,9 +103,9 @@ class Ed25519Sha256 extends BaseSha256 {
       this.setPublicKey(keyPair.publicKey)
       this.signature = ed25519.Sign(message, keyPair)
     } else {
-      const keyPair = nacl.sign.keyPair.fromSeed(privateKey)
+      const keyPair = sign.keyPair.fromSeed(bufferToUint8Array(privateKey))
       this.setPublicKey(Buffer.from(keyPair.publicKey))
-      this.signature = Buffer.from(nacl.sign.detached(message, keyPair.secretKey))
+      this.signature = Buffer.from(sign.detached(bufferToUint8Array(message), keyPair.secretKey))
     }
   }
 
@@ -170,7 +171,7 @@ class Ed25519Sha256 extends BaseSha256 {
     if (ed25519) {
       result = ed25519.Verify(message, this.signature, this.publicKey)
     } else {
-      result = nacl.sign.detached.verify(message, this.signature, this.publicKey)
+      result = sign.detached.verify(bufferToUint8Array(message), bufferToUint8Array(this.signature), bufferToUint8Array(this.publicKey))
     }
 
     if (result !== true) {
