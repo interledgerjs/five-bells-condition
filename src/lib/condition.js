@@ -87,6 +87,7 @@ class Condition {
     if (type.Class.TYPE_CATEGORY === 'compound') {
       condition.setSubtypes(new Set(query.subtypes.split(',')))
     } else {
+      // ? Should be bitmask number ?
       condition.setSubtypes(new Set())
     }
     condition.setHash(base64url.decode(parsed[1]))

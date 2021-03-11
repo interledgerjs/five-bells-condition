@@ -1,4 +1,4 @@
-import { TypeAsn1Condition } from '../types';
+import { TypeAsn1Condition, TypeId, TypeName } from '../types';
 
 export interface ConditionAsn1Json {
   type: TypeAsn1Condition;
@@ -13,8 +13,10 @@ export interface ConditionAsn1Json {
 }
 
 export default class Condition {
-  // TODO: in which cases subtypes is number ?
-  private subtypes: Set<string> | number;
+  private type?: TypeId;
+  private subtypes?: Set<TypeName> | number;
+  private hash?: Buffer;
+  private cost?: number;
 
   static readonly MAX_SAFE_SUBTYPES = 0xffffffff;
   static readonly SUPPORTED_SUBTYPES = 0x3f;
@@ -33,14 +35,14 @@ export default class Condition {
 
   getTypeId(): number;
 
-  setTypeId(type: number): void;
+  setTypeId(type: TypeId): void;
 
   getTypeName(): string;
 
-  //? Should be Set<string>
-  getSubtypes(): Set<string> | number;
+  //TODO: improve base on Condition typeCategory, if compound : Set<TypeName>, if simple : number
+  getSubtypes(): Set<TypeName> | number;
 
-  setSubtypes(subtypes: Set<string> | number): void;
+  setSubtypes(subtypes: Set<TypeName> | number): void;
 
   getHash(): Buffer;
 

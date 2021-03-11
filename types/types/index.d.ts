@@ -62,13 +62,13 @@ export interface PrefixSha256Json {
   type: Types.PrefixSha256;
   prefix: string;
   maxMessageLength: number;
-  subfulfillment: FulfillmentAsn1Json;
+  subfulfillment: FulfillmentAsn1Json<any>; // TODO: improve type
 }
 
 export interface PrefixSha256Asn1Json {
   prefix: Buffer;
   maxMessageLength: number;
-  subfulfillment: FulfillmentAsn1Json;
+  subfulfillment: FulfillmentAsn1Json<any>; // TODO: improve type
 }
 
 export interface RsaSha256Json {
@@ -105,6 +105,6 @@ export interface ThresholdSha256Json {
   subconditions?: ConditionAsn1Json[];
 }
 export interface ThresholdSha256Asn1Json {
-  subfulfillments?: FulfillmentAsn1Json[];
+  subfulfillments?: FulfillmentAsn1Json<any>[];
   subconditions?: ConditionAsn1Json[];
 }
