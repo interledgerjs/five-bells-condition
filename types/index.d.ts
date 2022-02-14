@@ -7,6 +7,12 @@ import {
   PreimageSha256Json,
   RsaSha256Json,
   ThresholdSha256Json,
+  Types,
+  TypeId,
+  TypeName,
+  TypeAsn1Condition,
+  TypeAsn1Fulfillment,
+  TypeCategory,
 } from './types';
 import PreimageSha256 from './types/preimage-sha256';
 import PrefixSha256 from './types/prefix-sha256';
@@ -16,13 +22,22 @@ import Ed25519Sha256 from './types/ed25519-sha256';
 import base64url from './util/base64url';
 
 export { base64url, Condition, Fulfillment, TypeRegistry };
-
 export {
   PreimageSha256,
   RsaSha256,
   PrefixSha256,
   ThresholdSha256,
   Ed25519Sha256,
+};
+
+// Extras
+export {
+  Types,
+  TypeId,
+  TypeName,
+  TypeAsn1Condition,
+  TypeAsn1Fulfillment,
+  TypeCategory,
 };
 
 export function fromConditionUri(serializedCondition: string): Condition;

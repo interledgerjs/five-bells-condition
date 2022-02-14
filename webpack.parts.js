@@ -20,13 +20,8 @@ const outputs = (base, env, mapping, overrides) => {
   const library = 'CryptoConditions'
   const windowLibrary = 'CryptoConditions'
 
-  let environment = development
-  let ext = 'js'
-
-  if (env === 'production') {
-    environment = production
-    ext = `min.${ext}`
-  }
+  const environment = env === 'production' ? production : development
+  const ext = env === 'production' ? 'min.js' : 'js'
 
   Object.entries(mapping).forEach(([target, extension]) => {
     const filename = `[name].${library}.${extension}.${ext}`
@@ -38,9 +33,7 @@ const outputs = (base, env, mapping, overrides) => {
         libraryTarget: target,
         path: paths.bundle
       },
-      plugins: [
-        new AddVendorsPlugin(`${library}.${extension}.${ext}`)
-      ]
+      plugins: [new AddVendorsPlugin(`${library}.${extension}.${ext}`)]
     }
 
     collection.push(merge(base, environment, compiled, overrides))
