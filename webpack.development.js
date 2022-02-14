@@ -9,12 +9,10 @@ module.exports = {
   optimization: {
     minimizer: [
       new TerserPlugin({
-        test: /vendor/,
-        sourceMap: false
+        test: /vendor/
       }),
       new TerserPlugin({
-        test: /^((?!(vendor)).)*.js$/,
-        sourceMap: false
+        test: /^((?!(vendor)).)*.js$/
       })
     ],
     splitChunks: {

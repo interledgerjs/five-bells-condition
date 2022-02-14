@@ -2,6 +2,7 @@
 
 'use strict'
 
+const { ProvidePlugin } = require('webpack')
 const { paths } = require('./webpack.parts.js')
 
 module.exports = {
@@ -38,6 +39,19 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'],
-    modules: ['node_modules']
-  }
+    modules: ['node_modules'],
+    fallback: {
+      buffer: require.resolve('buffer/'),
+      crypto: require.resolve('crypto-browserify'),
+      fs: false,
+      path: require.resolve('path-browserify'),
+      querystring: require.resolve('querystring-es3'),
+      stream: require.resolve('stream-browserify')
+    }
+  },
+  plugins: [
+    new ProvidePlugin({
+      Buffer: ['buffer', 'Buffer']
+    })
+  ]
 }

@@ -22,7 +22,7 @@ const OVERRIDES = {
   //     minimize: false
   // }
   node: {
-    fs: 'empty'
+    global: true
   }
 }
 
