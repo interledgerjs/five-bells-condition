@@ -1,8 +1,6 @@
-'use strict'
-
-const BaseError = require('./base-error')
+import BaseError from './base-error'
 
 class ValidationError extends BaseError {
 }
 
-module.exports = ValidationError
+export default ValidationError

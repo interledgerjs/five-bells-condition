@@ -1,8 +1,6 @@
-'use strict'
-
-const BaseError = require('./base-error')
+import BaseError from './base-error'
 
 class PrefixError extends BaseError {
 }
 
-module.exports = PrefixError
+export default PrefixError

@@ -1,6 +1,4 @@
-'use strict'
-
-module.exports = function (value) {
+export default function (value) {
   return typeof value === 'number' &&
     isFinite(value) &&
     Math.floor(value) === value

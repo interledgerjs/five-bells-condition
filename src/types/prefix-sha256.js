@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const Condition = require('../lib/condition')
-const Fulfillment = require('../lib/fulfillment')
-const BaseSha256 = require('./base-sha256')
-const MissingDataError = require('../errors/missing-data-error')
-const isInteger = require('../util/is-integer')
-const Asn1PrefixFingerprintContents = require('../schemas/fingerprint').PrefixFingerprintContents
+import Condition from '../lib/condition'
+import Fulfillment from '../lib/fulfillment'
+import BaseSha256 from './base-sha256'
+import MissingDataError from '../errors/missing-data-error'
+import isInteger from '../util/is-integer'
+import { PrefixFingerprintContents as Asn1PrefixFingerprintContents } from '../schemas/fingerprint'
 
 /**
  * PREFIX-SHA-256: Prefix condition using SHA-256.
@@ -239,4 +237,4 @@ PrefixSha256.prototype.setSubconditionUri =
 PrefixSha256.prototype.setSubfulfillmentUri =
   PrefixSha256.prototype.setSubfulfillment
 
-module.exports = PrefixSha256
+export default PrefixSha256;

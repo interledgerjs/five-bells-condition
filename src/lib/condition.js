@@ -1,20 +1,18 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const querystring = require('querystring')
+import { parse } from 'querystring'
 
-const TypeRegistry = require('./type-registry')
-const PrefixError = require('../errors/prefix-error')
-const ParseError = require('../errors/parse-error')
-const MissingDataError = require('../errors/missing-data-error')
+import TypeRegistry from './type-registry'
+import PrefixError from '../errors/prefix-error'
+import ParseError from '../errors/parse-error'
+import MissingDataError from '../errors/missing-data-error'
 
-const base64url = require('../util/base64url')
-const isInteger = require('../util/is-integer')
+import base64url from '../util/base64url'
+import isInteger from '../util/is-integer'
 
-const Asn1Condition = require('../schemas/condition').Condition
+import { Condition as Asn1Condition } from '../schemas/condition'
 
 // Regex for validating conditions
 //
@@ -46,6 +44,19 @@ const INTEGER_REGEX = /^0|[1-9]\d*$/
  * certainty whether it would be able to process the corresponding fulfillment.
  */
 class Condition {
+  // Our current implementation can only represent up to 32 bits for our subtypes
+  static MAX_SAFE_SUBTYPES = 0xffffffff
+
+  // Feature suites supported by this implementation
+  static SUPPORTED_SUBTYPES = 0x3f
+
+  // Max fulfillment size supported by this implementation
+  static MAX_COST = 2097152
+
+  // Expose regular expressions
+  static REGEX = CONDITION_REGEX
+  static REGEX_STRICT = CONDITION_REGEX_STRICT
+
   /**
    * Create a Condition object from a URI.
    *
@@ -72,7 +83,7 @@ class Condition {
       throw new ParseError('Invalid condition format')
     }
 
-    const query = querystring.parse(parsed[2])
+    const query = parse(parsed[2])
 
     const type = TypeRegistry.findByName(query.fpt)
 
@@ -375,17 +386,4 @@ class Condition {
   }
 }
 
-// Our current implementation can only represent up to 32 bits for our subtypes
-Condition.MAX_SAFE_SUBTYPES = 0xffffffff
-
-// Feature suites supported by this implementation
-Condition.SUPPORTED_SUBTYPES = 0x3f
-
-// Max fulfillment size supported by this implementation
-Condition.MAX_COST = 2097152
-
-// Expose regular expressions
-Condition.REGEX = CONDITION_REGEX
-Condition.REGEX_STRICT = CONDITION_REGEX_STRICT
-
-module.exports = Condition
+export default Condition

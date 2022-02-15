@@ -1,13 +1,10 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const crypto = require('crypto')
-const constants = crypto.constants
-const Pss = require('../crypto/pss')
-const pem = require('../util/pem')
+import { constants, privateEncrypt, publicDecrypt } from 'crypto'
+import Pss from '../crypto/pss'
+import pem from '../util/pem'
 
 /**
  * RSA-PSS using Node crypto module.
@@ -61,7 +58,7 @@ class Rsa {
       : encodedMessage
 
     // Sign
-    return crypto.privateEncrypt(
+    return privateEncrypt(
       {
         key: privateKey,
         padding: constants.RSA_NO_PADDING
@@ -81,7 +78,7 @@ class Rsa {
   verify (modulus, message, signature) {
     // Verify signature
     const publicKey = pem.modulusToPem(modulus)
-    const paddedMessage = crypto.publicDecrypt(
+    const paddedMessage = publicDecrypt(
       {
         key: publicKey,
         padding: constants.RSA_NO_PADDING
@@ -105,4 +102,4 @@ class Rsa {
 // Used to add a zero for padding
 Rsa.ZERO_BYTE = Buffer.from([0])
 
-module.exports = Rsa
+export default Rsa

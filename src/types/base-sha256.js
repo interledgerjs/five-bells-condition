@@ -1,7 +1,7 @@
 'use strict'
 
-const Fulfillment = require('../lib/fulfillment')
-const crypto = require('crypto')
+import Fulfillment from '../lib/fulfillment'
+import crypto from 'crypto'
 
 class BaseSha256 extends Fulfillment {
   /**
@@ -20,4 +20,4 @@ class BaseSha256 extends Fulfillment {
   }
 }
 
-module.exports = BaseSha256
+export default BaseSha256;

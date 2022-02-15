@@ -1,6 +1,4 @@
-'use strict'
-
-const UnsupportedTypeError = require('../errors/unsupported-type-error')
+import UnsupportedTypeError from '../errors/unsupported-type-error'
 
 class TypeRegistry {
   /**
@@ -76,4 +74,4 @@ class TypeRegistry {
 
 TypeRegistry.registeredTypes = []
 
-module.exports = TypeRegistry
+export default TypeRegistry

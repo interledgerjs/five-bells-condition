@@ -4,8 +4,8 @@
  * @module types
  */
 
-const BaseSha256 = require('./base-sha256')
-const MissingDataError = require('../errors/missing-data-error')
+import BaseSha256 from './base-sha256'
+import MissingDataError from '../errors/missing-data-error'
 
 /**
  * PREIMAGE-SHA-256: Hashlock condition using SHA-256.
@@ -22,6 +22,10 @@ const MissingDataError = require('../errors/missing-data-error')
  * of 0x03.
  */
 class PreimageSha256 extends BaseSha256 {
+  constructor () {
+    super()
+  }
+
   /**
    * Generate the contents of the condition hash.
    *
@@ -104,4 +108,4 @@ PreimageSha256.TYPE_ASN1_CONDITION = 'preimageSha256Condition'
 PreimageSha256.TYPE_ASN1_FULFILLMENT = 'preimageSha256Fulfillment'
 PreimageSha256.TYPE_CATEGORY = 'simple'
 
-module.exports = PreimageSha256
+export default PreimageSha256;

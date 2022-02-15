@@ -1,15 +1,13 @@
-'use strict'
-
-const crypto = require('crypto')
-const Mgf1 = require('./mgf1')
-const xor = require('../util/xor')
+import { createHash, randomBytes } from 'crypto'
+import Mgf1 from './mgf1'
+import xor from '../util/xor'
 
 class Pss {
   constructor (opts) {
     opts = opts || {}
 
     this.hashAlgorithm = opts.hashAlgorithm || 'sha256'
-    this.hashLength = crypto.createHash(this.hashAlgorithm).digest().length
+    this.hashLength = createHash(this.hashAlgorithm).digest().length
     this.saltLength = this.hashLength
   }
 
@@ -27,17 +25,17 @@ class Pss {
     // Calculate emLen
     const encodedMessageBytes = Math.ceil(encodedMessageBits / 8)
     // Step 2. mHash = Hash(M)
-    const messageHash = crypto.createHash(this.hashAlgorithm).update(message).digest()
+    const messageHash = createHash(this.hashAlgorithm).update(message).digest()
     // Step 3. If emLen < hLen + sLen + 2, output "encoding error" and stop.
     if (encodedMessageBytes < this.hashLength + this.saltLength + 2) {
       throw new Error('Encoding error: RSA modulus is too small for ' + this.hashAlgorithm)
     }
     // Step 4. Generate a random salt
-    const salt = crypto.randomBytes(this.saltLength)
+    const salt = randomBytes(this.saltLength)
 
     // Step 5. M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 6. H = Hash(M')
-    const hash = crypto.createHash(this.hashAlgorithm)
+    const hash = createHash(this.hashAlgorithm)
       .update(Buffer.alloc(8).fill(0))
       .update(messageHash)
       .update(salt)
@@ -88,7 +86,7 @@ class Pss {
     // Calculate emLen
     const encodedMessageBytes = Math.ceil(encodedMessageBits / 8)
     // Step 2. mHash = Hash(M)
-    const messageHash = crypto.createHash(this.hashAlgorithm).update(message).digest()
+    const messageHash = createHash(this.hashAlgorithm).update(message).digest()
     // Step 3. If emLen < hLen + sLen + 2, output "inconsistent" and stop.
     if (encodedMessageBytes < this.hashLength + this.saltLength + 2) {
       return false
@@ -136,7 +134,7 @@ class Pss {
 
     // Step 12. Let M' = (0x)00 00 00 00 00 00 00 00 || mHash || salt
     // Step 13. Let H' = Hash(M'), an octet string of length hLen.
-    const reconstructedHash = crypto.createHash(this.hashAlgorithm)
+    const reconstructedHash = createHash(this.hashAlgorithm)
       .update(Buffer.alloc(8).fill(0))
       .update(messageHash)
       .update(salt)
@@ -148,4 +146,4 @@ class Pss {
 
 Pss.EMPTY_BUFFER = Buffer.alloc(0)
 
-module.exports = Pss
+export default Pss

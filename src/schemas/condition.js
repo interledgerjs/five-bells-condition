@@ -1,15 +1,13 @@
-'use strict'
+import asn from 'asn1.js'
 
-const asn = require('asn1.js')
-
-exports.Simple256Condition = asn.define('Simple256Condition', function () {
+export const Simple256Condition = asn.define('Simple256Condition', function () {
   this.seq().obj(
     this.key('fingerprint').implicit(0).octstr(),
     this.key('cost').implicit(1).int()
   )
 })
 
-exports.Compound256Condition = asn.define('Compound256Condition', function () {
+export const Compound256Condition = asn.define('Compound256Condition', function () {
   this.seq().obj(
     this.key('fingerprint').implicit(0).octstr(),
     this.key('cost').implicit(1).int(),
@@ -17,7 +15,7 @@ exports.Compound256Condition = asn.define('Compound256Condition', function () {
   )
 })
 
-exports.Condition = asn.define('Condition', function () {
+export const Condition = asn.define('Condition', function () {
   this.choice({
     preimageSha256Condition: this.implicit(0).use(exports.Simple256Condition),
     prefixSha256Condition: this.implicit(1).use(exports.Compound256Condition),

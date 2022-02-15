@@ -1,13 +1,11 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const TypeRegistry = require('./type-registry')
-const Condition = require('./condition')
-const base64url = require('../util/base64url')
-const Asn1Fulfillment = require('../schemas/fulfillment').Fulfillment
+import TypeRegistry from './type-registry'
+import Condition from './condition'
+import base64url from '../util/base64url'
+import { Fulfillment as Asn1Fulfillment } from '../schemas/fulfillment'
 
 /**
  * Base class for fulfillment types.
@@ -216,4 +214,4 @@ class Fulfillment {
   }
 }
 
-module.exports = Fulfillment
+export default Fulfillment

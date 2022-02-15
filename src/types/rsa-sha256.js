@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const Rsa = require('../crypto/rsa')
-const pem = require('../util/pem')
-const BaseSha256 = require('./base-sha256')
-const MissingDataError = require('../errors/missing-data-error')
-const ValidationError = require('../errors/validation-error')
-const Asn1RsaFingerprintContents = require('../schemas/fingerprint').RsaFingerprintContents
+import Rsa from '../crypto/rsa'
+import pem from '../util/pem'
+import BaseSha256 from './base-sha256'
+import MissingDataError from '../errors/missing-data-error'
+import ValidationError from '../errors/validation-error'
+import { RsaFingerprintContents as Asn1RsaFingerprintContents } from '../schemas/fingerprint'
 
 // Instantiate RSA signer with standard settings
 const rsa = new Rsa()
@@ -174,4 +172,4 @@ RsaSha256.TYPE_CATEGORY = 'simple'
 
 RsaSha256.COST_RIGHT_SHIFT = 6 // 2^6 = 64
 
-module.exports = RsaSha256
+export default RsaSha256;

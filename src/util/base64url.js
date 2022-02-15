@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @module util
  */
@@ -35,4 +33,4 @@ class Base64Url {
   }
 }
 
-module.exports = Base64Url
+export default Base64Url

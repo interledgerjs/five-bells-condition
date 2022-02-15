@@ -1,5 +1,3 @@
-'use strict'
-
 function xor (a, b) {
   if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
     throw new Error('Arguments must be buffers')
@@ -14,4 +12,4 @@ function xor (a, b) {
   return result
 }
 
-module.exports = xor
+export default xor

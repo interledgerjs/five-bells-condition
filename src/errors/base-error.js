@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @module util
  */
@@ -42,4 +40,4 @@ class BaseError extends Error {
   }
 }
 
-module.exports = BaseError
+export default BaseError

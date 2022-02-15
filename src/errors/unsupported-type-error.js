@@ -1,8 +1,6 @@
-'use strict'
-
-const BaseError = require('./base-error')
+import BaseError from './base-error'
 
 class UnsupportedTypeError extends BaseError {
 }
 
-module.exports = UnsupportedTypeError
+export default UnsupportedTypeError

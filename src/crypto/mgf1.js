@@ -1,13 +1,11 @@
-'use strict'
-
-const crypto = require('crypto')
+import { createHash } from 'crypto'
 
 class Mgf1 {
   constructor (opts) {
     opts = opts || {}
 
     this.hashAlgorithm = opts.hashAlgorithm || 'sha256'
-    this.hashLength = crypto.createHash(this.hashAlgorithm).digest().length
+    this.hashLength = createHash(this.hashAlgorithm).digest().length
     this.saltLength = this.hashLength
   }
 
@@ -28,7 +26,7 @@ class Mgf1 {
       const counter = Buffer.alloc(4)
       counter.writeInt32BE(i, 0)
 
-      const hash = crypto.createHash(this.hashAlgorithm)
+      const hash = createHash(this.hashAlgorithm)
         .update(seed)
         .update(counter)
         .digest()
@@ -40,4 +38,4 @@ class Mgf1 {
   }
 }
 
-module.exports = Mgf1
+export default Mgf1

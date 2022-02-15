@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const { sign } = require('tweetnacl')
-const BaseSha256 = require('./base-sha256')
-const MissingDataError = require('../errors/missing-data-error')
-const ValidationError = require('../errors/validation-error')
-const bufferToUint8Array = require('../util/buffer-to-uint-array')
-const Asn1Ed25519FingerprintContents = require('../schemas/fingerprint').Ed25519FingerprintContents
+import { sign } from 'tweetnacl'
+import BaseSha256 from './base-sha256'
+import MissingDataError from '../errors/missing-data-error'
+import ValidationError from '../errors/validation-error'
+import bufferToUint8Array from '../util/buffer-to-uint-array'
+import { Ed25519FingerprintContents as Asn1Ed25519FingerprintContents } from '../schemas/fingerprint'
 
 let ed25519
 try {
@@ -190,4 +188,4 @@ Ed25519Sha256.TYPE_CATEGORY = 'simple'
 
 Ed25519Sha256.CONSTANT_COST = 131072
 
-module.exports = Ed25519Sha256
+export default Ed25519Sha256;

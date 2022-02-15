@@ -1,16 +1,14 @@
-'use strict'
-
 /**
  * @module types
  */
 
-const Condition = require('../lib/condition')
-const Fulfillment = require('../lib/fulfillment')
-const BaseSha256 = require('./base-sha256')
-const MissingDataError = require('../errors/missing-data-error')
-const isInteger = require('../util/is-integer')
+import Condition from '../lib/condition'
+import Fulfillment from '../lib/fulfillment'
+import BaseSha256 from './base-sha256'
+import MissingDataError from '../errors/missing-data-error'
+import isInteger from '../util/is-integer'
 
-const Asn1ThresholdFingerprintContents = require('../schemas/fingerprint').ThresholdFingerprintContents
+import { ThresholdFingerprintContents as Asn1ThresholdFingerprintContents } from '../schemas/fingerprint'
 
 const CONDITION = 'condition'
 const FULFILLMENT = 'fulfillment'
@@ -351,4 +349,4 @@ ThresholdSha256.prototype.addSubconditionUri =
 ThresholdSha256.prototype.addSubfulfillmentUri =
   ThresholdSha256.prototype.addSubfulfillment
 
-module.exports = ThresholdSha256
+export default ThresholdSha256;

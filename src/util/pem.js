@@ -1,10 +1,8 @@
-'use strict'
-
 /**
  * @module util
  */
 
-const asn1 = require('asn1.js')
+import asn1 from 'asn1.js'
 
 // Crypto-conditions always use the same RSA exponent, namely 65537
 const RSA_EXPONENT = 65537
@@ -137,4 +135,4 @@ class Pem {
   }
 }
 
-module.exports = Pem
+export default Pem
