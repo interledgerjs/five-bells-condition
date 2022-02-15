@@ -11,14 +11,14 @@ const production = require('./webpack.production.js')
 const AddVendorsPlugin = require('./plugins/add-vendors-plugin')
 
 const paths = {
-  entry: path.resolve(__dirname, './src/index.js'),
+  entry: path.resolve(__dirname, 'src/index.js'),
   bundle: path.resolve(__dirname, 'dist/browser')
 }
 
 const outputs = (base, env, mapping, overrides) => {
   const collection = []
   const library = 'CryptoConditions'
-  const windowLibrary = 'CryptoConditions'
+  // const windowLibrary = 'CryptoConditions'
 
   const environment = env === 'production' ? production : development
   const ext = env === 'production' ? 'min.js' : 'js'
@@ -29,7 +29,8 @@ const outputs = (base, env, mapping, overrides) => {
     const compiled = {
       output: {
         filename: filename,
-        library: target === 'window' ? windowLibrary : library,
+        // setting library mess up with export
+        // library: target === 'window' ? windowLibrary : library,
         libraryTarget: target,
         path: paths.bundle
       },

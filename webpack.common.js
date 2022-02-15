@@ -35,7 +35,7 @@ module.exports = {
   },
   optimization: {
     minimize: true,
-    noEmitOnErrors: true
+    emitOnErrors: false
   },
   resolve: {
     extensions: ['.js'],
