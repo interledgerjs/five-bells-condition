@@ -14,11 +14,9 @@ module.exports = class AddVendorsPlugin {
         const vendor = compilation.assets[`vendors.${this.base}`]
 
         if (main && vendor) {
-          const compiledAsset = new ConcatSource(main._value[0])
-          compiledAsset.add(vendor)
-          compiledAsset.add(main._value[1])
+          main.add(vendor)
           compilation.assets = {}
-          compilation.assets[this.base] = compiledAsset
+          compilation.assets[this.base] = main
         } else if (main && mainMap) {
           compilation.assets = {}
           compilation.assets[this.base] = main

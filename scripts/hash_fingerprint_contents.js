@@ -1,7 +1,7 @@
 'use strict'
 
-const base64url = require('../src/util/base64url')
 const crypto = require('crypto')
+const base64url = require('../src/util/base64url')
 
 const fingerprintContents = Buffer.from(process.argv[2], 'base64')
 

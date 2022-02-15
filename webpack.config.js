@@ -21,9 +21,6 @@ const OVERRIDES = {
   // optimization: {
   //     minimize: false
   // }
-  node: {
-    global: true
-  }
 }
 
 if (PRODUCTION) {
