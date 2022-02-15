@@ -11,5 +11,17 @@
       }
     ]
   ],
+  "plugins": [
+    "@babel/plugin-proposal-export-default-from",
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": true
+      }
+    ]
+  ],
   "sourceMaps": true
 }

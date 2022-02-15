@@ -1,8 +1,0 @@
-{
-  "extends": [
-    "eslint:recommended",
-    "standard",
-    "plugin:node/recommended",
-    "plugin:promise/recommended"
-  ]
-}
